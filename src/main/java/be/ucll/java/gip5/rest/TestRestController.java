@@ -14,10 +14,10 @@ public class TestRestController {
     private Logger logger = LoggerFactory.getLogger(TestRestController.class);
 
     // URL => http://<server and port>/rest/v1/test
-    @GetMapping(value = "/v1/test")
+    @GetMapping(value = "/v1/ping")
     public ResponseEntity getTestResponse() {
-        logger.debug("Rest service was triggered");
-        return new ResponseEntity<String>("Hello from UCLL Gip5 Starter Rest service", HttpStatus.OK);
+        logger.debug("Rest ping service was triggered");
+        return new ResponseEntity<String>("pong", HttpStatus.OK);
     }
 }
 
