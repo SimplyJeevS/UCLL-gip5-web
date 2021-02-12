@@ -3,7 +3,7 @@ package be.ucll.java.gip5.model;
 import javax.persistence.*;
 import java.util.Date;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 @Entity
 @Table(name ="wedstrijd", schema = "gip5")
 public class Wedstrijd {
@@ -11,10 +11,8 @@ public class Wedstrijd {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @Column(name="datum")
-    private Date datum;
-    @Column(name="uur")
-    private LocalTime uur;
+    @Column(name="tijdstip")
+    private LocalDateTime tijdstip;
     @Column(name="locatie")
     private String locatie;
     @Column(name="thuisPloeg")
@@ -27,8 +25,7 @@ public class Wedstrijd {
 
     private static final class WedstrijdBuilder{
         private Long id;
-        private Date datum;
-        private LocalTime uur;
+        private LocalDateTime tijdstip;
         private String locatie;
         private Long thuisPloeg;
         private Long tegenstander;
@@ -36,8 +33,7 @@ public class Wedstrijd {
         public static WedstrijdBuilder Wedstrijd(){return new WedstrijdBuilder();}
         public WedstrijdBuilder(Wedstrijd copy){
             this.id = copy.id;
-            this.datum = copy.datum;
-            this.uur = copy.uur;
+            this.tijdstip = copy.tijdstip;
             this.locatie = copy.locatie;
             this.thuisPloeg = copy.thuisPloeg;
             this.tegenstander = copy.tegenstander;
@@ -46,12 +42,8 @@ public class Wedstrijd {
             this.id = id;
             return this;
         }
-        public WedstrijdBuilder datum(Date datum){
-            this.datum = datum;
-            return this;
-        }
-        public WedstrijdBuilder uur(LocalTime uur){
-            this.uur = uur;
+        public WedstrijdBuilder uur(LocalDateTime tijdstip){
+            this.tijdstip = tijdstip;
             return this;
         }
         public WedstrijdBuilder locatie(String locatie){
