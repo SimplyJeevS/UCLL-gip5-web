@@ -7,17 +7,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
-@RequestMapping("/rest")
-public class TestRestController {
-    private Logger logger = LoggerFactory.getLogger(TestRestController.class);
+@RequestMapping("/ping")
+public class PingResource {
+    private Logger logger = LoggerFactory.getLogger(PingResource.class);
 
-    // URL => http://<server and port>/rest/v1/test
-    @GetMapping(value = "/v1/ping")
-    public ResponseEntity getTestResponse() {
+    @GetMapping(value = "")
+    @Operation(
+            summary = "ping",
+            description = "Should receive 'pong'"
+    )
+    public ResponseEntity getPingResource() {
         logger.debug("Rest ping service was triggered");
-        return new ResponseEntity<String>("pong", HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body("pong");
     }
 }
 
