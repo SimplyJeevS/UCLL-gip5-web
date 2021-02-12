@@ -1,12 +1,11 @@
 package be.ucll.java.gip5.dto;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class Wedstrijd {
     private Long id;
-    private Date datum;
-    private LocalTime uur;
+    private LocalDateTime tijdstip;
     private String locatie;
     private Long thuisPloeg;
     private Long tegenstander;
@@ -19,21 +18,14 @@ public class Wedstrijd {
         this.id = id;
     }
 
-    public Date getDatum() {
-        return datum;
+    public LocalDateTime tijdstip() {
+        return tijdstip;
     }
 
-    public void setDatum(Date datum) {
-        this.datum = datum;
+    public void setDatum(LocalDateTime tijdstip) {
+        this.tijdstip = tijdstip;
     }
 
-    public LocalTime getUur() {
-        return uur;
-    }
-
-    public void setUur(LocalTime uur) {
-        this.uur = uur;
-    }
 
     public String getLocatie() {
         return locatie;
