@@ -67,20 +67,12 @@ public class Wedstrijd {
             this.id = id;
         }
 
-        public Date getDatum() {
-            return datum;
+        public LocalDateTime getTijdstip() {
+            return tijdstip;
         }
 
-        public void setDatum(Date datum) {
-            this.datum = datum;
-        }
-
-        public LocalTime getUur() {
-            return uur;
-        }
-
-        public void setUur(LocalTime uur) {
-            this.uur = uur;
+        public void setTijdstip(LocalDateTime tijdstip) {
+            this.tijdstip = tijdstip;
         }
 
         public String getLocatie() {
