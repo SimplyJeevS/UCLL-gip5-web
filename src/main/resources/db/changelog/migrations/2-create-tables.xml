@@ -4,7 +4,7 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="2" author="Thomas Claes">
+    <changeSet id="2" author="Karel De Smet">
         <createTable tableName="bericht" schemaName="gip5">
             <column name="id" type="SERIAL" autoIncrement="true">
                 <constraints primaryKey="true"/>
@@ -15,12 +15,21 @@
             <column name="boodschap" type="CHARACTER VARYING(1000)">
                 <constraints nullable="false"/>
             </column>
+            <column name="afzenderId" type="SERIAL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tijdstip" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
         <createTable tableName="persoon" schemaName="gip5">
             <column name="id" type="SERIAL" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
             <column name="voornaam" type="CHARACTER VARYING(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="naam" type="CHARACTER VARYING(50)">
                 <constraints nullable="false"/>
             </column>
             <column name="geboortedatum" type="DATE">
@@ -81,6 +90,35 @@
                 <constraints nullable="false"/>
             </column>
             <column name="tegenstander" type="SERIAL">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="toewijzing" schemaName="gip5">
+            <column name="id" type="SERIAL" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="persoonId" type="SERIAL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="wedstrijdID" type="SERIAL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="commentaar" type="CHARACTER VARYING(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="deelname" schemaName="gip5">
+            <column name="id" type="SERIAL" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="persoonId" type="SERIAL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rolId" type="SERIAL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ploegId" type="SERIAL">
                 <constraints nullable="false"/>
             </column>
         </createTable>
