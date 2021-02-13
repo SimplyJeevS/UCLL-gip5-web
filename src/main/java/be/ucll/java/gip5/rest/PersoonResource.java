@@ -87,13 +87,16 @@ public class PersoonResource {
         if(persoon.getWachtwoord() == null || persoon.getWachtwoord().trim().length() < 8){
             throw new ParameterInvalidException("Wachtwoord moet minstens 8 characters bevatten, u gaf "+persoon.getWachtwoord());
         }
+        Optional<Ploeg> ploeg = Optional.empty();
         if(persoon.getPloegId() == null || !(persoon.getPloegId() instanceof Long)){
-            throw new ParameterInvalidException("Ploeg id met waarde "+persoon.getPloegId());
+            //throw new ParameterInvalidException("Ploeg id met waarde "+persoon.getPloegId());
+        }else{
+            ploeg = ploegRepository.findPloegById(persoon.getPloegId());
         }
         if(persoon.getRolId() == null || !(persoon.getRolId() instanceof Long)){
             throw new ParameterInvalidException("Rol id met waarde "+persoon.getRolId());
         }
-        Optional<Ploeg> ploeg = ploegRepository.findPloegById(persoon.getPloegId());
+
         Optional<Rol> rol = rolRepository.findRolById(persoon.getRolId());
         if(!ploeg.isPresent()){
             throw new NotFoundException("Ploeg met id "+persoon.getPloegId());

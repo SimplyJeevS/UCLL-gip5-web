@@ -54,7 +54,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="ploegId" type="SERIAL">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="rolId" type="SERIAL">
                 <constraints nullable="false"/>
