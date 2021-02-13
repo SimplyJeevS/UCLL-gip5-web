@@ -1,17 +1,12 @@
 package be.ucll.java.gip5.dto;
 
-public class Rol {
-    private Long id;
+public class PloegDTO {
     private String naam;
 
-    public Long getId() {
-        return id;
+    public PloegDTO(){}
+    public PloegDTO(String naam){
+        this.naam = naam;
     }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getNaam() {
         return naam;
     }

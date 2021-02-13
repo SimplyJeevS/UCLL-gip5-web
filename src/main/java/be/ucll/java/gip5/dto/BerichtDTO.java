@@ -1,16 +1,13 @@
 package be.ucll.java.gip5.dto;
 
-public class Bericht {
-    private Long id;
+public class BerichtDTO {
     private Long wedstrijdId;
     private String boodschap;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public BerichtDTO(){}
+    public BerichtDTO(Long wedstrijdId, String boodschap){
+        this.wedstrijdId = wedstrijdId;
+        this.boodschap = boodschap;
     }
 
     public Long getWedstrijdId() {

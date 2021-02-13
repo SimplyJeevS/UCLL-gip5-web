@@ -1,21 +1,21 @@
 package be.ucll.java.gip5.dto;
 
+import liquibase.pro.packaged.S;
+
 import java.time.LocalDateTime;
 import java.util.Date;
 
-public class Wedstrijd {
-    private Long id;
+public class WedstrijdDTO {
     private LocalDateTime tijdstip;
     private String locatie;
     private Long thuisPloeg;
     private Long tegenstander;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public WedstrijdDTO(){}
+    public WedstrijdDTO(LocalDateTime tijdstip, String locatie, Long thuisPloeg){
+        this.tijdstip = tijdstip;
+        this.locatie = locatie;
+        this.thuisPloeg = thuisPloeg;
     }
 
     public LocalDateTime tijdstip() {

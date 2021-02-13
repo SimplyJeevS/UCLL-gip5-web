@@ -2,8 +2,7 @@ package be.ucll.java.gip5.dto;
 
 import java.util.Date;
 
-public class Persoon {
-    private Long id;
+public class PersoonDTO {
     private String voornaam;
     private Date geboortedatum;
     private Boolean geslacht;
@@ -15,12 +14,19 @@ public class Persoon {
     private Long ploegId;
     private Long rolId;
 
-    public Long getId() {
-        return id;
-    }
+    public PersoonDTO(){}
 
-    public void setId(Long id) {
-        this.id = id;
+    public PersoonDTO(String voornaam, Date geboortedatum, Boolean geslacht, String adres, String telefoon, String gsm, String email, String wachtwoord, Long ploegId, Long rolId) {
+        this.voornaam = voornaam;
+        this.geboortedatum = geboortedatum;
+        this.geslacht = geslacht;
+        this.adres = adres;
+        this.telefoon = telefoon;
+        this.gsm = gsm;
+        this.email = email;
+        this.wachtwoord = wachtwoord;
+        this.ploegId = ploegId;
+        this.rolId = rolId;
     }
 
     public String getVoornaam() {
