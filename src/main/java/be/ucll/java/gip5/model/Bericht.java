@@ -22,7 +22,7 @@ public class Bericht {
 
     }
 
-    private static final class BerichtBuilder{
+    public static final class BerichtBuilder{
         private Long id;
         private Long wedstrijdId;
         private String boodschap;
@@ -45,6 +45,7 @@ public class Bericht {
             this.boodschap = boodschap;
             return this;
         }
+        public Bericht build(){return new Bericht(this);}
     }
 
     public Long getId() {

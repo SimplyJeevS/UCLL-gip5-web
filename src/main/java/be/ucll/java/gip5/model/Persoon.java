@@ -200,6 +200,6 @@ public class Persoon {
             this.wachtwoord = wachtwoord;
             return this;
         }
-
+        public Persoon build(){return new Persoon(this);}
     }
 }

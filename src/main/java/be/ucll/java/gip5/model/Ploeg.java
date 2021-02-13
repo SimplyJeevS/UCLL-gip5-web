@@ -17,22 +17,34 @@ public class Ploeg {
     }
     public Ploeg(){};
 
-    private static final class PloegBuilder{
+    public static final class PloegBuilder {
         private Long id;
         private String naam;
-        public PloegBuilder(){}
-        public static PloegBuilder Ploeg(){return new PloegBuilder();}
-        public PloegBuilder(Ploeg copy){
+
+        public PloegBuilder() {
+        }
+
+        public static PloegBuilder Ploeg() {
+            return new PloegBuilder();
+        }
+
+        public PloegBuilder(Ploeg copy) {
             this.id = copy.id;
             this.naam = copy.naam;
         }
-        public PloegBuilder id(Long id){
+
+        public PloegBuilder id(Long id) {
             this.id = id;
             return this;
         }
-        public PloegBuilder naam(String naam){
+
+        public PloegBuilder naam(String naam) {
             this.naam = naam;
             return this;
+        }
+
+        public Ploeg build() {
+            return new Ploeg(this);
         }
     }
 

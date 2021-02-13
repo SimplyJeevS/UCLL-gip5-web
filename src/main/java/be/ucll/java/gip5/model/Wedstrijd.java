@@ -23,81 +23,96 @@ public class Wedstrijd {
     private Wedstrijd(WedstrijdBuilder builder){}
     public Wedstrijd(){}
 
-    private static final class WedstrijdBuilder{
+    public static final class WedstrijdBuilder {
         private Long id;
         private LocalDateTime tijdstip;
         private String locatie;
         private Long thuisPloeg;
         private Long tegenstander;
-        public WedstrijdBuilder(){}
-        public static WedstrijdBuilder Wedstrijd(){return new WedstrijdBuilder();}
-        public WedstrijdBuilder(Wedstrijd copy){
+
+        public WedstrijdBuilder() {
+        }
+
+        public static WedstrijdBuilder Wedstrijd() {
+            return new WedstrijdBuilder();
+        }
+
+        public WedstrijdBuilder(Wedstrijd copy) {
             this.id = copy.id;
             this.tijdstip = copy.tijdstip;
             this.locatie = copy.locatie;
             this.thuisPloeg = copy.thuisPloeg;
             this.tegenstander = copy.tegenstander;
         }
-        public WedstrijdBuilder id(Long id){
+
+        public WedstrijdBuilder id(Long id) {
             this.id = id;
             return this;
         }
-        public WedstrijdBuilder uur(LocalDateTime tijdstip){
+
+        public WedstrijdBuilder uur(LocalDateTime tijdstip) {
             this.tijdstip = tijdstip;
             return this;
         }
-        public WedstrijdBuilder locatie(String locatie){
+
+        public WedstrijdBuilder locatie(String locatie) {
             this.locatie = locatie;
             return this;
         }
-        public WedstrijdBuilder thuisPloeg(Long thuisPloeg){
+
+        public WedstrijdBuilder thuisPloeg(Long thuisPloeg) {
             this.thuisPloeg = thuisPloeg;
             return this;
         }
-        public WedstrijdBuilder tegenstander(Long tegenstander){
+
+        public WedstrijdBuilder tegenstander(Long tegenstander) {
             this.tegenstander = tegenstander;
             return this;
         }
 
-        public Long getId() {
-            return id;
+        public Wedstrijd build() {
+            return new Wedstrijd(this);
         }
+    }
 
-        public void setId(Long id) {
-            this.id = id;
-        }
+    public Long getId() {
+        return id;
+    }
 
-        public LocalDateTime getTijdstip() {
-            return tijdstip;
-        }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-        public void setTijdstip(LocalDateTime tijdstip) {
-            this.tijdstip = tijdstip;
-        }
+    public LocalDateTime getTijdstip() {
+        return tijdstip;
+    }
 
-        public String getLocatie() {
-            return locatie;
-        }
+    public void setTijdstip(LocalDateTime tijdstip) {
+        this.tijdstip = tijdstip;
+    }
 
-        public void setLocatie(String locatie) {
-            this.locatie = locatie;
-        }
+    public String getLocatie() {
+        return locatie;
+    }
 
-        public Long getThuisPloeg() {
-            return thuisPloeg;
-        }
+    public void setLocatie(String locatie) {
+        this.locatie = locatie;
+    }
 
-        public void setThuisPloeg(Long thuisPloeg) {
-            this.thuisPloeg = thuisPloeg;
-        }
+    public Long getThuisPloeg() {
+        return thuisPloeg;
+    }
 
-        public Long getTegenstander() {
-            return tegenstander;
-        }
+    public void setThuisPloeg(Long thuisPloeg) {
+        this.thuisPloeg = thuisPloeg;
+    }
 
-        public void setTegenstander(Long tegenstander) {
-            this.tegenstander = tegenstander;
-        }
+    public Long getTegenstander() {
+        return tegenstander;
+    }
+
+    public void setTegenstander(Long tegenstander) {
+        this.tegenstander = tegenstander;
     }
 
 
