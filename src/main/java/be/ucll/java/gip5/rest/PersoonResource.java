@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/persoon")
+@RequestMapping("/api")
 public class PersoonResource {
     private Logger logger = LoggerFactory.getLogger(BerichtResource.class);
     private PersoonRepository persoonRepository;
@@ -28,7 +28,7 @@ public class PersoonResource {
         this.persoonRepository = persoonRepository;
     }
 
-    @GetMapping(value = "{id}")
+    @GetMapping(value = "/v1/persoon/{id}")
     @Operation(
             summary = "Verkrijg persoon",
             description = "Geef een persoon ID en verkrijg de persoon"

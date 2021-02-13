@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/wedstrijd")
+@RequestMapping("/api")
 public class WedstrijdResource {
     private Logger logger = LoggerFactory.getLogger(BerichtResource.class);
     private WedstrijdRepository wedstrijdRepository;
@@ -28,7 +28,7 @@ public class WedstrijdResource {
         this.wedstrijdRepository = wedstrijdRepository;
     }
 
-    @GetMapping(value = "{id}")
+    @GetMapping(value = "/v1/wedstrijd/{id}")
     @Operation(
             summary = "Verkrijg wedstrijd",
             description = "Geef een wedstrijd ID en verkrijg de wedstrijd"

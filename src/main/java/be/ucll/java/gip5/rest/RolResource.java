@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("rol")
+@RequestMapping("/api")
 public class RolResource {
     private Logger logger = LoggerFactory.getLogger(BerichtResource.class);
     private RolRepository rolRepository;
@@ -28,7 +28,7 @@ public class RolResource {
         this.rolRepository = rolRepository;
     }
 
-    @GetMapping(value = "{id}")
+    @GetMapping(value = "/v1/rol/{id}")
     @Operation(
             summary = "Verkrijg rol",
             description = "Geef een rol ID en verkrijg de rol"

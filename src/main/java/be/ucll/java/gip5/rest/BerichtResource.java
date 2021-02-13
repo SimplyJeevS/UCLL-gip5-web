@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/bericht")
+@RequestMapping("/api")
 public class BerichtResource {
     private Logger logger = LoggerFactory.getLogger(BerichtResource.class);
     private BerichtRepository berichtRepository;
@@ -29,7 +29,7 @@ public class BerichtResource {
         this.berichtRepository = berichtRepository;
     }
 
-    @GetMapping(value = "{id}")
+    @GetMapping(value = "/v1/bericht/{id}")
     @Operation(
             summary = "Verkrijg bericht",
             description = "Geef een bericht ID en verkrijg het bericht"
