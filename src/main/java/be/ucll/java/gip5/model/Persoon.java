@@ -13,6 +13,9 @@ public class Persoon {
     @Column(name = "voornaam")
     private String voornaam;
 
+    @Column(name = "naam")
+    private String naam;
+
     @Column(name = "geboortedatum")
     private Date geboortedatum;
 
@@ -60,6 +63,14 @@ public class Persoon {
 
     public void setVoornaam(String voornaam) {
         this.voornaam = voornaam;
+    }
+
+    public String getNaam() {
+        return naam;
+    }
+
+    public void setNaam(String naam) {
+        this.naam = naam;
     }
 
     public Date getGeboortedatum() {
@@ -137,6 +148,7 @@ public class Persoon {
     public static final class PersoonBuilder {
         private Long id;
         private String voornaam;
+        private String naam;
         private Date geboortedatum;
         private Boolean geslacht;
         private String adres;
@@ -156,6 +168,7 @@ public class Persoon {
         public PersoonBuilder(Persoon copy){
             this.id = copy.id;
             this.voornaam = copy.voornaam;
+            this.naam = copy.naam;
             this.geboortedatum = copy.geboortedatum;
             this.geslacht = copy.geslacht;
             this.adres = copy.adres;
@@ -173,6 +186,10 @@ public class Persoon {
         }
         public PersoonBuilder voornaam(String voornaam){
             this.voornaam = voornaam;
+            return this;
+        }
+        public PersoonBuilder naam(String naam){
+            this.naam = naam;
             return this;
         }
         public PersoonBuilder geboortedatum(Date geboortedatum){

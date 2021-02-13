@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class PersoonDTO {
     private String voornaam;
+    private String naam;
     private Date geboortedatum;
     private Boolean geslacht;
     private String adres;
@@ -16,8 +17,9 @@ public class PersoonDTO {
 
     public PersoonDTO(){}
 
-    public PersoonDTO(String voornaam, Date geboortedatum, Boolean geslacht, String adres, String telefoon, String gsm, String email, String wachtwoord, Long ploegId, Long rolId) {
+    public PersoonDTO(String voornaam, String naam, Date geboortedatum, Boolean geslacht, String adres, String telefoon, String gsm, String email, String wachtwoord, Long ploegId, Long rolId) {
         this.voornaam = voornaam;
+        this.naam = naam;
         this.geboortedatum = geboortedatum;
         this.geslacht = geslacht;
         this.adres = adres;
@@ -35,6 +37,14 @@ public class PersoonDTO {
 
     public void setVoornaam(String voornaam) {
         this.voornaam = voornaam;
+    }
+
+    public String getNaam() {
+        return naam;
+    }
+
+    public void setNaam(String naam) {
+        this.naam = naam;
     }
 
     public Date getGeboortedatum() {
