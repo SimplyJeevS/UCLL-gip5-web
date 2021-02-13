@@ -42,16 +42,15 @@ public class BerichtResource {
             throw new ParameterInvalidException(id.toString());
         }
         Optional<Bericht> bericht =  berichtRepository.findBerichtById(id);
-        if(bericht.isPresent()){
-            return ResponseEntity.status(HttpStatus.OK).body(bericht.get());
-        }else{
+        if(!bericht.isPresent()) {
             throw new NotFoundException(id.toString());
         }
+        return ResponseEntity.status(HttpStatus.OK).body(bericht.get());
     }
     @PostMapping(value = "/v1/bericht")
     @Operation(
             summary = "maak bericht",
-            description = ""
+            description = "Creeer een nieuw bericht"
     )
     public ResponseEntity postBericht(@RequestBody BerichtDTO bericht) throws ParameterInvalidException, NotFoundException {
         logger.debug("POST request voor bericht gekregen");
@@ -72,7 +71,8 @@ public class BerichtResource {
 
     @PutMapping(value="/v1/bericht/{id}")
     @Operation(
-            summary = "Pas bericht aan"
+            summary = "Pas bericht aan",
+            description = "Verander de inhoud van een bericht"
     )
     public ResponseEntity putBericht(@PathVariable("id") Long id,@RequestBody BerichtDTO berichtDto) throws ParameterInvalidException, NotFoundException {
         logger.debug("PUT request voor bericht gekregen");
@@ -95,6 +95,24 @@ public class BerichtResource {
         bericht.get().setWedstrijdId(berichtDto.getWedstrijdId());
         berichtRepository.save(bericht.get());
         return ResponseEntity.status(HttpStatus.OK).body(new BerichtDTO(bericht.get().getWedstrijdId(),bericht.get().getBoodschap()));
+    }
+
+    @DeleteMapping(value="/v1/bericht/{id}")
+    @Operation(
+            summary = "Verwijder een bericht",
+            description= "Geef id een mee en verwijder het bericht"
+    )
+    public ResponseEntity deleteBericht(@PathVariable("id") Long id) throws ParameterInvalidException, NotFoundException {
+        logger.debug("DELETE request voor bericht gekregen");
+        if(id == null && !(id instanceof Long) && id <=0 ){
+            throw new ParameterInvalidException(id.toString());
+        }
+        Optional<Bericht> bericht = berichtRepository.findBerichtById(id);
+        if(!bericht.isPresent()) {
+            throw new NotFoundException(id.toString());
+        }
+        berichtRepository.delete(bericht.get());
+        return ResponseEntity.status(HttpStatus.OK).body(bericht.get());
     }
 
 }
