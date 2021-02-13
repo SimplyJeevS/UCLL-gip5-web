@@ -27,7 +27,7 @@ public class HelloView extends VerticalLayout {
         add(new H1("Welkom op de UCLL Gip5 Starter pagina"));
         add(new Text("Dit is een vrijwel lege Vaadin toepassing die vervangen moet worden door de opdracht van de Gip 5."));
         add(new Paragraph("Deze dummy web app bevat een kleine JPA Entity die even de connectiviteit met de databank test door er een dummy tabel aan te maken."));
-        add(new Paragraph(new Text("Deze dummy web app bevat een Test Rest service:"), new Anchor("rest/v1/test", "Test Rest service")));
+        add(new Paragraph(new Text("Deze dummy web app bevat een Test Rest service:"), new Anchor("rest/v1/ping", "Test Rest service")));
         add(new Paragraph("De toepassing is opgestart op: " + vars.getStartupTime() + " (UTC Time)"));
     }
 
