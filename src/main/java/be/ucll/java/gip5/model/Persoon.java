@@ -216,6 +216,12 @@ public class Persoon {
         }public PersoonBuilder wachtwoord(String wachtwoord){
             this.wachtwoord = wachtwoord;
             return this;
+        }public PersoonBuilder ploegId(Long ploegId){
+            this.ploegId = ploegId;
+            return this;
+        }public PersoonBuilder rolId(Long rolId){
+            this.rolId = rolId;
+            return this;
         }
         public Persoon build(){return new Persoon(this);}
     }
