@@ -19,46 +19,46 @@ public class Deelname {
 
     @Column(name = "commentaar")
     private String commentaar;
-    private Deelname(ToewijzingBuilder builder) {
+    private Deelname(DeelnameBuilder builder) {
     }
 
     public Deelname() {
     }
 
-    public static final class ToewijzingBuilder {
+    public static final class DeelnameBuilder {
 
         private Long id;
         private Long persoonId;
         private Long wedstrijdId;
         private String commentaar;
 
-        public ToewijzingBuilder(){
+        public DeelnameBuilder(){
         }
 
-        public static ToewijzingBuilder Toewijzing() {
-            return new ToewijzingBuilder();
+        public static DeelnameBuilder Deelname() {
+            return new DeelnameBuilder();
         }
 
-        public ToewijzingBuilder(Deelname copy) {
+        public DeelnameBuilder(Deelname copy) {
             this.id = copy.id;
             this.persoonId = copy.id;
             this.wedstrijdId = copy.wedstrijdId;
             this.commentaar = copy.commentaar;
         }
 
-        public ToewijzingBuilder id(Long id){
+        public DeelnameBuilder id(Long id){
             this.id = id;
             return this;
         }
-        public ToewijzingBuilder persoonId(Long persoonId){
+        public DeelnameBuilder persoonId(Long persoonId){
             this.persoonId = persoonId;
             return this;
         }
-        public ToewijzingBuilder wedstrijdId(Long wedstrijdId){
+        public DeelnameBuilder wedstrijdId(Long wedstrijdId){
             this.wedstrijdId = wedstrijdId;
             return this;
         }
-        public ToewijzingBuilder commentaar(String commentaar){
+        public DeelnameBuilder commentaar(String commentaar){
             this.commentaar = commentaar;
             return this;
         }

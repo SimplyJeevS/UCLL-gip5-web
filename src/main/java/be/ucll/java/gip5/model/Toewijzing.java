@@ -19,38 +19,38 @@ public class Toewijzing {
     @Column(name="ploegId")
     private Long ploegId;
 
-    private Toewijzing(DeelnameBuilder builder){
+    private Toewijzing(ToewijzingBuilder builder){
 
     }
     public Toewijzing(){}
 
-    public static final class DeelnameBuilder{
+    public static final class ToewijzingBuilder{
         private Long id;
         private Long persoonId;
         private Long rolId;
         private Long ploegId;
 
-        public DeelnameBuilder(){}
-        public static DeelnameBuilder Deelname(){return new DeelnameBuilder();}
-        public DeelnameBuilder(Toewijzing copy){
+        public ToewijzingBuilder(){}
+        public static ToewijzingBuilder Deelname(){return new ToewijzingBuilder();}
+        public ToewijzingBuilder(Toewijzing copy){
             this.id = copy.id;
             this.persoonId = copy.persoonId;
             this.rolId = copy.rolId;
             this.ploegId = copy.ploegId;
         }
-        public DeelnameBuilder id(Long id){
+        public ToewijzingBuilder id(Long id){
             this.id = id;
             return this;
         }
-        public DeelnameBuilder persoonId(Long persoonId){
+        public ToewijzingBuilder persoonId(Long persoonId){
             this.persoonId = persoonId;
             return this;
         }
-        public DeelnameBuilder rolId(Long rolId){
+        public ToewijzingBuilder rolId(Long rolId){
             this.rolId = rolId;
             return this;
         }
-        public DeelnameBuilder ploegId(Long ploegId){
+        public ToewijzingBuilder ploegId(Long ploegId){
             this.ploegId = ploegId;
             return this;
         }

@@ -1,16 +1,11 @@
 package be.ucll.java.gip5.rest;
 
-import be.ucll.java.gip5.dao.DeelnameRepository;
-import be.ucll.java.gip5.dao.PersoonRepository;
-import be.ucll.java.gip5.dao.PloegRepository;
-import be.ucll.java.gip5.dao.RolRepository;
+import be.ucll.java.gip5.dao.*;
+import be.ucll.java.gip5.dto.DeelnameDTO;
 import be.ucll.java.gip5.dto.ToewijzingDTO;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
-import be.ucll.java.gip5.model.Toewijzing;
-import be.ucll.java.gip5.model.Persoon;
-import be.ucll.java.gip5.model.Ploeg;
-import be.ucll.java.gip5.model.Rol;
+import be.ucll.java.gip5.model.*;
 import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,15 +23,13 @@ public class DeelnameResource {
     private Logger logger = LoggerFactory.getLogger(BerichtResource.class);
     private DeelnameRepository deelnameRepository;
     private PersoonRepository persoonRepository;
-    private PloegRepository ploegRepository;
-    private RolRepository rolRepository;
+    private WedstrijdRepository wedstrijdRepository;
 
     @Autowired
-    public DeelnameResource(DeelnameRepository deelnameRepository,PersoonRepository persoonRepository,PloegRepository ploegRepository,RolRepository rolRepository){
+    public DeelnameResource(DeelnameRepository deelnameRepository, PersoonRepository persoonRepository, WedstrijdRepository wedstrijdRepository){
         this.deelnameRepository = deelnameRepository;
         this.persoonRepository = persoonRepository;
-        this.ploegRepository = ploegRepository;
-        this.rolRepository = rolRepository;
+        this.wedstrijdRepository = wedstrijdRepository;
     }
 
     @GetMapping(value="/v1/deelname/{id}")
@@ -49,7 +42,7 @@ public class DeelnameResource {
         if(id == null && !(id instanceof Long) && id <=0 ){
             throw new ParameterInvalidException(id.toString());
         }
-        Optional<Toewijzing> deelname = deelnameRepository.findDeelnameById(id);
+        Optional<Deelname> deelname = deelnameRepository.findDeelnameById(id);
         if(!deelname.isPresent()){
             throw new NotFoundException(id.toString());
         }
@@ -58,14 +51,15 @@ public class DeelnameResource {
 
     @GetMapping( value = "/v1/deelname")
     public ResponseEntity getDeelnameList() throws NotFoundException {
-        List<Toewijzing> deelnameList = deelnameRepository.findAll();
+        List<Deelname> deelnameList = deelnameRepository.findAll();
         if(deelnameList.isEmpty()) throw new NotFoundException("Deelnames");
         return ResponseEntity.status(HttpStatus.OK).body(deelnameList);
     }
 
     @GetMapping( value = "/v1/deelname/wedstrijd/{wedstrijdId}")
     public ResponseEntity getDeelnameWedstrijd(){
-
+        //TODO
+        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("");
     }
 
     @PostMapping(value="/v1/deelname")
@@ -73,33 +67,29 @@ public class DeelnameResource {
             summary = "Maak bericht",
             description = "Creer een nieuwe deelname"
     )
-    public ResponseEntity postDeelname(@RequestBody ToewijzingDTO deelname) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity postDeelname(@RequestBody DeelnameDTO deelname) throws ParameterInvalidException, NotFoundException {
         logger.debug("POST request voor deelname gekregen");
-        if(deelname.getPersoonId() ==null || deelname.getPersoonId() <= 0){
-            throw new ParameterInvalidException(deelname.getPersoonId().toString());
+        if(deelname.getPersoonId().equals(null) || deelname.getWedstrijdId().equals(null) || deelname.getCommentaar().equals(null)){
+            throw new ParameterInvalidException("Geef een compleet object mee van deelname");
         }
-        if(deelname.getPloegId() == null || deelname.getPersoonId() <= 0){
-            throw new ParameterInvalidException(deelname.getPersoonId().toString());
+        if(deelname.getPersoonId() <= 0 || deelname.getWedstrijdId() <= 0){
+            throw new ParameterInvalidException("Id mag niet minder als 0 zijn");
         }
-        if(deelname.getRolId() == null || deelname.getRolId() <= 0 ){
-            throw new ParameterInvalidException(deelname.getRolId().toString());
+        if(deelname.getCommentaar().trim().length() <= 0){
+            throw new ParameterInvalidException("Deelname is niet ingvuld");
         }
         Optional<Persoon> persoon = persoonRepository.findPersoonById(deelname.getPersoonId());
-        Optional<Ploeg> ploeg = ploegRepository.findPloegById(deelname.getPloegId());
-        Optional<Rol> rol = rolRepository.findRolById(deelname.getRolId());
+        Optional<Wedstrijd> wedstrijd = wedstrijdRepository.findWedstrijdById(deelname.getWedstrijdId());
         if(!persoon.isPresent()){
             throw new NotFoundException("Persoon met id "+deelname.getPersoonId());
         }
-        if(!ploeg.isPresent()){
-            throw new NotFoundException("Ploeg met id "+deelname.getPloegId());
+        if(!wedstrijd.isPresent()){
+            throw new NotFoundException("Wedstrijd met id "+deelname.getWedstrijdId());
         }
-        if(!rol.isPresent()){
-            throw new NotFoundException("Rol met id "+deelname.getRolId());
-        }
-        Toewijzing newDeelname = deelnameRepository.save(new Toewijzing.DeelnameBuilder()
+        Deelname newDeelname = deelnameRepository.save(new Deelname.DeelnameBuilder()
         .persoonId(deelname.getPersoonId())
-        .ploegId(deelname.getPloegId())
-        .rolId(deelname.getRolId())
+        .wedstrijdId(deelname.getWedstrijdId())
+        .commentaar(deelname.getCommentaar())
         .build());
         return ResponseEntity.status(HttpStatus.CREATED).body(newDeelname);
     }
@@ -109,7 +99,7 @@ public class DeelnameResource {
             summary = "Pas deelname aan",
             description = "verander de rol, persoon en/of ploeg van de deelname"
     )
-    public ResponseEntity putDeelname(@PathVariable("id") Long id,@RequestBody ToewijzingDTO deelname) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity putDeelname(@PathVariable("id") Long id,@RequestBody DeelnameDTO deelname) throws ParameterInvalidException, NotFoundException {
         logger.debug("PUT request voor deelname gekregen");
         if(id == null && !(id instanceof Long) && id <=0 ){
             throw new ParameterInvalidException(id.toString());
@@ -117,31 +107,27 @@ public class DeelnameResource {
         if(deelname.equals(null)){
             throw new ParameterInvalidException("Geef een deelname object mee");
         }
-        if(deelname.getPersoonId().equals(null) || deelname.getPloegId().equals(null) || deelname.getRolId().equals(null)){
-            throw new ParameterInvalidException("Geef een compleet object mee van deelname");
-        }
-        if(deelname.getPersoonId() <= 0 || deelname.getPloegId() <= 0 || deelname.getRolId() <= 0){
+        if(deelname.getPersoonId() <= 0 || deelname.getWedstrijdId() <= 0){
             throw new ParameterInvalidException("Id mag niet minder als 0 zijn");
         }
-        Optional<Toewijzing> foundDeelname = deelnameRepository.findDeelnameById(id);
+        if(deelname.getCommentaar().trim().length() <= 0){
+            throw new ParameterInvalidException("Deelname is niet ingvuld");
+        }
+        Optional<Deelname> foundDeelname = deelnameRepository.findDeelnameById(id);
         Optional<Persoon> persoon = persoonRepository.findPersoonById(deelname.getPersoonId());
-        Optional<Ploeg> ploeg = ploegRepository.findPloegById(deelname.getPloegId());
-        Optional<Rol> rol = rolRepository.findRolById(deelname.getRolId());
+        Optional<Wedstrijd> wedstrijd = wedstrijdRepository.findWedstrijdById(deelname.getWedstrijdId());
         if(!foundDeelname.isPresent()){
             throw new NotFoundException("Deelname met id "+id);
         }
         if(!persoon.isPresent()){
             throw new NotFoundException("Persoon met id "+deelname.getPersoonId());
         }
-        if(!ploeg.isPresent()){
-            throw new NotFoundException("Ploeg met id "+deelname.getPloegId());
-        }
-        if(!rol.isPresent()){
-            throw new NotFoundException("Rol met id "+deelname.getRolId());
+        if(!wedstrijd.isPresent()){
+            throw new NotFoundException("Ploeg met id "+deelname.getWedstrijdId());
         }
         foundDeelname.get().setPersoonId(deelname.getPersoonId());
-        foundDeelname.get().setPloegId(deelname.getPloegId());
-        foundDeelname.get().setRolId(deelname.getRolId());
+        foundDeelname.get().setPersoonId(deelname.getWedstrijdId());
+        foundDeelname.get().setCommentaar(deelname.getCommentaar());
         deelnameRepository.save(foundDeelname.get());
         return ResponseEntity.status(HttpStatus.OK).body(deelname);
     }
@@ -155,7 +141,7 @@ public class DeelnameResource {
         if(id == null && !(id instanceof Long) && id <=0 ){
             throw new ParameterInvalidException(id.toString());
         }
-        Optional<Toewijzing> deelname = deelnameRepository.findDeelnameById(id);
+        Optional<Deelname> deelname = deelnameRepository.findDeelnameById(id);
         if(!deelname.isPresent()){
             throw new NotFoundException(id.toString());
         }
