@@ -1,10 +1,12 @@
 package be.ucll.java.gip5.rest;
 
 import be.ucll.java.gip5.dao.PloegRepository;
+import be.ucll.java.gip5.dao.WedstrijdRepository;
 import be.ucll.java.gip5.dto.PloegDTO;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
 import be.ucll.java.gip5.model.Ploeg;
+import be.ucll.java.gip5.model.Wedstrijd;
 import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,10 +24,12 @@ import java.util.Optional;
 public class PloegResource {
     private Logger logger = LoggerFactory.getLogger(BerichtResource.class);
     private PloegRepository ploegRepository;
+    private WedstrijdRepository wedstrijdRepository;
 
     @Autowired
-    public PloegResource(PloegRepository ploegRepository){
+    public PloegResource(PloegRepository ploegRepository, WedstrijdRepository wedstrijdRepository){
         this.ploegRepository = ploegRepository;
+        this.wedstrijdRepository = wedstrijdRepository;
     }
 
     @GetMapping(value = "/v1/ploeg/{id}")
@@ -98,4 +103,43 @@ public class PloegResource {
             throw new ParameterInvalidException("Naam met value "+ploeg.getNaam());
         }
     }
+
+    @GetMapping( value = "/v1/ploeg/thuisploeg")
+    public ResponseEntity getThuisploegen() throws NotFoundException {
+        List<Wedstrijd> wedstrijden = wedstrijdRepository.findAll();
+        if(wedstrijden.isEmpty()){
+            throw new NotFoundException("Er zijn nog geen wedstrijden gespeeld");
+        }
+        List<Ploeg> ploegen = Collections.<Ploeg>emptyList();
+        wedstrijden.forEach(wedstrijd -> {
+            Optional<Ploeg> ploeg = ploegRepository.findPloegById(wedstrijd.getThuisPloeg());
+            if(ploeg.isPresent()){
+                ploegen.add(ploeg.get());
+            }
+        });
+        if(ploegen.isEmpty()){
+            throw new NotFoundException("Thuisploegen in wedstrijden ");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(ploegen);
+    }
+
+    @GetMapping( value = "/v1/ploeg/tegenstander")
+    public ResponseEntity getTegenstanders() throws NotFoundException {
+        List<Wedstrijd> wedstrijden = wedstrijdRepository.findAll();
+        if(wedstrijden.isEmpty()){
+            throw new NotFoundException("Er zijn nog geen wedstrijden gespeeld");
+        }
+        List<Ploeg> ploegen = Collections.<Ploeg>emptyList();
+        wedstrijden.forEach(wedstrijd -> {
+            Optional<Ploeg> ploeg = ploegRepository.findPloegById(wedstrijd.getTegenstander());
+            if(ploeg.isPresent()){
+                ploegen.add(ploeg.get());
+            }
+        });
+        if(ploegen.isEmpty()){
+            throw new NotFoundException("Tegenstander in wedstrijden ");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(ploegen);
+    }
+
 }
