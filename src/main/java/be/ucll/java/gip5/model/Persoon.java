@@ -37,12 +37,6 @@ public class Persoon {
     @Column(name = "wachtwoord")
     private String wachtwoord;
 
-    @Column(name = "ploegId")
-    private Long ploegId;
-
-    @Column(name = "rolId")
-    private Long rolId;
-
     private Persoon(PersoonBuilder builder){
 
     }
@@ -129,22 +123,6 @@ public class Persoon {
         this.wachtwoord = wachtwoord;
     }
 
-    public Long getPloegId() {
-        return ploegId;
-    }
-
-    public void setPloegId(Long ploegId) {
-        this.ploegId = ploegId;
-    }
-
-    public Long getRolId() {
-        return rolId;
-    }
-
-    public void setRolId(Long rolId) {
-        this.rolId = rolId;
-    }
-
     public static final class PersoonBuilder {
         private Long id;
         private String voornaam;
@@ -156,8 +134,6 @@ public class Persoon {
         private String gsm;
         private String email;
         private String wachtwoord;
-        private Long ploegId;
-        private Long rolId;
 
         public PersoonBuilder() {
         }
@@ -176,8 +152,6 @@ public class Persoon {
             this.gsm = copy.gsm;
             this.email = copy.email;
             this.wachtwoord = copy.wachtwoord;
-            this.ploegId = copy.ploegId;
-            this.rolId = copy.rolId;
         }
 
         public PersoonBuilder id(Long id){
@@ -215,12 +189,6 @@ public class Persoon {
             return this;
         }public PersoonBuilder wachtwoord(String wachtwoord){
             this.wachtwoord = wachtwoord;
-            return this;
-        }public PersoonBuilder ploegId(Long ploegId){
-            this.ploegId = ploegId;
-            return this;
-        }public PersoonBuilder rolId(Long rolId){
-            this.rolId = rolId;
             return this;
         }
         public Persoon build(){return new Persoon(this);}

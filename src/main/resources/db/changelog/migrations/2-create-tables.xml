@@ -53,12 +53,6 @@
             <column name="wachtwoord" type="CHARACTER VARYING(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="ploegId" type="SERIAL">
-                <constraints nullable="true"/>
-            </column>
-            <column name="rolId" type="SERIAL">
-                <constraints nullable="false"/>
-            </column>
         </createTable>
         <createTable tableName="ploeg" schemaName="gip5">
             <column name="id" type="SERIAL" autoIncrement="true">
