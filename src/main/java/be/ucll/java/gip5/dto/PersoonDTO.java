@@ -30,7 +30,28 @@ public class PersoonDTO {
         this.ploegId = ploegId;
         this.rolId = rolId;
     }
-
+    public PersoonDTO(String voornaam, String naam, Date geboortedatum, Boolean geslacht, String adres, String telefoon, String gsm, String email, Long ploegId, Long rolId) {
+        this.voornaam = voornaam;
+        this.naam = naam;
+        this.geboortedatum = geboortedatum;
+        this.geslacht = geslacht;
+        this.adres = adres;
+        this.telefoon = telefoon;
+        this.gsm = gsm;
+        this.email = email;
+        this.ploegId = ploegId;
+        this.rolId = rolId;
+    }
+    public PersoonDTO(String voornaam, String naam, Date geboortedatum, Boolean geslacht, String adres, String telefoon, String gsm, String email) {
+        this.voornaam = voornaam;
+        this.naam = naam;
+        this.geboortedatum = geboortedatum;
+        this.geslacht = geslacht;
+        this.adres = adres;
+        this.telefoon = telefoon;
+        this.gsm = gsm;
+        this.email = email;
+    }
     public String getVoornaam() {
         return voornaam;
     }
