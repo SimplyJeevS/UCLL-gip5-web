@@ -3,6 +3,7 @@ package be.ucll.java.gip5.rest;
 import be.ucll.java.gip5.dao.ToewijzingRepository;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
+import be.ucll.java.gip5.model.Deelname;
 import be.ucll.java.gip5.model.Toewijzing;
 import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;

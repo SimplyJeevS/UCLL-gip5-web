@@ -2,13 +2,15 @@ package be.ucll.java.gip5.dto;
 
 public class ToewijzingDTO {
     private Long persoonId;
+    private Long rolId;
+    private Long ploegId;
     private Long wedstrijdId;
-    private String commentaar;
+
     public ToewijzingDTO(){}
-    public ToewijzingDTO(Long persoonId, Long wedstrijdId, String commentaar){
+    public ToewijzingDTO(Long persoonId, Long rolId, Long ploegId){
         this.persoonId = persoonId;
-        this.wedstrijdId = wedstrijdId;
-        this.commentaar = commentaar;
+        this.rolId = rolId;
+        this.ploegId = ploegId;
     }
 
     public Long getPersoonId() {
@@ -19,19 +21,19 @@ public class ToewijzingDTO {
         this.persoonId = persoonId;
     }
 
-    public Long getWedstrijdId() {
-        return wedstrijdId;
+    public Long getRolId() {
+        return rolId;
     }
 
-    public void setWedstrijdId(Long wedstrijdId) {
-        this.wedstrijdId = wedstrijdId;
+    public void setRolId(Long rolId) {
+        this.rolId = rolId;
     }
 
-    public String getCommentaar() {
-        return commentaar;
+    public Long getPloegId() {
+        return ploegId;
     }
 
-    public void setCommentaar(String commentaar) {
-        this.commentaar = commentaar;
+    public void setPloegId(Long ploegId) {
+        this.ploegId = ploegId;
     }
 }

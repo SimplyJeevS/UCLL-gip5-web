@@ -5,66 +5,56 @@ import javax.persistence.*;
 @Entity
 @Table(name ="toewijzing", schema = "gip5")
 public class Toewijzing {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "persoonId")
+    @Column(name="persoonId")
     private Long persoonId;
 
-    @Column(name = "wedstrijdId")
-    private Long wedstrijdId;
+    @Column(name="rolId")
+    private Long rolId;
 
-    @Column(name = "commentaar")
-    private String commentaar;
-    private Toewijzing(ToewijzingBuilder builder) {
+    @Column(name="ploegId")
+    private Long ploegId;
+
+    private Toewijzing(DeelnameBuilder builder){
+
     }
+    public Toewijzing(){}
 
-    public Toewijzing() {
-    }
-
-    public static final class ToewijzingBuilder {
-
+    public static final class DeelnameBuilder{
         private Long id;
         private Long persoonId;
-        private Long wedstrijdId;
-        private String commentaar;
+        private Long rolId;
+        private Long ploegId;
 
-        public ToewijzingBuilder(){
-        }
-
-        public static ToewijzingBuilder Toewijzing() {
-            return new ToewijzingBuilder();
-        }
-
-        public ToewijzingBuilder(Toewijzing copy) {
+        public DeelnameBuilder(){}
+        public static DeelnameBuilder Deelname(){return new DeelnameBuilder();}
+        public DeelnameBuilder(Toewijzing copy){
             this.id = copy.id;
-            this.persoonId = copy.id;
-            this.wedstrijdId = copy.wedstrijdId;
-            this.commentaar = copy.commentaar;
+            this.persoonId = copy.persoonId;
+            this.rolId = copy.rolId;
+            this.ploegId = copy.ploegId;
         }
-
-        public ToewijzingBuilder id(Long id){
+        public DeelnameBuilder id(Long id){
             this.id = id;
             return this;
         }
-        public ToewijzingBuilder persoonId(Long persoonId){
+        public DeelnameBuilder persoonId(Long persoonId){
             this.persoonId = persoonId;
             return this;
         }
-        public ToewijzingBuilder wedstrijdId(Long wedstrijdId){
-            this.wedstrijdId = wedstrijdId;
+        public DeelnameBuilder rolId(Long rolId){
+            this.rolId = rolId;
             return this;
         }
-        public ToewijzingBuilder commentaar(String commentaar){
-            this.commentaar = commentaar;
+        public DeelnameBuilder ploegId(Long ploegId){
+            this.ploegId = ploegId;
             return this;
         }
-        public Toewijzing build(){
-            return new Toewijzing(this);
-        }
+        public Toewijzing build(){return new Toewijzing(this);}
     }
 
     public Long getId() {
@@ -83,19 +73,19 @@ public class Toewijzing {
         this.persoonId = persoonId;
     }
 
-    public Long getWedstrijdId() {
-        return wedstrijdId;
+    public Long getRolId() {
+        return rolId;
     }
 
-    public void setWedstrijdId(Long wedstrijdId) {
-        this.wedstrijdId = wedstrijdId;
+    public void setRolId(Long rolId) {
+        this.rolId = rolId;
     }
 
-    public String getCommentaar() {
-        return commentaar;
+    public Long getPloegId() {
+        return ploegId;
     }
 
-    public void setCommentaar(String commentaar) {
-        this.commentaar = commentaar;
+    public void setPloegId(Long ploegId) {
+        this.ploegId = ploegId;
     }
 }

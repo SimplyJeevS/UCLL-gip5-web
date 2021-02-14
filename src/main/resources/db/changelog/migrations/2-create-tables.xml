@@ -87,14 +87,14 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <createTable tableName="toewijzing" schemaName="gip5">
+        <createTable tableName="deelname" schemaName="gip5">
             <column name="id" type="SERIAL" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
             <column name="persoonId" type="SERIAL">
                 <constraints nullable="false"/>
             </column>
-            <column name="wedstrijdID" type="SERIAL">
+            <column name="wedstrijdId" type="SERIAL">
                 <constraints nullable="false"/>
             </column>
             <column name="commentaar" type="CHARACTER VARYING(50)">
@@ -102,7 +102,7 @@
             </column>
         </createTable>
 
-        <createTable tableName="deelname" schemaName="gip5">
+        <createTable tableName="toewijzing" schemaName="gip5">
             <column name="id" type="SERIAL" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
