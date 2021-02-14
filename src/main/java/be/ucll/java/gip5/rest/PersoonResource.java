@@ -167,7 +167,6 @@ public class PersoonResource {
         if(id == null && !(id instanceof Long) && id <=0 ){
             throw new ParameterInvalidException(id.toString());
         }
-        checkPersoonIds(persoon);
         checkPersoonInfo(persoon);
         Optional<Persoon> foundPersoon = persoonRepository.findPersoonById(id);
         if(!foundPersoon.isPresent()){
@@ -181,8 +180,6 @@ public class PersoonResource {
         updatedPersoon.setGsm(persoon.getGsm());
         updatedPersoon.setNaam(persoon.getNaam());
         updatedPersoon.setVoornaam(persoon.getVoornaam());
-        updatedPersoon.setPloegId(persoon.getPloegId());
-        updatedPersoon.setRolId(persoon.getRolId());
         persoonRepository.save(updatedPersoon);
         return ResponseEntity.status(HttpStatus.OK).body(updatedPersoon);
     }
