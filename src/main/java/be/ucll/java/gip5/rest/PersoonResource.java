@@ -231,7 +231,7 @@ public class PersoonResource {
         updatedPersoon.setNaam(persoon.getNaam());
         updatedPersoon.setVoornaam(persoon.getVoornaam());
         persoonRepository.save(updatedPersoon);
-        return ResponseEntity.status(HttpStatus.OK).body(updatedPersoon
+        return ResponseEntity.status(HttpStatus.OK).body(updatedPersoon);
     }
 
     @DeleteMapping(value = "/v1/persoon/{id}")
