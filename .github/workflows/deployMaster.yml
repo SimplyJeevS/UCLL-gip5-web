@@ -35,7 +35,7 @@ jobs:
 #       run: npm run build
 
     - name: Generate deployment package
-      run: zip -r "deploy-${{ steps.date.outputs.date.replaced }}.zip" * -x "**node_modules**"
+      run: zip -r "deploy-${{ steps.date.outputs.date }}.zip" * -x "**node_modules**"
 
     - name: Get timestamp
       uses: gerred/actions/current-time@master
@@ -58,8 +58,8 @@ jobs:
         application_name: ucll-team3-gip5-web
         environment_name: Ucllteam3gip5web-env
         region: eu-west-1
-        version_label: "stable-${{ steps.date.outputs.date.replaced }}"
-        deployment_package: "deploy-${{ steps.date.outputs.date.replaced }}.zip"
+        version_label: "stable-${{ steps.date.outputs.date }}"
+        deployment_package: "deploy-${{ steps.date.outputs.date }}.zip"
 
     - name: Deployed!
       run: echo App deployed to ELB
