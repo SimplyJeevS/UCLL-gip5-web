@@ -51,7 +51,7 @@ jobs:
       run: mv target/gip5-starter-1.0.jar target/deploy-${{ steps.time.outputs.time }}.jar
       
     - name: Set up beanstalk
-      uses: einaregilsson/beanstalk-deploy@v14
+      uses: snakehead007/beanstalk-deploy@jar
       with:
         aws_access_key: ${{secrets.AWS_ACCESS_KEY_ID}}
         aws_secret_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
@@ -61,6 +61,7 @@ jobs:
         version_label: "stable-${{ steps.time.outputs.time }}"
         version_description: CI/CD using Github actions
         deployment_package: target/deploy-${{ steps.time.outputs.time }}.jar
+        wait_for_environment_recovery: 120
 
     - name: Deployed!
       run: echo App deployed to ELB
