@@ -1,6 +1,7 @@
 package be.ucll.java.gip5.rest;
 
 import be.ucll.java.gip5.dao.RolRepository;
+import be.ucll.java.gip5.dto.RolDTO;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
 import be.ucll.java.gip5.model.Rol;
@@ -10,11 +11,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -44,5 +43,15 @@ public class RolResource {
         }else{
             throw new NotFoundException(id.toString());
         }
+    }
+    @PostMapping( value = "/v1/rol")
+    public ResponseEntity postRol(@RequestBody RolDTO rol) throws ParameterInvalidException {
+        if(rol.getNaam().isEmpty() || rol.getNaam().trim().length() <= 2){
+            throw new ParameterInvalidException("Rol naam moet minstens 3 karakters hebben, kreeg "+rol.getNaam());
+        }
+        List<Rol> rolList = rolRepository.findAll();
+        Rol newRol = new Rol.RolBuilder().naam(rol.getNaam()).build();
+        rolRepository.save(newRol);
+        return ResponseEntity.status(HttpStatus.OK).body(newRol);
     }
 }

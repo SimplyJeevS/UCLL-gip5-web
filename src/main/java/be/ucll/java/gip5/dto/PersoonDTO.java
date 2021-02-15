@@ -5,8 +5,8 @@ import java.util.Date;
 public class PersoonDTO {
     private String voornaam;
     private String naam;
-    private Date geboortedatum;
-    private Boolean geslacht;
+    private String geboortedatum;
+    private String geslacht;
     private String adres;
     private String telefoon;
     private String gsm;
@@ -14,7 +14,7 @@ public class PersoonDTO {
     private String wachtwoord;
 
     public PersoonDTO(){}
-    public PersoonDTO(String voornaam, String naam, Date geboortedatum, Boolean geslacht, String adres, String telefoon, String gsm, String email) {
+    public PersoonDTO(String voornaam, String naam, String geboortedatum, String geslacht, String adres, String telefoon, String gsm, String email) {
         this.voornaam = voornaam;
         this.naam = naam;
         this.geboortedatum = geboortedatum;
@@ -23,6 +23,18 @@ public class PersoonDTO {
         this.telefoon = telefoon;
         this.gsm = gsm;
         this.email = email;
+    }
+
+    public PersoonDTO(String voornaam, String naam, String geboortedatum, String geslacht, String adres, String telefoon, String gsm, String email,String wachtwoord) {
+        this.voornaam = voornaam;
+        this.naam = naam;
+        this.geboortedatum = geboortedatum;
+        this.geslacht = geslacht;
+        this.adres = adres;
+        this.telefoon = telefoon;
+        this.gsm = gsm;
+        this.email = email;
+        this.wachtwoord = wachtwoord;
     }
     public String getVoornaam() {
         return voornaam;
@@ -40,19 +52,19 @@ public class PersoonDTO {
         this.naam = naam;
     }
 
-    public Date getGeboortedatum() {
+    public String getGeboortedatum() {
         return geboortedatum;
     }
 
-    public void setGeboortedatum(Date geboortedatum) {
+    public void setGeboortedatum(String geboortedatum) {
         this.geboortedatum = geboortedatum;
     }
 
-    public Boolean getGeslacht() {
+    public String getGeslacht() {
         return geslacht;
     }
 
-    public void setGeslacht(Boolean geslacht) {
+    public void setGeslacht(String geslacht) {
         this.geslacht = geslacht;
     }
 

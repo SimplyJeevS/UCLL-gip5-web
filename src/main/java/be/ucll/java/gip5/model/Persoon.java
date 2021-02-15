@@ -2,6 +2,8 @@ package be.ucll.java.gip5.model;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.UUID;
+
 @Entity
 @Table(name ="persoon", schema = "gip5")
 public class Persoon {
@@ -20,7 +22,7 @@ public class Persoon {
     private Date geboortedatum;
 
     @Column(name = "geslacht")
-    private Boolean geslacht;
+    private String geslacht;
 
     @Column(name = "adres")
     private String adres;
@@ -36,6 +38,8 @@ public class Persoon {
 
     @Column(name = "wachtwoord")
     private String wachtwoord;
+
+    private UUID apikey;
 
     private Persoon(PersoonBuilder builder){
 
@@ -75,11 +79,11 @@ public class Persoon {
         this.geboortedatum = geboortedatum;
     }
 
-    public Boolean getGeslacht() {
+    public String getGeslacht() {
         return geslacht;
     }
 
-    public void setGeslacht(Boolean geslacht) {
+    public void setGeslacht(String geslacht) {
         this.geslacht = geslacht;
     }
 
@@ -128,7 +132,7 @@ public class Persoon {
         private String voornaam;
         private String naam;
         private Date geboortedatum;
-        private Boolean geslacht;
+        private String geslacht;
         private String adres;
         private String telefoon;
         private String gsm;
@@ -170,7 +174,7 @@ public class Persoon {
             this.geboortedatum = geboortedatum;
             return this;
         }
-        public PersoonBuilder geslacht(boolean geslacht){
+        public PersoonBuilder geslacht(String geslacht){
             this.geslacht = geslacht;
             return this;
         }

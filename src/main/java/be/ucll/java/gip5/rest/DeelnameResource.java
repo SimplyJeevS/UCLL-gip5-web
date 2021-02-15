@@ -138,7 +138,7 @@ public class DeelnameResource {
     )
     public ResponseEntity deleteDeelname(@PathVariable("id") Long id) throws ParameterInvalidException, NotFoundException {
         logger.debug("DELETE request voor deelname gekregen");
-        if(id == null || !(id instanceof Long) || id <=0 ){
+        if(id == null || !(id instanceof Long) ||    id <=0 ){
             throw new ParameterInvalidException(id.toString());
         }
         Optional<Deelname> deelname = deelnameRepository.findDeelnameById(id);

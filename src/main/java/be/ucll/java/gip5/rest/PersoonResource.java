@@ -17,6 +17,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -137,16 +140,17 @@ public class PersoonResource {
     @PostMapping(value = "/v1/persoon")
     @Operation(
             summary = "Maak een persoon",
-            description = "Creeer een nieuwe persoon"
+            description = "Creeer een nieuwe persoon, info + wachtwoord"
     )
     public ResponseEntity postPersoon(@PathVariable PersoonDTO persoon) throws ParameterInvalidException, NotFoundException {
         logger.debug("POST request voor persoon gekregen");
-        checkPersoonInfo(persoon);
+        Date geboortedatum = checkPersoonInfo(persoon);
+        checkPersoonWachtwoord(persoon.getWachtwoord());
         Persoon newPersoon = persoonRepository.save(
                 new Persoon.PersoonBuilder()
                 .adres(persoon.getAdres())
                 .email(persoon.getEmail())
-                .geboortedatum(persoon.getGeboortedatum())
+                .geboortedatum(geboortedatum)
                 .geslacht(persoon.getGeslacht())
                 .gsm(persoon.getGsm())
                 .voornaam(persoon.getVoornaam())
@@ -167,7 +171,7 @@ public class PersoonResource {
         if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());
         }
-        checkPersoonInfo(persoon);
+        Date geboortedatum = checkPersoonInfo(persoon);
         Optional<Persoon> foundPersoon = persoonRepository.findPersoonById(id);
         if(!foundPersoon.isPresent()){
             throw new NotFoundException("Persoon met id "+id);
@@ -175,7 +179,7 @@ public class PersoonResource {
         Persoon updatedPersoon = foundPersoon.get();
         updatedPersoon.setAdres(persoon.getAdres());
         updatedPersoon.setEmail(persoon.getEmail());
-        updatedPersoon.setGeboortedatum(persoon.getGeboortedatum());
+        updatedPersoon.setGeboortedatum(geboortedatum);
         updatedPersoon.setGeslacht(persoon.getGeslacht());
         updatedPersoon.setGsm(persoon.getGsm());
         updatedPersoon.setNaam(persoon.getNaam());
@@ -197,6 +201,7 @@ public class PersoonResource {
         if(!foundPersoon.isPresent()){
             throw new NotFoundException("Persoon met id "+id);
         }
+        checkPersoonWachtwoord(wachtwoord);
         foundPersoon.get().setWachtwoord(wachtwoord);
         persoonRepository.save(foundPersoon.get());
         return ResponseEntity.status(HttpStatus.OK).body(foundPersoon);
@@ -215,11 +220,11 @@ public class PersoonResource {
         if(!foundPersoon.isPresent()){
             throw new NotFoundException("Persoon met id "+id);
         }
-
+        Date geboortedatum = checkPersoonInfo(persoon);
         Persoon updatedPersoon = foundPersoon.get();
         updatedPersoon.setAdres(persoon.getAdres());
         updatedPersoon.setEmail(persoon.getEmail());
-        updatedPersoon.setGeboortedatum(persoon.getGeboortedatum());
+        updatedPersoon.setGeboortedatum(geboortedatum);
         updatedPersoon.setGeslacht(persoon.getGeslacht());
         updatedPersoon.setGsm(persoon.getGsm());
         updatedPersoon.setNaam(persoon.getNaam());
@@ -245,9 +250,11 @@ public class PersoonResource {
         return ResponseEntity.status(HttpStatus.OK).body(persoon.get());
     }
 
-    private void checkPersoonInfo(PersoonDTO persoon) throws ParameterInvalidException {
-        if(persoon.getGeslacht() == null || !(persoon.getGeslacht() instanceof Boolean)){
+    private Date checkPersoonInfo(PersoonDTO persoon) throws ParameterInvalidException {
+        if(persoon.getGeslacht().isEmpty() || persoon.getGeslacht().trim().length() <= 0){
             throw new ParameterInvalidException("Geslacht met waarde "+persoon.getGeslacht());
+        }else if(persoon.getGeslacht().trim().length() != 1){
+            throw new ParameterInvalidException("Geslacht moet exact 1 character hebben (V/M), kreeg waarde "+persoon.getGeslacht());
         }
         if(persoon.getAdres() == null || persoon.getAdres().trim().length() == 0){
             throw new ParameterInvalidException("Adress met waarde "+persoon.getAdres());
@@ -255,10 +262,16 @@ public class PersoonResource {
         if(persoon.getEmail() == null || persoon.getEmail().trim().length() == 0){
             throw new ParameterInvalidException("E-mail met waarde "+persoon.getEmail());
         }
-        if(persoon.getGeboortedatum() == null || persoon.getGeboortedatum().toString().trim().length() == 0){
+        if(persoon.getGeboortedatum() == null || persoon.getGeboortedatum().trim().length() == 0){
             throw new ParameterInvalidException("Geboortedatum met waarde "+persoon.getGeboortedatum());
         }
-        if(persoon.getGeboortedatum().after(new Date())){
+        Date geboortedatum;
+        try {
+            geboortedatum = new SimpleDateFormat("dd/MM/yyyy").parse(persoon.getGeboortedatum());
+        }catch(Exception err){
+            throw new ParameterInvalidException("Geboorte datum formaat invalid, gebruik dd/MM/yyyy formaat (vb: 31/12/2020). Geboortedatum met waarde "+persoon.getGeboortedatum());
+        }
+        if(geboortedatum.after(new Date())){
             throw new ParameterInvalidException("Geboortedatum ligt niet in het verleden, "+persoon.getGeboortedatum());
         }
         if(persoon.getGsm() == null || persoon.getGsm().trim().length() == 0){
@@ -270,8 +283,13 @@ public class PersoonResource {
         if(persoon.getTelefoon() == null || persoon.getTelefoon().trim().length() == 0){
             throw new ParameterInvalidException("Telefoon met waarde "+persoon.getTelefoon());
         }
-        if(persoon.getWachtwoord() == null || persoon.getWachtwoord().trim().length() < 8){
-            throw new ParameterInvalidException("Wachtwoord moet minstens 8 characters bevatten, u gaf "+persoon.getWachtwoord());
+
+        return geboortedatum;
+    }
+    private void checkPersoonWachtwoord(String wachtwoord) throws ParameterInvalidException {
+
+        if(wachtwoord == null || wachtwoord.trim().length() < 8){
+            throw new ParameterInvalidException("Wachtwoord moet minstens 8 characters bevatten, u gaf "+wachtwoord);
         }
     }
 }
