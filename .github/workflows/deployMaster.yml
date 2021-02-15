@@ -50,7 +50,7 @@ jobs:
     - name: rename target .jar file
       run: mv ./target/gip5-starter-1.0.jar ./deploy-${{ steps.time.outputs.time }}.jar
       
-    - name: Beanstalk Deploy for app
+    - name: Set up beanstalk
       uses: einaregilsson/beanstalk-deploy@v14
       with:
         aws_access_key: ${{secrets.AWS_ACCESS_KEY_ID}}
@@ -61,7 +61,8 @@ jobs:
         version_label: "stable-${{ steps.time.outputs.time }}"
         version_description: CI/CD using Github actions
         #deployment_package: ./deploy-${{ steps.time.outputs.time }}.jar
-        run: beanstalk-deploy.js ucll-team3-gip5-webUcllteam3gip5web-env stable-${{ steps.time.outputs.time }} eu-west-1 ./deploy-${{ steps.time.outputs.time }}.jar
+    - name: deploy Beanstalk
+      run: beanstalk-deploy.js ucll-team3-gip5-webUcllteam3gip5web-env stable-${{ steps.time.outputs.time }} eu-west-1 ./deploy-${{ steps.time.outputs.time }}.jar
 
     - name: Deployed!
       run: echo App deployed to ELB
