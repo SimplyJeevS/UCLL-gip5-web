@@ -20,7 +20,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/v1/wedstrijd")
 public class WedstrijdResource {
     private Logger logger = LoggerFactory.getLogger(BerichtResource.class);
     private WedstrijdRepository wedstrijdRepository;
@@ -32,7 +32,7 @@ public class WedstrijdResource {
         this.ploegRepository = ploegRepository;
     }
 
-    @GetMapping(value = "/v1/wedstrijd/{id}")
+    @GetMapping(value = "/{id}")
     @Operation(
             summary = "Verkrijg wedstrijd",
             description = "Geef een wedstrijd ID en verkrijg de wedstrijd"
@@ -50,7 +50,7 @@ public class WedstrijdResource {
         }
     }
 
-    @PostMapping( value = "/v1/wedstrijd")
+    @PostMapping( value = "/")
     public ResponseEntity postWedstrijd(@RequestBody WedstrijdDTO wedstrijd) throws ParameterInvalidException, NotFoundException {
         if(wedstrijd.getLocatie().isEmpty() || wedstrijd.getLocatie().trim().length() <= 0 ){
             throw new ParameterInvalidException("Locatie met waarde "+wedstrijd.getLocatie());

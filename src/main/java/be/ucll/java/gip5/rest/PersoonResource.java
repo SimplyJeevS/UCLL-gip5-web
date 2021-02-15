@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/v1/persoon")
 public class PersoonResource {
     private Logger logger = LoggerFactory.getLogger(BerichtResource.class);
     private PersoonRepository persoonRepository;
@@ -42,7 +42,7 @@ public class PersoonResource {
 
 
 
-    @GetMapping(value = "/v1/persoon/{id}")
+    @GetMapping(value = "/{id}")
     @Operation(
             summary = "Verkrijg persoon",
             description = "Geef een persoon ID en verkrijg de persoon"
@@ -60,7 +60,7 @@ public class PersoonResource {
         }
     }
 
-    @GetMapping(value = "/v1/persoon")
+    @GetMapping(value = "/")
     @Operation(
             summary = "Verkrijg alle personen",
             description = "Krijg een array van alle personen in de database"
@@ -73,7 +73,7 @@ public class PersoonResource {
         return ResponseEntity.status(HttpStatus.OK).body(personen);
     }
 
-    @GetMapping(value = "/v1/persoon/voornaam/{voornaam}")
+    @GetMapping(value = "/voornaam/{voornaam}")
     @Operation(
             summary = "Verkrijg alle personen met voornaam",
             description = "Krijg een array van alle personen in de database die een specifieke voornaam bevatten"
@@ -89,7 +89,7 @@ public class PersoonResource {
         return ResponseEntity.status(HttpStatus.OK).body(personen);
     }
 
-    @GetMapping(value = "/v1/persoon/naam/{naam}")
+    @GetMapping(value = "/naam/{naam}")
     @Operation(
             summary = "Verkrijg alle personen met naam",
             description = "Krijg een array van alle personen in de database die een specifieke naam bevatten"
@@ -105,7 +105,7 @@ public class PersoonResource {
         return ResponseEntity.status(HttpStatus.OK).body(personen);
     }
 
-    @GetMapping(value = "/v1/persoon/geslacht/{geslacht}")
+    @GetMapping(value = "/geslacht/{geslacht}")
     @Operation(
             summary = "Verkrijg alle personen met geslacht",
             description = "Krijg een array van alle personen in de database die een van het gegeven geslacht zijn"
@@ -121,7 +121,7 @@ public class PersoonResource {
         return ResponseEntity.status(HttpStatus.OK).body(personen);
     }
 
-    @GetMapping(value = "/v1/persoon/adres/{adres}")
+    @GetMapping(value = "/adres/{adres}")
     @Operation(
             summary = "Verkrijg alle personen met adres",
             description = "Krijg een array van alle personen in de database die een specifiek adres bevatten"
@@ -137,7 +137,7 @@ public class PersoonResource {
         return ResponseEntity.status(HttpStatus.OK).body(personen);
     }
 
-    @PostMapping(value = "/v1/persoon")
+    @PostMapping(value = "/")
     @Operation(
             summary = "Maak een persoon",
             description = "Creeer een nieuwe persoon, info + wachtwoord"
@@ -162,7 +162,7 @@ public class PersoonResource {
         return ResponseEntity.status(HttpStatus.CREATED).body(newPersoon);
     }
 
-    @PutMapping (value = "/v1/persoon/{id}")
+    @PutMapping (value = "/{id}")
     @Operation(
             summary = "Pas persoon aan",
             description = "verander het hele persoons object (info + ploegId)"
@@ -188,7 +188,7 @@ public class PersoonResource {
         return ResponseEntity.status(HttpStatus.OK).body(updatedPersoon);
     }
 
-    @PutMapping (value = "/v1/persoon/{id}/wachtwoord")
+    @PutMapping (value = "/{id}/wachtwoord")
     @Operation(
             summary = "Reset wachtwoord",
             description = "Reset een wachtwoord van een persoon"
@@ -207,7 +207,7 @@ public class PersoonResource {
         return ResponseEntity.status(HttpStatus.OK).body(foundPersoon);
     }
 
-    @PutMapping (value = "/v1/persoon/{id}/info")
+    @PutMapping (value = "/{id}/info")
     @Operation(
             summary = "Verander info",
             description = "Verander algemene informatie van een persoon"
@@ -233,7 +233,7 @@ public class PersoonResource {
         return ResponseEntity.status(HttpStatus.OK).body(updatedPersoon);
     }
 
-    @DeleteMapping(value = "/v1/persoon/{id}")
+    @DeleteMapping(value = "/{id}")
     @Operation(
             summary = "Verwijder een persoon",
             description = "Geef het id van een persoon mee om het te verwijderen"

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/v1/toewijzing")
 public class ToewijzingResource {
     private Logger logger = LoggerFactory.getLogger(BerichtResource.class);
     private ToewijzingRepository toewijzingRepository;
@@ -29,7 +29,7 @@ public class ToewijzingResource {
         this.toewijzingRepository = toewijzingRepository;
     }
 
-    @GetMapping("/v1/toewijzing/{id}")
+    @GetMapping("/{id}")
     @Operation(
             summary = "Verkrijg een toewijzing",
             description = "Geef een toewijzing Id en verkrijg een toewijzing"

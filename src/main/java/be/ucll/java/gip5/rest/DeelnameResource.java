@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/v1/deelname")
 public class DeelnameResource {
     private Logger logger = LoggerFactory.getLogger(BerichtResource.class);
     private DeelnameRepository deelnameRepository;
@@ -32,7 +32,7 @@ public class DeelnameResource {
         this.wedstrijdRepository = wedstrijdRepository;
     }
 
-    @GetMapping(value="/v1/deelname/{id}")
+    @GetMapping(value="/{id}")
     @Operation(
             summary = "Verkrijg deelname",
             description = "Geef een deelname ID en verkrijg de deelname"
@@ -49,7 +49,7 @@ public class DeelnameResource {
         return ResponseEntity.status(HttpStatus.OK).body(deelname.get());
     }
 
-    @GetMapping( value = "/v1/deelname")
+    @GetMapping( value = "/")
     public ResponseEntity getDeelnameList() throws NotFoundException {
         List<Deelname> deelnameList = deelnameRepository.findAll();
         if(deelnameList.isEmpty()) throw new NotFoundException("Deelnames");
@@ -62,7 +62,7 @@ public class DeelnameResource {
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("");
     }
 
-    @PostMapping(value="/v1/deelname")
+    @PostMapping(value="/")
     @Operation(
             summary = "Maak bericht",
             description = "Creer een nieuwe deelname"
@@ -94,7 +94,7 @@ public class DeelnameResource {
         return ResponseEntity.status(HttpStatus.CREATED).body(newDeelname);
     }
 
-    @PutMapping( value = "/v1/deelname/{id}")
+    @PutMapping( value = "/{id}")
     @Operation(
             summary = "Pas deelname aan",
             description = "verander de rol, persoon en/of ploeg van de deelname"
@@ -131,7 +131,7 @@ public class DeelnameResource {
         deelnameRepository.save(foundDeelname.get());
         return ResponseEntity.status(HttpStatus.OK).body(deelname);
     }
-    @DeleteMapping( value = "/v1/deelname/{id}")
+    @DeleteMapping( value = "/{id}")
     @Operation(
             summary = "Verwijder een deelname",
             description = "Geef het id van de deelname mee om het te verwijderen"

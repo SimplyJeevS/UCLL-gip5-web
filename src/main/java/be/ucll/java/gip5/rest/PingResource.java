@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/v1/ping")
 public class PingResource {
     private Logger logger = LoggerFactory.getLogger(PingResource.class);
 
-    @GetMapping(value = "/v1/ping")
+    @GetMapping(value = "/")
     @Operation(
             summary = "ping",
             description = "Should receive 'pong'"

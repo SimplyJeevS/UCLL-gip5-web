@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/v1/rol")
 public class RolResource {
     private Logger logger = LoggerFactory.getLogger(BerichtResource.class);
     private RolRepository rolRepository;
@@ -27,31 +27,52 @@ public class RolResource {
         this.rolRepository = rolRepository;
     }
 
-    @GetMapping(value = "/v1/rol/{id}")
+    @GetMapping(value = "/{id}")
     @Operation(
             summary = "Verkrijg rol",
             description = "Geef een rol ID en verkrijg de rol"
     )
     public ResponseEntity getRol(@PathVariable("id") Long id) throws ParameterInvalidException, NotFoundException {
         logger.debug("GET request voor rol gekregen");
-        if(id == null || !(id instanceof Long) || id <=0 ){
-            throw new ParameterInvalidException(id.toString());
-        }
-        Optional<Rol> rol =  rolRepository.findRolById(id);
-        if(rol.isPresent()){
-            return ResponseEntity.status(HttpStatus.OK).body(rol.get());
-        }else{
-            throw new NotFoundException(id.toString());
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(checkAndFindRolFromId(id));
     }
     @PostMapping( value = "/v1/rol")
     public ResponseEntity postRol(@RequestBody RolDTO rol) throws ParameterInvalidException {
-        if(rol.getNaam().isEmpty() || rol.getNaam().trim().length() <= 2){
-            throw new ParameterInvalidException("Rol naam moet minstens 3 karakters hebben, kreeg "+rol.getNaam());
-        }
+        checkRolNaam(rol.getNaam());
         List<Rol> rolList = rolRepository.findAll();
         Rol newRol = new Rol.RolBuilder().naam(rol.getNaam()).build();
         rolRepository.save(newRol);
         return ResponseEntity.status(HttpStatus.OK).body(newRol);
     }
+
+    @PutMapping( value = "/{id}")
+    public ResponseEntity putRol(@PathVariable("id") Long id, @RequestBody RolDTO rolDTO) throws NotFoundException, ParameterInvalidException {
+        Rol rol = checkAndFindRolFromId(id);
+        checkRolNaam(rol.getNaam());
+        rol.setNaam(rol.getNaam());
+        rolRepository.save(rol);
+        return ResponseEntity.status(HttpStatus.OK).body(rol);
+    }
+
+    @GetMapping( value = "/")
+
+    private Rol checkAndFindRolFromId(Long id) throws ParameterInvalidException, NotFoundException {
+
+        if(id == null || !(id instanceof Long) || id <=0 ){
+            throw new ParameterInvalidException(id.toString());
+        }
+        Optional<Rol> rol =  rolRepository.findRolById(id);
+        if(rol.isPresent()){
+            return rol.get();
+        }else{
+            throw new NotFoundException(id.toString());
+        }
+    }
+
+    private void checkRolNaam(String naam) throws ParameterInvalidException {
+        if(naam.isEmpty() || naam.trim().length() <= 2){
+            throw new ParameterInvalidException("Rol naam moet minstens 3 karakters hebben, kreeg "+naam);
+        }
+    }
+
 }
