@@ -48,7 +48,7 @@ jobs:
       run: mvn -B clean verify
     
     - name: rename target .jar file
-      run: mv ./target/gip5-starter-1.0.jar ./deploy-"${{ steps.time.outputs.time }}".jar
+      run: mv ./target/gip5-starter-1.0.jar ./deploy-${{ steps.time.outputs.time }}.jar
       
     - name: Beanstalk Deploy for app
       uses: einaregilsson/beanstalk-deploy@v14
@@ -59,7 +59,7 @@ jobs:
         environment_name: Ucllteam3gip5web-env
         region: eu-west-1
         version_label: "stable-${{ steps.time.outputs.time }}"
-        deployment_package: ./deploy-"${{ steps.time.outputs.time }}".jar
+        deployment_package: ./deploy-${{ steps.time.outputs.time }}.jar
 
     - name: Deployed!
       run: echo App deployed to ELB
