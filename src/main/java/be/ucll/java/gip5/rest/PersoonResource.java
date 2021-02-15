@@ -164,7 +164,7 @@ public class PersoonResource {
             description = "verander het hele persoons object (info + ploegId)"
     )
     public ResponseEntity putPersoon(@PathVariable("id") Long id, @RequestBody PersoonDTO persoon) throws ParameterInvalidException, NotFoundException {
-        if(id == null && !(id instanceof Long) && id <=0 ){
+        if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());
         }
         checkPersoonInfo(persoon);
@@ -190,7 +190,7 @@ public class PersoonResource {
             description = "Reset een wachtwoord van een persoon"
     )
     public ResponseEntity putPersoonWachtwoord(@PathVariable("id") Long id, @RequestBody String wachtwoord) throws NotFoundException, ParameterInvalidException {
-        if(id == null && !(id instanceof Long) && id <=0 ){
+        if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());
         }
         Optional<Persoon> foundPersoon = persoonRepository.findPersoonById(id);
@@ -208,7 +208,7 @@ public class PersoonResource {
             description = "Verander algemene informatie van een persoon"
     )
     public ResponseEntity putPersoonPloegId(@PathVariable("id") Long id, @RequestBody PersoonDTO persoon) throws NotFoundException, ParameterInvalidException {
-        if(id == null && !(id instanceof Long) && id <=0 ){
+        if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());
         }
         Optional<Persoon> foundPersoon = persoonRepository.findPersoonById(id);

@@ -36,7 +36,7 @@ public class ToewijzingResource {
     )
     public ResponseEntity getToewijzing(@PathVariable("id") Long id) throws ParameterInvalidException, NotFoundException {
         logger.debug("GET request voor toewijzing gekregen");
-        if(id == null && !(id instanceof Long) && id <=0 ){
+        if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());
         }
         Optional<Toewijzing> toewijzing = toewijzingRepository.findToewijzingById(id);

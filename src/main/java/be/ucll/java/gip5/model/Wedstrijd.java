@@ -50,7 +50,7 @@ public class Wedstrijd {
             return this;
         }
 
-        public WedstrijdBuilder uur(LocalDateTime tijdstip) {
+        public WedstrijdBuilder tijdstip(LocalDateTime tijdstip) {
             this.tijdstip = tijdstip;
             return this;
         }

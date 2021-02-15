@@ -39,7 +39,7 @@ public class PloegResource {
     )
     public ResponseEntity getPloeg(@PathVariable("id") Long id) throws ParameterInvalidException, NotFoundException {
         logger.debug("GET request voor ploeg gekregen");
-        if(id == null && !(id instanceof Long) && id <=0 ){
+        if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());
         }
         Optional<Ploeg> ploeg =  ploegRepository.findPloegById(id);
@@ -72,7 +72,7 @@ public class PloegResource {
 
     @PutMapping( value = "/v1/ploeg/{id}")
     public ResponseEntity putPloeg(@PathVariable("id") Long id,@RequestBody PloegDTO ploeg) throws ParameterInvalidException, NotFoundException {
-        if(id == null && !(id instanceof Long) && id <=0 ){
+        if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());
         }
         Optional<Ploeg> foundPloeg = ploegRepository.findPloegById(id);
@@ -87,7 +87,7 @@ public class PloegResource {
 
     @DeleteMapping( value = "/v1/ploeg/{id}")
     public ResponseEntity deletePloeg(@PathVariable("id") Long id) throws NotFoundException, ParameterInvalidException {
-        if(id == null && !(id instanceof Long) && id <=0 ){
+        if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());
         }
         Optional<Ploeg> foundPloeg = ploegRepository.findPloegById(id);

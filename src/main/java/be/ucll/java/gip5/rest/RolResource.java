@@ -35,7 +35,7 @@ public class RolResource {
     )
     public ResponseEntity getRol(@PathVariable("id") Long id) throws ParameterInvalidException, NotFoundException {
         logger.debug("GET request voor rol gekregen");
-        if(id == null && !(id instanceof Long) && id <=0 ){
+        if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());
         }
         Optional<Rol> rol =  rolRepository.findRolById(id);

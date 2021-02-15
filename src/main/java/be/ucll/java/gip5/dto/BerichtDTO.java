@@ -6,9 +6,9 @@ public class BerichtDTO {
     private Long wedstrijdId;
     private String boodschap;
     private Long afzenderId;
-    private LocalDateTime tijdstip;
+    private String tijdstip;
     public BerichtDTO(){}
-    public BerichtDTO(Long wedstrijdId, String boodschap,Long afzenderId, LocalDateTime tijdstip){
+    public BerichtDTO(Long wedstrijdId, String boodschap,Long afzenderId, String tijdstip){
         this.wedstrijdId = wedstrijdId;
         this.boodschap = boodschap;
         this.afzenderId = afzenderId;
@@ -39,11 +39,11 @@ public class BerichtDTO {
         this.afzenderId = afzenderId;
     }
 
-    public LocalDateTime getTijdstip() {
+    public String getTijdstip() {
         return tijdstip;
     }
 
-    public void setTijdstip(LocalDateTime tijdstip) {
+    public void setTijdstip(String tijdstip) {
         this.tijdstip = tijdstip;
     }
 }

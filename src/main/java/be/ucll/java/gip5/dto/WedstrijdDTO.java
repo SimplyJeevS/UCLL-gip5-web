@@ -6,23 +6,23 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 public class WedstrijdDTO {
-    private LocalDateTime tijdstip;
+    private String tijdstip;
     private String locatie;
     private Long thuisPloeg;
     private Long tegenstander;
 
     public WedstrijdDTO(){}
-    public WedstrijdDTO(LocalDateTime tijdstip, String locatie, Long thuisPloeg){
+    public WedstrijdDTO(String tijdstip, String locatie, Long thuisPloeg){
         this.tijdstip = tijdstip;
         this.locatie = locatie;
         this.thuisPloeg = thuisPloeg;
     }
 
-    public LocalDateTime tijdstip() {
+    public String tijdstip() {
         return tijdstip;
     }
 
-    public void setDatum(LocalDateTime tijdstip) {
+    public void setDatum(String tijdstip) {
         this.tijdstip = tijdstip;
     }
 
@@ -49,5 +49,13 @@ public class WedstrijdDTO {
 
     public void setTegenstander(Long tegenstander) {
         this.tegenstander = tegenstander;
+    }
+
+    public String getTijdstip() {
+        return tijdstip;
+    }
+
+    public void setTijdstip(String tijdstip) {
+        this.tijdstip = tijdstip;
     }
 }

@@ -39,7 +39,7 @@ public class DeelnameResource {
     )
     public ResponseEntity getDeelname(@PathVariable("deelname") Long id) throws ParameterInvalidException, NotFoundException {
         logger.debug("GET request voor deelname gekregen");
-        if(id == null && !(id instanceof Long) && id <=0 ){
+        if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());
         }
         Optional<Deelname> deelname = deelnameRepository.findDeelnameById(id);
@@ -101,7 +101,7 @@ public class DeelnameResource {
     )
     public ResponseEntity putDeelname(@PathVariable("id") Long id,@RequestBody DeelnameDTO deelname) throws ParameterInvalidException, NotFoundException {
         logger.debug("PUT request voor deelname gekregen");
-        if(id == null && !(id instanceof Long) && id <=0 ){
+        if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());
         }
         if(deelname.equals(null)){
@@ -138,7 +138,7 @@ public class DeelnameResource {
     )
     public ResponseEntity deleteDeelname(@PathVariable("id") Long id) throws ParameterInvalidException, NotFoundException {
         logger.debug("DELETE request voor deelname gekregen");
-        if(id == null && !(id instanceof Long) && id <=0 ){
+        if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());
         }
         Optional<Deelname> deelname = deelnameRepository.findDeelnameById(id);
