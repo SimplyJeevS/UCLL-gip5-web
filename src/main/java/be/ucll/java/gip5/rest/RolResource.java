@@ -55,6 +55,20 @@ public class RolResource {
     }
 
     @GetMapping( value = "/")
+    public ResponseEntity getRolList() throws NotFoundException {
+        List<Rol> rolList = rolRepository.findAll();
+        if(rolList.isEmpty()){
+            throw new NotFoundException("Er zijn geen rollen gevonden");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(rolList);
+    }
+
+    @DeleteMapping( value="/{id}")
+    public ResponseEntity deleteRol(@PathVariable("id") Long id) throws NotFoundException, ParameterInvalidException {
+        Rol rol = checkAndFindRolFromId(id);
+        rolRepository.delete(rol);
+        return ResponseEntity.status(HttpStatus.OK).body(rol);
+    }
 
     private Rol checkAndFindRolFromId(Long id) throws ParameterInvalidException, NotFoundException {
 
