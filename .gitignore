@@ -26,5 +26,3 @@ logs/
 
 # Maven
 target/
-
-application-local.properties
