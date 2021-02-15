@@ -59,7 +59,9 @@ jobs:
         environment_name: Ucllteam3gip5web-env
         region: eu-west-1
         version_label: "stable-${{ steps.time.outputs.time }}"
-        deployment_package: ./deploy-${{ steps.time.outputs.time }}.jar
+        version_description: CI/CD using Github actions
+        #deployment_package: ./deploy-${{ steps.time.outputs.time }}.jar
+        run: beanstalk-deploy.js ucll-team3-gip5-webUcllteam3gip5web-env stable-${{ steps.time.outputs.time }} eu-west-1 ./deploy-${{ steps.time.outputs.time }}.jar
 
     - name: Deployed!
       run: echo App deployed to ELB
