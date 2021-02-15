@@ -33,22 +33,19 @@ jobs:
 
 #     - name: Building application
 #       run: npm run build
-
-    - name: Generate deployment package
-      run: zip -r "deploy-${{ steps.date.outputs.date }}.zip" * -x "**node_modules**"
-
-    - name: Get timestamp
-      uses: gerred/actions/current-time@master
-      id: current-time
-
-    - name: Run string replace
-      uses: frabert/replace-string-action@master
-      id: format-time
+    - name: Get Time
+      id: time
+      uses: nanzm/get-time-action@v1.1
       with:
-        pattern: '[:\.]+'
-        string: "${{ steps.current-time.outputs.time }}"
-        replace-with: '-'
-        flags: 'g'
+        timeZone: 8
+        format: 'YYYY-MM-DD-HH-mm'
+    - name: Create current time env
+      env:
+        TIME: "${{ steps.time.outputs.time }}"
+      run: |
+        echo $TIME
+    - name: Generate deployment package
+      run: zip -r "deploy-${{ steps.time.outputs.time }}.zip" * -x "**node_modules**"
 
     - name: Beanstalk Deploy for app
       uses: einaregilsson/beanstalk-deploy@v14
@@ -58,8 +55,8 @@ jobs:
         application_name: ucll-team3-gip5-web
         environment_name: Ucllteam3gip5web-env
         region: eu-west-1
-        version_label: "stable-${{ steps.date.outputs.date }}"
-        deployment_package: "deploy-${{ steps.date.outputs.date }}.zip"
+        version_label: "stable-${{ steps.time.outputs.time }}"
+        deployment_package: "deploy-${{ steps.time.outputs.time }}.zip"
 
     - name: Deployed!
       run: echo App deployed to ELB
