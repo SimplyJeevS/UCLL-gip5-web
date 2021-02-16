@@ -39,8 +39,6 @@ public class Persoon {
     @Column(name = "wachtwoord")
     private String wachtwoord;
 
-    private UUID apikey;
-
     private Persoon(PersoonBuilder builder){
 
     }

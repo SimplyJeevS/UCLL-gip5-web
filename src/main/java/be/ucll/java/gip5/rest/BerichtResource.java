@@ -129,12 +129,13 @@ public class BerichtResource {
         if(!persoon.isPresent()){
             throw new NotFoundException("Persoon with id"+bericht.getAfzenderId().toString());
         }
-        Bericht newBericht = berichtRepository.save(new Bericht.BerichtBuilder()
+        Bericht newBericht = new Bericht.BerichtBuilder()
         .boodschap(bericht.getBoodschap())
         .wedstrijdId(bericht.getWedstrijdId())
         .tijdstip(tijdstip)
         .afzenderId(bericht.getAfzenderId())
-        .build());
+        .build();
+        berichtRepository.save(newBericht);
         return ResponseEntity.status(HttpStatus.CREATED).body(newBericht);
 
     }

@@ -14,8 +14,6 @@ public class Rol {
     private String naam;
 
     private Rol(RolBuilder builder){
-        setId(builder.id);
-        setNaam(builder.naam);
     }
 
     public Rol(){};

@@ -58,7 +58,7 @@ public class DeelnameResource {
 
     @GetMapping( value = "/v1/deelname/wedstrijd/{wedstrijdId}")
     public ResponseEntity getDeelnameWedstrijd(){
-        //TODO
+        //-TODO
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("");
     }
 
