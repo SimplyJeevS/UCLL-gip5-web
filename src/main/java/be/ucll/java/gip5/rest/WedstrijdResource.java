@@ -1,11 +1,15 @@
 package be.ucll.java.gip5.rest;
 
+import be.ucll.java.gip5.dao.DeelnameRepository;
 import be.ucll.java.gip5.dao.PloegRepository;
+import be.ucll.java.gip5.dao.ToewijzingRepository;
 import be.ucll.java.gip5.dao.WedstrijdRepository;
 import be.ucll.java.gip5.dto.WedstrijdDTO;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
+import be.ucll.java.gip5.model.Deelname;
 import be.ucll.java.gip5.model.Ploeg;
+import be.ucll.java.gip5.model.Toewijzing;
 import be.ucll.java.gip5.model.Wedstrijd;
 import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
@@ -29,11 +33,15 @@ public class WedstrijdResource {
     private Logger logger = LoggerFactory.getLogger(BerichtResource.class);
     private WedstrijdRepository wedstrijdRepository;
     private PloegRepository ploegRepository;
+    private ToewijzingRepository toewijzingRepository;
+    private DeelnameRepository deelnameRepository;
 
     @Autowired
-    public WedstrijdResource(WedstrijdRepository wedstrijdRepository, PloegRepository ploegRepository){
+    public WedstrijdResource(WedstrijdRepository wedstrijdRepository, PloegRepository ploegRepository, ToewijzingRepository toewijzingRepository, DeelnameRepository deelnameRepository){
         this.wedstrijdRepository = wedstrijdRepository;
         this.ploegRepository = ploegRepository;
+        this.toewijzingRepository = toewijzingRepository;
+        this.deelnameRepository = deelnameRepository;
     }
 
     @GetMapping(value = "/{id}")
@@ -104,10 +112,25 @@ public class WedstrijdResource {
         return ResponseEntity.status(HttpStatus.OK).body(wedstrijdList);
     }
 
-    @PutMapping( value = "/{wedstrijdId}/uitnodig/{ploegId}")
-    public ResponseEntity putUitnodigAlleSpelersVanThuisPloegNaarWedstrijd(@PathVariable("wedstrijdId") Long wedstrijdId, @PathVariable("ploegId") Long ploegId){
-        //TODO
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("Not Implemented yet");
+    @PutMapping( value = "/{id}/uitnodig")
+    public ResponseEntity putUitnodigAlleSpelersVanThuisPloegNaarWedstrijd(@PathVariable("id") Long id,@RequestParam(value = "commentaar", required = false, defaultValue = "") String commentaar ) throws NotFoundException, ParameterInvalidException {
+        Wedstrijd wedstrijd = findWedstrijdFromId(id);
+        findploegFromId(wedstrijd.getThuisPloeg());
+        Optional<List<Toewijzing>> toewijzingList = toewijzingRepository.findAllByPloegId(wedstrijd.getThuisPloeg());
+        if(!toewijzingList.isPresent() || toewijzingList.get().isEmpty()){
+            throw new NotFoundException("Geen toewijzingen gevonden voor de ploeg met id "+wedstrijd.getThuisPloeg());
+        }
+        List<Deelname> deelnameList = Collections.emptyList();
+        toewijzingList.get().forEach(toewijzing -> {
+            Deelname newDeelname = new Deelname.DeelnameBuilder()
+                    .wedstrijdId(id)
+                    .persoonId(toewijzing.getPersoonId())
+                    .commentaar(commentaar)
+                    .build();
+            deelnameList.add(newDeelname);
+        });
+        deelnameRepository.saveAll(deelnameList);
+        return ResponseEntity.status(HttpStatus.OK).body(deelnameList);
     }
 
     @PostMapping( value = "/")
