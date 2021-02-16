@@ -15,8 +15,6 @@ import java.time.LocalTime;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
-
-import static org.junit.jupiter.api.AssertTrue.assertTrue;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class BerichtRepositoryTest extends AbstractIntegrationTest {
