@@ -53,6 +53,15 @@ public class ToewijzingResource {
         }
         return ResponseEntity.status(HttpStatus.OK).body(toewijzingList);
     }
+    @GetMapping("/persoon/{persoonId}")
+    public ResponseEntity getToewijzingListVanPersoon(@PathVariable("persoonId") Long persoonId) throws NotFoundException, ParameterInvalidException {
+        checkIdAndGetPersoon(persoonId);
+        Optional<List<Toewijzing>> toewijzingList = toewijzingRepository.findAllByPersoonId(persoonId);
+        if(!toewijzingList.isPresent() || toewijzingList.get().isEmpty()){
+            throw new NotFoundException("Geen toewijzingen gevonden voor persoon met id "+persoonId);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(toewijzingList.get());
+    }
 
     @PostMapping( value = "/")
     public ResponseEntity postToewijzing(@RequestBody ToewijzingDTO toewijzing) throws ParameterInvalidException, NotFoundException {
