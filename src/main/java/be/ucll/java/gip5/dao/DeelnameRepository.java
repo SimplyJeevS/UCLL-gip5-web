@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface DeelnameRepository  extends JpaRepository<Deelname, Long> {
     Optional<Deelname> findDeelnameById(Long id);
     List<Deelname> findAll();
+    Optional<List<Deelname>> findAllByWedstrijdId(Long id);
+    Optional<List<Deelname>> findAllByPersoonId(Long id);
 }
