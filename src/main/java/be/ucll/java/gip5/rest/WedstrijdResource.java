@@ -28,7 +28,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/v1/wedstrijd")
+@RequestMapping("/rest/v1")
 public class WedstrijdResource {
     private Logger logger = LoggerFactory.getLogger(BerichtResource.class);
     private WedstrijdRepository wedstrijdRepository;
@@ -44,7 +44,7 @@ public class WedstrijdResource {
         this.deelnameRepository = deelnameRepository;
     }
 
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/wedstrijd/{id}")
     @Operation(
             summary = "Verkrijg wedstrijd",
             description = "Geef een wedstrijd ID en verkrijg de wedstrijd"
@@ -54,7 +54,7 @@ public class WedstrijdResource {
         return ResponseEntity.status(HttpStatus.OK).body(findWedstrijdFromId(id));
     }
 
-    @GetMapping("/")
+    @GetMapping("/wedstrijd")
     public ResponseEntity getWedstrijdList() throws NotFoundException {
         List<Wedstrijd> wedstrijdList = wedstrijdRepository.findAll();
         if(wedstrijdList.isEmpty()){
@@ -63,7 +63,7 @@ public class WedstrijdResource {
         return ResponseEntity.status(HttpStatus.OK).body(wedstrijdList);
     }
 
-    @GetMapping("/locatie/{locatie}")
+    @GetMapping("/wedstrijd/locatie/{locatie}")
     public ResponseEntity getWedstrijdFromLocatie(@PathVariable("locatie") String locatie) throws ParameterInvalidException, NotFoundException {
         if(locatie.isEmpty() || locatie.trim().length() <= 0){
             throw new ParameterInvalidException("Locatie is niet correct , kreeg "+locatie);
@@ -75,7 +75,7 @@ public class WedstrijdResource {
         return ResponseEntity.status(HttpStatus.OK).body(wedstrijdList.get());
     }
 
-    @GetMapping("/ploeg/{ploegId}")
+    @GetMapping("/wedstrijd/ploeg/{ploegId}")
     public ResponseEntity getWedstrijdListFromPloegId(@PathVariable("ploegId") Long ploegId) throws NotFoundException, ParameterInvalidException {
         findploegFromId(ploegId);
         Optional<List<Wedstrijd>> alsThuisploeg = wedstrijdRepository.findWedstrijdByThuisPloeg(ploegId);
@@ -92,7 +92,7 @@ public class WedstrijdResource {
         return ResponseEntity.status(HttpStatus.OK).body(uniekWedstrijdList);
     }
 
-    @GetMapping( value = "/thuisploeg/{ploegId}")
+    @GetMapping( value = "/wedstrijd/thuisploeg/{ploegId}")
     public ResponseEntity getWedstrijdListFromThuisploeg(@PathVariable("ploegId") Long ploegId ) throws NotFoundException, ParameterInvalidException {
         findploegFromId(ploegId);
         Optional<List<Wedstrijd>> wedstrijdList = wedstrijdRepository.findWedstrijdByThuisPloeg(ploegId);
@@ -102,7 +102,7 @@ public class WedstrijdResource {
         return ResponseEntity.status(HttpStatus.OK).body(wedstrijdList);
     }
 
-    @GetMapping( value = "/tegenstander/{ploegId}")
+    @GetMapping( value = "/wedstrijd/tegenstander/{ploegId}")
     public ResponseEntity getWedstrijdListFromTegenstander(@PathVariable("ploegId") Long ploegId ) throws NotFoundException, ParameterInvalidException {
         findploegFromId(ploegId);
         Optional<List<Wedstrijd>> wedstrijdList = wedstrijdRepository.findWedstrijdByTegenstander(ploegId);
@@ -112,7 +112,7 @@ public class WedstrijdResource {
         return ResponseEntity.status(HttpStatus.OK).body(wedstrijdList);
     }
 
-    @PutMapping( value = "/{id}/uitnodig")
+    @PutMapping( value = "/wedstrijd/{id}/uitnodig")
     public ResponseEntity putUitnodigAlleSpelersVanThuisPloegNaarWedstrijd(@PathVariable("id") Long id,@RequestParam(value = "commentaar", required = false, defaultValue = "") String commentaar ) throws NotFoundException, ParameterInvalidException {
         Wedstrijd wedstrijd = findWedstrijdFromId(id);
         findploegFromId(wedstrijd.getThuisPloeg());
@@ -133,7 +133,7 @@ public class WedstrijdResource {
         return ResponseEntity.status(HttpStatus.OK).body(deelnameList);
     }
 
-    @PostMapping( value = "/")
+    @PostMapping( value = "/wedstrijd")
     public ResponseEntity postWedstrijd(@RequestBody WedstrijdDTO wedstrijd) throws ParameterInvalidException, NotFoundException {
         LocalDateTime tijdstip = checkWedstrijdDTOAndFindTijdstip(wedstrijd);
         Wedstrijd newWedstrijd = new Wedstrijd.WedstrijdBuilder()
@@ -146,7 +146,7 @@ public class WedstrijdResource {
         return ResponseEntity.status(HttpStatus.CREATED).body(newWedstrijd);
     }
 
-    @PutMapping( value = "/{id}")
+    @PutMapping( value = "/wedstrijd/{id}")
     public ResponseEntity putWedstrijd(@PathVariable("id") Long id, @RequestBody WedstrijdDTO wedstrijd) throws NotFoundException, ParameterInvalidException {
         Wedstrijd foundWedstrijd = findWedstrijdFromId(id);
         LocalDateTime tijdstip = checkWedstrijdDTOAndFindTijdstip(wedstrijd);
@@ -158,7 +158,7 @@ public class WedstrijdResource {
         return ResponseEntity.status(HttpStatus.OK).body(foundWedstrijd);
     }
 
-    @DeleteMapping( value = "/{id}")
+    @DeleteMapping( value = "/wedstrijd/{id}")
     public ResponseEntity deleteWedstrijd(@PathVariable("id") Long id) throws NotFoundException, ParameterInvalidException {
         Wedstrijd wedstrijd = findWedstrijdFromId(id);
         wedstrijdRepository.delete(wedstrijd);

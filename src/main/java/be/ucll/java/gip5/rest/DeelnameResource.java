@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/v1/deelname")
+@RequestMapping("/rest/v1")
 public class DeelnameResource {
     private Logger logger = LoggerFactory.getLogger(BerichtResource.class);
     private DeelnameRepository deelnameRepository;
@@ -32,7 +32,7 @@ public class DeelnameResource {
         this.wedstrijdRepository = wedstrijdRepository;
     }
 
-    @GetMapping(value="/{id}")
+    @GetMapping(value="/deelname/{id}")
     @Operation(
             summary = "Verkrijg deelname",
             description = "Geef een deelname ID en verkrijg de deelname"
@@ -49,14 +49,14 @@ public class DeelnameResource {
         return ResponseEntity.status(HttpStatus.OK).body(deelname.get());
     }
 
-    @GetMapping( value = "/")
+    @GetMapping( value = "/deelname")
     public ResponseEntity getDeelnameList() throws NotFoundException {
         List<Deelname> deelnameList = deelnameRepository.findAll();
         if(deelnameList.isEmpty()) throw new NotFoundException("Deelnames");
         return ResponseEntity.status(HttpStatus.OK).body(deelnameList);
     }
 
-    @GetMapping( value = "/v1/deelname/wedstrijd/{wedstrijdId}")
+    @GetMapping( value = "/deelname/wedstrijd/{wedstrijdId}")
     public ResponseEntity getDeelnameWedstrijd(@PathVariable("wedstrijdId") Long wedstrijdId) throws NotFoundException, ParameterInvalidException {
         checkandFindWedstrijdId(wedstrijdId);
         Optional<List<Deelname>> deelnameList = deelnameRepository.findAllByWedstrijdId(wedstrijdId);
@@ -66,7 +66,7 @@ public class DeelnameResource {
         return ResponseEntity.status(HttpStatus.OK).body(deelnameList.get());
     }
 
-    @GetMapping( value = "/v1/deelname/persoon/{persoonId}")
+    @GetMapping( value = "/deelname/persoon/{persoonId}")
     public ResponseEntity getDeelnamePersoon(@PathVariable("persoonId") Long persoonId) throws NotFoundException, ParameterInvalidException {
         checkandFindPersoonId(persoonId);
         Optional<List<Deelname>> deelnameList = deelnameRepository.findAllByPersoonId(persoonId);
@@ -76,7 +76,7 @@ public class DeelnameResource {
         return ResponseEntity.status(HttpStatus.OK).body(deelnameList.get());
     }
 
-    @PutMapping("/{id}/commentaar")
+    @PutMapping("/deelname/{id}/commentaar")
     public ResponseEntity putDeelnameCommentaar(@PathVariable("id") Long id,@RequestParam(value = "commentaar",defaultValue = "") String commentaar) throws ParameterInvalidException, NotFoundException {
         if(commentaar.trim().length() <= 0){
             throw new ParameterInvalidException("Commentaar mag niet leeg zijn");
@@ -87,7 +87,7 @@ public class DeelnameResource {
         return ResponseEntity.status(HttpStatus.OK).body(deelname);
     }
 
-    @PostMapping(value="/")
+    @PostMapping(value="/deelname")
     @Operation(
             summary = "Maak bericht",
             description = "Creer een nieuwe deelname"
@@ -110,7 +110,7 @@ public class DeelnameResource {
         return ResponseEntity.status(HttpStatus.CREATED).body(newDeelname);
     }
 
-    @PutMapping( value = "/{id}")
+    @PutMapping( value = "/deelname/{id}")
     @Operation(
             summary = "Pas deelname aan",
             description = "verander de rol, persoon en/of ploeg van de deelname"
@@ -128,7 +128,7 @@ public class DeelnameResource {
         deelnameRepository.save(foundDeelname);
         return ResponseEntity.status(HttpStatus.OK).body(deelname);
     }
-    @DeleteMapping( value = "/{id}")
+    @DeleteMapping( value = "/deelname/{id}")
     @Operation(
             summary = "Verwijder een deelname",
             description = "Geef het id van de deelname mee om het te verwijderen"

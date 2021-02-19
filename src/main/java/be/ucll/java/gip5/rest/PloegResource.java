@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/v1/ploeg")
+@RequestMapping("/rest/v1")
 public class PloegResource {
     private Logger logger = LoggerFactory.getLogger(BerichtResource.class);
     private PloegRepository ploegRepository;
@@ -32,7 +32,7 @@ public class PloegResource {
         this.wedstrijdRepository = wedstrijdRepository;
     }
 
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/ploeg/{id}")
     @Operation(
             summary = "Verkrijg ploeg",
             description = "Geef een ploeg ID en verkrijg de ploeg"
@@ -50,7 +50,7 @@ public class PloegResource {
         }
     }
 
-    @GetMapping( value = "/")
+    @GetMapping( value = "/ploeg")
     public ResponseEntity getPloegen() throws NotFoundException {
         List<Ploeg> ploegen = ploegRepository.findAll();
         if(ploegen.isEmpty()){
@@ -59,7 +59,7 @@ public class PloegResource {
         return ResponseEntity.status(HttpStatus.OK).body(ploegen);
     }
 
-    @PostMapping(value="/")
+    @PostMapping(value="/ploeg")
     public ResponseEntity postPloeg(@RequestBody PloegDTO ploeg) throws ParameterInvalidException {
         checkPloegDTO(ploeg);
         Ploeg newPloeg = ploegRepository.save(
@@ -70,7 +70,7 @@ public class PloegResource {
         return ResponseEntity.status(HttpStatus.CREATED).body(newPloeg);
     }
 
-    @PutMapping( value = "/{id}")
+    @PutMapping( value = "/ploeg/{id}")
     public ResponseEntity putPloeg(@PathVariable("id") Long id,@RequestBody PloegDTO ploeg) throws ParameterInvalidException, NotFoundException {
         if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());
@@ -85,7 +85,7 @@ public class PloegResource {
         return ResponseEntity.status(HttpStatus.OK).body(foundPloeg);
     }
 
-    @DeleteMapping( value = "/{id}")
+    @DeleteMapping( value = "/ploeg/{id}")
     public ResponseEntity deletePloeg(@PathVariable("id") Long id) throws NotFoundException, ParameterInvalidException {
         if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());
@@ -104,7 +104,7 @@ public class PloegResource {
         }
     }
 
-    @GetMapping( value = "/thuisploeg")
+    @GetMapping( value = "/ploeg/thuisploeg")
     public ResponseEntity getThuisploegen() throws NotFoundException {
         List<Wedstrijd> wedstrijden = wedstrijdRepository.findAll();
         if(wedstrijden.isEmpty()){
@@ -123,7 +123,7 @@ public class PloegResource {
         return ResponseEntity.status(HttpStatus.OK).body(ploegen);
     }
 
-    @GetMapping( value = "/tegenstander")
+    @GetMapping( value = "/ploeg/tegenstander")
     public ResponseEntity getTegenstanders() throws NotFoundException {
         List<Wedstrijd> wedstrijden = wedstrijdRepository.findAll();
         if(wedstrijden.isEmpty()){
