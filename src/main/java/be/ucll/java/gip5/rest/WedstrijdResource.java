@@ -11,7 +11,6 @@ import be.ucll.java.gip5.model.Deelname;
 import be.ucll.java.gip5.model.Ploeg;
 import be.ucll.java.gip5.model.Toewijzing;
 import be.ucll.java.gip5.model.Wedstrijd;
-import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,10 +44,6 @@ public class WedstrijdResource {
     }
 
     @GetMapping(value = "/wedstrijd/{id}")
-    @Operation(
-            summary = "Verkrijg wedstrijd",
-            description = "Geef een wedstrijd ID en verkrijg de wedstrijd"
-    )
     public ResponseEntity getWedstrijd(@PathVariable("id") Long id) throws ParameterInvalidException, NotFoundException {
         logger.debug("GET request voor wedstrijd gekregen");
         return ResponseEntity.status(HttpStatus.OK).body(findWedstrijdFromId(id));

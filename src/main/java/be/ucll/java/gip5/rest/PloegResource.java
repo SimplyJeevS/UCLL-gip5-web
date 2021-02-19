@@ -7,7 +7,6 @@ import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
 import be.ucll.java.gip5.model.Ploeg;
 import be.ucll.java.gip5.model.Wedstrijd;
-import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +32,6 @@ public class PloegResource {
     }
 
     @GetMapping(value = "/ploeg/{id}")
-    @Operation(
-            summary = "Verkrijg ploeg",
-            description = "Geef een ploeg ID en verkrijg de ploeg"
-    )
     public ResponseEntity getPloeg(@PathVariable("id") Long id) throws ParameterInvalidException, NotFoundException {
         logger.debug("GET request voor ploeg gekregen");
         if(id == null || !(id instanceof Long) || id <=0 ){

@@ -2,11 +2,9 @@ package be.ucll.java.gip5.rest;
 
 import be.ucll.java.gip5.dao.*;
 import be.ucll.java.gip5.dto.DeelnameDTO;
-import be.ucll.java.gip5.dto.ToewijzingDTO;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
 import be.ucll.java.gip5.model.*;
-import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +31,6 @@ public class DeelnameResource {
     }
 
     @GetMapping(value="/deelname/{id}")
-    @Operation(
-            summary = "Verkrijg deelname",
-            description = "Geef een deelname ID en verkrijg de deelname"
-    )
     public ResponseEntity getDeelname(@PathVariable("deelname") Long id) throws ParameterInvalidException, NotFoundException {
         logger.debug("GET request voor deelname gekregen");
         if(id == null || !(id instanceof Long) || id <=0 ){
@@ -88,10 +82,6 @@ public class DeelnameResource {
     }
 
     @PostMapping(value="/deelname")
-    @Operation(
-            summary = "Maak bericht",
-            description = "Creer een nieuwe deelname"
-    )
     public ResponseEntity postDeelname(@RequestBody DeelnameDTO deelname) throws ParameterInvalidException, NotFoundException {
         logger.debug("POST request voor deelname gekregen");
         if(deelname.getPersoonId().equals(null) || deelname.getWedstrijdId().equals(null) || deelname.getCommentaar().equals(null)){
@@ -111,10 +101,6 @@ public class DeelnameResource {
     }
 
     @PutMapping( value = "/deelname/{id}")
-    @Operation(
-            summary = "Pas deelname aan",
-            description = "verander de rol, persoon en/of ploeg van de deelname"
-    )
     public ResponseEntity putDeelname(@PathVariable("id") Long id,@RequestBody DeelnameDTO deelname) throws ParameterInvalidException, NotFoundException {
         if(deelname.getCommentaar().trim().length() <= 0){
             throw new ParameterInvalidException("Deelname is niet ingvuld");
@@ -129,10 +115,6 @@ public class DeelnameResource {
         return ResponseEntity.status(HttpStatus.OK).body(deelname);
     }
     @DeleteMapping( value = "/deelname/{id}")
-    @Operation(
-            summary = "Verwijder een deelname",
-            description = "Geef het id van de deelname mee om het te verwijderen"
-    )
     public ResponseEntity deleteDeelname(@PathVariable("id") Long id) throws ParameterInvalidException, NotFoundException {
         logger.debug("DELETE request voor deelname gekregen");
         if(id == null || !(id instanceof Long) ||    id <=0 ){

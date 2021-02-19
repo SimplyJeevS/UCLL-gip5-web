@@ -7,20 +7,13 @@ import be.ucll.java.gip5.dto.PersoonDTO;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
 import be.ucll.java.gip5.model.Persoon;
-import be.ucll.java.gip5.model.Ploeg;
-import be.ucll.java.gip5.model.Rol;
-import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -43,10 +36,6 @@ public class PersoonResource {
 
 
     @GetMapping(value = "/persoon/{id}")
-    @Operation(
-            summary = "Verkrijg persoon",
-            description = "Geef een persoon ID en verkrijg de persoon"
-    )
     public ResponseEntity getPersoon(@PathVariable("id") Long id) throws ParameterInvalidException, NotFoundException {
         logger.debug("GET request voor persoon gekregen");
         if(id == null && !(id instanceof Long) && id <=0 ){
@@ -61,10 +50,6 @@ public class PersoonResource {
     }
 
     @GetMapping(value = "/persoon")
-    @Operation(
-            summary = "Verkrijg alle personen",
-            description = "Krijg een array van alle personen in de database"
-    )
     public ResponseEntity getPersonen() throws NotFoundException {
         List<Persoon> personen = persoonRepository.findAll();
         if(personen.isEmpty()){
@@ -74,10 +59,6 @@ public class PersoonResource {
     }
 
     @GetMapping(value = "/persoon/voornaam/{voornaam}")
-    @Operation(
-            summary = "Verkrijg alle personen met voornaam",
-            description = "Krijg een array van alle personen in de database die een specifieke voornaam bevatten"
-    )
     public ResponseEntity getPersonenVoornaam(@PathVariable("voornaam") String voornaam) throws ParameterInvalidException, NotFoundException {
         if(voornaam == null || voornaam.trim().length() == 0){
             throw new ParameterInvalidException("Voornaam met waarde "+voornaam);
@@ -90,10 +71,6 @@ public class PersoonResource {
     }
 
     @GetMapping(value = "/persoon/naam/{naam}")
-    @Operation(
-            summary = "Verkrijg alle personen met naam",
-            description = "Krijg een array van alle personen in de database die een specifieke naam bevatten"
-    )
     public ResponseEntity getPersonenNaam(@PathVariable("naam") String naam) throws ParameterInvalidException, NotFoundException {
         if(naam == null || naam.trim().length() == 0){
             throw new ParameterInvalidException("Naam met waarde "+naam);
@@ -106,10 +83,6 @@ public class PersoonResource {
     }
 
     @GetMapping(value = "/persoon/geslacht/{geslacht}")
-    @Operation(
-            summary = "Verkrijg alle personen met geslacht",
-            description = "Krijg een array van alle personen in de database die een van het gegeven geslacht zijn"
-    )
     public ResponseEntity getPersonenGeslacht(@PathVariable("geslacht") Boolean geslacht) throws ParameterInvalidException, NotFoundException {
         if(geslacht == null || !(geslacht instanceof Boolean)){
             throw new ParameterInvalidException("Geslacht met waarde "+geslacht);
@@ -122,10 +95,6 @@ public class PersoonResource {
     }
 
     @GetMapping(value = "/persoon/adres/{adres}")
-    @Operation(
-            summary = "Verkrijg alle personen met adres",
-            description = "Krijg een array van alle personen in de database die een specifiek adres bevatten"
-    )
     public ResponseEntity getPersonenAdres(@PathVariable("adres") String adres) throws ParameterInvalidException, NotFoundException {
         if(adres == null || adres.trim().length() == 0){
             throw new ParameterInvalidException("Adres met waarde "+adres);
@@ -138,10 +107,6 @@ public class PersoonResource {
     }
 
     @PostMapping(value = "/persoon")
-    @Operation(
-            summary = "Maak een persoon",
-            description = "Creeer een nieuwe persoon, info + wachtwoord"
-    )
     public ResponseEntity postPersoon(@PathVariable PersoonDTO persoon) throws ParameterInvalidException, NotFoundException {
         logger.debug("POST request voor persoon gekregen");
         Date geboortedatum = checkPersoonInfo(persoon);
@@ -163,10 +128,6 @@ public class PersoonResource {
     }
 
     @PutMapping (value = "/persoon/{id}")
-    @Operation(
-            summary = "Pas persoon aan",
-            description = "verander het hele persoons object (info + ploegId)"
-    )
     public ResponseEntity putPersoon(@PathVariable("id") Long id, @RequestBody PersoonDTO persoon) throws ParameterInvalidException, NotFoundException {
         if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());
@@ -189,10 +150,6 @@ public class PersoonResource {
     }
 
     @PutMapping (value = "/persoon/{id}/wachtwoord")
-    @Operation(
-            summary = "Reset wachtwoord",
-            description = "Reset een wachtwoord van een persoon"
-    )
     public ResponseEntity putPersoonWachtwoord(@PathVariable("id") Long id, @RequestBody String wachtwoord) throws NotFoundException, ParameterInvalidException {
         if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());
@@ -208,10 +165,6 @@ public class PersoonResource {
     }
 
     @PutMapping (value = "/persoon/{id}/info")
-    @Operation(
-            summary = "Verander info",
-            description = "Verander algemene informatie van een persoon"
-    )
     public ResponseEntity putPersoonPloegId(@PathVariable("id") Long id, @RequestBody PersoonDTO persoon) throws NotFoundException, ParameterInvalidException {
         if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());
@@ -234,10 +187,6 @@ public class PersoonResource {
     }
 
     @DeleteMapping(value = "/persoon/{id}")
-    @Operation(
-            summary = "Verwijder een persoon",
-            description = "Geef het id van een persoon mee om het te verwijderen"
-    )
     public ResponseEntity deletePersoon(@PathVariable("id") Long id) throws ParameterInvalidException, NotFoundException {
         if(id == null && !(id instanceof Long) && id <=0 ){
             throw new ParameterInvalidException(id.toString());

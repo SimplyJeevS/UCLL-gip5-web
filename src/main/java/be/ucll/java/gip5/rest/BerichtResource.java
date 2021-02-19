@@ -3,21 +3,18 @@ package be.ucll.java.gip5.rest;
 import be.ucll.java.gip5.dao.BerichtRepository;
 import be.ucll.java.gip5.dao.PersoonRepository;
 import be.ucll.java.gip5.dao.WedstrijdRepository;
-import be.ucll.java.gip5.dto.WedstrijdDTO;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
 import be.ucll.java.gip5.model.Bericht;
 import be.ucll.java.gip5.dto.BerichtDTO;
 import be.ucll.java.gip5.model.Persoon;
 import be.ucll.java.gip5.model.Wedstrijd;
-import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -38,10 +35,6 @@ public class BerichtResource {
     }
 
     @GetMapping(value = "/bericht/{id}")
-    @Operation(
-            summary = "Verkrijg bericht",
-            description = "Geef een bericht ID en verkrijg het bericht"
-    )
     public ResponseEntity getBericht(@PathVariable("id") Long id) throws ParameterInvalidException, NotFoundException {
         logger.debug("GET request voor bericht gekregen");
         if(id == null || !(id instanceof Long) || id <=0 ){
@@ -55,10 +48,6 @@ public class BerichtResource {
     }
 
     @GetMapping( value = "/bericht")
-    @Operation(
-            summary = "Verkrijg alle berichten",
-            description = ""
-    )
     public ResponseEntity getBerichtList() throws NotFoundException {
         List<Bericht> berichtList = berichtRepository.findAll();
         if(berichtList.isEmpty()){
@@ -100,10 +89,6 @@ public class BerichtResource {
     }
 
     @PostMapping(value = "/bericht/")
-    @Operation(
-            summary = "maak bericht",
-            description = "Creeer een nieuw bericht"
-    )
     public ResponseEntity postBericht(@RequestBody BerichtDTO bericht) throws ParameterInvalidException, NotFoundException {
         logger.debug("POST request voor bericht gekregen");
         if(bericht.getBoodschap().isEmpty() || bericht.getWedstrijdId() == null){
@@ -141,10 +126,6 @@ public class BerichtResource {
     }
 
     @PutMapping(value="/bericht/{id}")
-    @Operation(
-            summary = "Pas bericht aan",
-            description = "Verander de inhoud van een bericht"
-    )
     public ResponseEntity putBericht(@PathVariable("id") Long id, @RequestBody BerichtDTO bericht) throws ParameterInvalidException, NotFoundException {
         logger.debug("PUT request voor bericht gekregen");
         if(id == null || !(id instanceof Long) || id <=0 ){
@@ -214,10 +195,6 @@ public class BerichtResource {
     }
 
     @DeleteMapping(value="/bericht/{id}")
-    @Operation(
-            summary = "Verwijder een bericht",
-            description= "Geef id een mee en verwijder het bericht"
-    )
     public ResponseEntity deleteBericht(@PathVariable("id") Long id) throws ParameterInvalidException, NotFoundException {
         logger.debug("DELETE request voor bericht gekregen");
         if(id == null || !(id instanceof Long) || id <=0 ){

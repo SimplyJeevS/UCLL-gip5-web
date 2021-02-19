@@ -5,9 +5,6 @@ import be.ucll.java.gip5.dto.ToewijzingDTO;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
 import be.ucll.java.gip5.model.*;
-import io.swagger.v3.oas.annotations.Operation;
-import liquibase.pro.packaged.T;
-import org.atmosphere.config.service.Put;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +34,6 @@ public class ToewijzingResource {
     }
 
     @GetMapping(value="/toewijzing/{id}")
-    @Operation(
-            summary = "Verkrijg een toewijzing",
-            description = "Geef een toewijzing Id en verkrijg een toewijzing"
-    )
     public ResponseEntity getToewijzing(@PathVariable("id") Long id) throws ParameterInvalidException, NotFoundException {
         return ResponseEntity.status(HttpStatus.OK).body(checkIdAndGetToewijzing(id));
     }

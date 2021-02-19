@@ -5,7 +5,6 @@ import be.ucll.java.gip5.dto.RolDTO;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
 import be.ucll.java.gip5.model.Rol;
-import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +27,6 @@ public class RolResource {
     }
 
     @GetMapping(value = "/rol/{id}")
-    @Operation(
-            summary = "Verkrijg rol",
-            description = "Geef een rol ID en verkrijg de rol"
-    )
     public ResponseEntity getRol(@PathVariable("id") Long id) throws ParameterInvalidException, NotFoundException {
         logger.debug("GET request voor rol gekregen");
         return ResponseEntity.status(HttpStatus.OK).body(checkAndFindRolFromId(id));
