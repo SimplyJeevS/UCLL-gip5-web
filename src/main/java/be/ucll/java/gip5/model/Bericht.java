@@ -68,7 +68,7 @@ public class Bericht {
         return id;
     }
 
-    public void setId(Long id) {
+    private void setId(Long id) {
         this.id = id;
     }
 
@@ -77,6 +77,9 @@ public class Bericht {
     }
 
     public void setWedstrijdId(Long wedstrijdId) {
+        if(wedstrijdId==null || wedstrijdId <= 0){
+            throw new IllegalArgumentException("WedstrijdId werd niet juist gegeven");
+        }
         this.wedstrijdId = wedstrijdId;
     }
 
@@ -85,6 +88,9 @@ public class Bericht {
     }
 
     public void setBoodschap(String boodschap) {
+        if(boodschap.isEmpty() || boodschap.trim().length() <= 0){
+            throw new IllegalArgumentException("boodschap werd niet juist gegeven");
+        }
         this.boodschap = boodschap;
     }
 
@@ -93,6 +99,9 @@ public class Bericht {
     }
 
     public void setAfzenderId(Long afzenderId) {
+        if(afzenderId==null || afzenderId <= 0){
+            throw new IllegalArgumentException("afzenderId werd niet juist gegeven");
+        }
         this.afzenderId = afzenderId;
     }
 
@@ -101,6 +110,11 @@ public class Bericht {
     }
 
     public void setTijdstip(LocalDateTime tijdstip) {
+        if(tijdstip.equals(null) ){
+            throw new IllegalArgumentException("tijdstip mag niet leeg zijn");
+        }else if(tijdstip.isAfter(LocalDateTime.now().plusMinutes(1))){
+            throw new IllegalArgumentException("tijdstip mag niet in de toekomst liggen");
+        }
         this.tijdstip = tijdstip;
     }
 }
