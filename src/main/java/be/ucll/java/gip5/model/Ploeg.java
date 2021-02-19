@@ -15,7 +15,7 @@ public class Ploeg {
     private Ploeg(PloegBuilder builder){
 
     }
-    public Ploeg(){};
+    public Ploeg(){}
 
     public static final class PloegBuilder {
         private Long id;

@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/v1/deelname")
 public class DeelnameResource {
     private Logger logger = LoggerFactory.getLogger(BerichtResource.class);
     private DeelnameRepository deelnameRepository;
@@ -32,7 +32,7 @@ public class DeelnameResource {
         this.wedstrijdRepository = wedstrijdRepository;
     }
 
-    @GetMapping(value="/v1/deelname/{id}")
+    @GetMapping(value="/{id}")
     @Operation(
             summary = "Verkrijg deelname",
             description = "Geef een deelname ID en verkrijg de deelname"
@@ -49,7 +49,7 @@ public class DeelnameResource {
         return ResponseEntity.status(HttpStatus.OK).body(deelname.get());
     }
 
-    @GetMapping( value = "/v1/deelname")
+    @GetMapping( value = "/")
     public ResponseEntity getDeelnameList() throws NotFoundException {
         List<Deelname> deelnameList = deelnameRepository.findAll();
         if(deelnameList.isEmpty()) throw new NotFoundException("Deelnames");
@@ -57,12 +57,37 @@ public class DeelnameResource {
     }
 
     @GetMapping( value = "/v1/deelname/wedstrijd/{wedstrijdId}")
-    public ResponseEntity getDeelnameWedstrijd(){
-        //TODO
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("");
+    public ResponseEntity getDeelnameWedstrijd(@PathVariable("wedstrijdId") Long wedstrijdId) throws NotFoundException, ParameterInvalidException {
+        checkandFindWedstrijdId(wedstrijdId);
+        Optional<List<Deelname>> deelnameList = deelnameRepository.findAllByWedstrijdId(wedstrijdId);
+        if(!deelnameList.isPresent() || deelnameList.get().isEmpty()){
+            throw new NotFoundException("Geen deelnames gevonden voor de wedstrijd met id "+wedstrijdId);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(deelnameList.get());
     }
 
-    @PostMapping(value="/v1/deelname")
+    @GetMapping( value = "/v1/deelname/persoon/{persoonId}")
+    public ResponseEntity getDeelnamePersoon(@PathVariable("persoonId") Long persoonId) throws NotFoundException, ParameterInvalidException {
+        checkandFindPersoonId(persoonId);
+        Optional<List<Deelname>> deelnameList = deelnameRepository.findAllByPersoonId(persoonId);
+        if(!deelnameList.isPresent() || deelnameList.get().isEmpty()){
+            throw new NotFoundException("Geen deelnames gevonden voor de persoon met id "+persoonId);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(deelnameList.get());
+    }
+
+    @PutMapping("/{id}/commentaar")
+    public ResponseEntity putDeelnameCommentaar(@PathVariable("id") Long id,@RequestParam(value = "commentaar",defaultValue = "") String commentaar) throws ParameterInvalidException, NotFoundException {
+        if(commentaar.trim().length() <= 0){
+            throw new ParameterInvalidException("Commentaar mag niet leeg zijn");
+        }
+        Deelname deelname = checkandFindDeelnameId(id);
+        deelname.setCommentaar(commentaar);
+        deelnameRepository.save(deelname);
+        return ResponseEntity.status(HttpStatus.OK).body(deelname);
+    }
+
+    @PostMapping(value="/")
     @Operation(
             summary = "Maak bericht",
             description = "Creer een nieuwe deelname"
@@ -72,20 +97,11 @@ public class DeelnameResource {
         if(deelname.getPersoonId().equals(null) || deelname.getWedstrijdId().equals(null) || deelname.getCommentaar().equals(null)){
             throw new ParameterInvalidException("Geef een compleet object mee van deelname");
         }
-        if(deelname.getPersoonId() <= 0 || deelname.getWedstrijdId() <= 0){
-            throw new ParameterInvalidException("Id mag niet minder als 0 zijn");
-        }
         if(deelname.getCommentaar().trim().length() <= 0){
-            throw new ParameterInvalidException("Deelname is niet ingvuld");
+            throw new ParameterInvalidException("Commentaar mag niet leeg zijn");
         }
-        Optional<Persoon> persoon = persoonRepository.findPersoonById(deelname.getPersoonId());
-        Optional<Wedstrijd> wedstrijd = wedstrijdRepository.findWedstrijdById(deelname.getWedstrijdId());
-        if(!persoon.isPresent()){
-            throw new NotFoundException("Persoon met id "+deelname.getPersoonId());
-        }
-        if(!wedstrijd.isPresent()){
-            throw new NotFoundException("Wedstrijd met id "+deelname.getWedstrijdId());
-        }
+        checkandFindWedstrijdId(deelname.getPersoonId());
+        checkandFindWedstrijdId(deelname.getWedstrijdId());
         Deelname newDeelname = deelnameRepository.save(new Deelname.DeelnameBuilder()
         .persoonId(deelname.getPersoonId())
         .wedstrijdId(deelname.getWedstrijdId())
@@ -94,51 +110,32 @@ public class DeelnameResource {
         return ResponseEntity.status(HttpStatus.CREATED).body(newDeelname);
     }
 
-    @PutMapping( value = "/v1/deelname/{id}")
+    @PutMapping( value = "/{id}")
     @Operation(
             summary = "Pas deelname aan",
             description = "verander de rol, persoon en/of ploeg van de deelname"
     )
     public ResponseEntity putDeelname(@PathVariable("id") Long id,@RequestBody DeelnameDTO deelname) throws ParameterInvalidException, NotFoundException {
-        logger.debug("PUT request voor deelname gekregen");
-        if(id == null || !(id instanceof Long) || id <=0 ){
-            throw new ParameterInvalidException(id.toString());
-        }
-        if(deelname.equals(null)){
-            throw new ParameterInvalidException("Geef een deelname object mee");
-        }
-        if(deelname.getPersoonId() <= 0 || deelname.getWedstrijdId() <= 0){
-            throw new ParameterInvalidException("Id mag niet minder als 0 zijn");
-        }
         if(deelname.getCommentaar().trim().length() <= 0){
             throw new ParameterInvalidException("Deelname is niet ingvuld");
         }
-        Optional<Deelname> foundDeelname = deelnameRepository.findDeelnameById(id);
-        Optional<Persoon> persoon = persoonRepository.findPersoonById(deelname.getPersoonId());
-        Optional<Wedstrijd> wedstrijd = wedstrijdRepository.findWedstrijdById(deelname.getWedstrijdId());
-        if(!foundDeelname.isPresent()){
-            throw new NotFoundException("Deelname met id "+id);
-        }
-        if(!persoon.isPresent()){
-            throw new NotFoundException("Persoon met id "+deelname.getPersoonId());
-        }
-        if(!wedstrijd.isPresent()){
-            throw new NotFoundException("Ploeg met id "+deelname.getWedstrijdId());
-        }
-        foundDeelname.get().setPersoonId(deelname.getPersoonId());
-        foundDeelname.get().setPersoonId(deelname.getWedstrijdId());
-        foundDeelname.get().setCommentaar(deelname.getCommentaar());
-        deelnameRepository.save(foundDeelname.get());
+        Deelname foundDeelname = checkandFindDeelnameId(id);
+        checkandFindPersoonId(deelname.getPersoonId());
+        checkandFindWedstrijdId(deelname.getWedstrijdId());
+        foundDeelname.setPersoonId(deelname.getPersoonId());
+        foundDeelname.setPersoonId(deelname.getWedstrijdId());
+        foundDeelname.setCommentaar(deelname.getCommentaar());
+        deelnameRepository.save(foundDeelname);
         return ResponseEntity.status(HttpStatus.OK).body(deelname);
     }
-    @DeleteMapping( value = "/v1/deelname/{id}")
+    @DeleteMapping( value = "/{id}")
     @Operation(
             summary = "Verwijder een deelname",
             description = "Geef het id van de deelname mee om het te verwijderen"
     )
     public ResponseEntity deleteDeelname(@PathVariable("id") Long id) throws ParameterInvalidException, NotFoundException {
         logger.debug("DELETE request voor deelname gekregen");
-        if(id == null || !(id instanceof Long) || id <=0 ){
+        if(id == null || !(id instanceof Long) ||    id <=0 ){
             throw new ParameterInvalidException(id.toString());
         }
         Optional<Deelname> deelname = deelnameRepository.findDeelnameById(id);
@@ -147,5 +144,38 @@ public class DeelnameResource {
         }
         deelnameRepository.delete(deelname.get());
         return ResponseEntity.status(HttpStatus.OK).body(deelname.get());
+    }
+
+    private Wedstrijd checkandFindWedstrijdId(Long id) throws NotFoundException, ParameterInvalidException {
+        if(id == null || !(id instanceof Long) || id <=0 ){
+            throw new ParameterInvalidException(id.toString());
+        }
+        Optional<Wedstrijd> wedstrijd = wedstrijdRepository.findWedstrijdById(id);
+        if(!wedstrijd.isPresent()){
+            throw new NotFoundException("Wedstrijd niet gevonden met id "+id);
+        }
+        return wedstrijd.get();
+    }
+
+    private Persoon checkandFindPersoonId(Long id) throws NotFoundException, ParameterInvalidException {
+        if(id == null || !(id instanceof Long) || id <=0 ){
+            throw new ParameterInvalidException(id.toString());
+        }
+        Optional<Persoon> persoon = persoonRepository.findPersoonById(id);
+        if(!persoon.isPresent()){
+            throw new NotFoundException("Persoon niet gevonden met id "+id);
+        }
+        return persoon.get();
+    }
+
+    private Deelname checkandFindDeelnameId(Long id) throws NotFoundException, ParameterInvalidException {
+        if(id == null || !(id instanceof Long) || id <=0 ){
+            throw new ParameterInvalidException(id.toString());
+        }
+        Optional<Deelname> deelname = deelnameRepository.findDeelnameById(id);
+        if(!deelname.isPresent()){
+            throw new NotFoundException("Deelname niet gevonden met id "+id);
+        }
+        return deelname.get();
     }
 }

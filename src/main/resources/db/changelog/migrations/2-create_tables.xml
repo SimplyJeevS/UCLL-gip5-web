@@ -35,7 +35,7 @@
             <column name="geboortedatum" type="DATE">
                 <constraints nullable="false"/>
             </column>
-            <column name="geslacht" type="BOOLEAN">
+            <column name="geslacht" type="CHARACTER VARYING(1)">
                 <constraints nullable="false"/>
             </column>
             <column name="adres" type="CHARACTER VARYING(300)">

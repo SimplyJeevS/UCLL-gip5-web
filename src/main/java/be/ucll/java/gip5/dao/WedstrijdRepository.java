@@ -11,4 +11,7 @@ import java.util.Optional;
 public interface WedstrijdRepository extends JpaRepository<Wedstrijd, Long> {
     Optional<Wedstrijd> findWedstrijdById(Long id);
     List<Wedstrijd> findAll();
+    Optional<List<Wedstrijd>> findWedstrijdByLocatieContaining(String locatie);
+    Optional<List<Wedstrijd>> findWedstrijdByThuisPloeg(Long id);
+    Optional<List<Wedstrijd>> findWedstrijdByTegenstander(Long id);
 }

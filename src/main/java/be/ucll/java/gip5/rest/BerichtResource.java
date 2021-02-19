@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/v1/bericht")
 public class BerichtResource {
     private Logger logger = LoggerFactory.getLogger(BerichtResource.class);
     private BerichtRepository berichtRepository;
@@ -37,7 +37,7 @@ public class BerichtResource {
         this.persoonRepository = persoonRepository;
     }
 
-    @GetMapping(value = "/v1/bericht/{id}")
+    @GetMapping(value = "/{id}")
     @Operation(
             summary = "Verkrijg bericht",
             description = "Geef een bericht ID en verkrijg het bericht"
@@ -54,7 +54,7 @@ public class BerichtResource {
         return ResponseEntity.status(HttpStatus.OK).body(bericht.get());
     }
 
-    @GetMapping( value = "/v1/bericht")
+    @GetMapping( value = "/")
     @Operation(
             summary = "Verkrijg alle berichten",
             description = ""
@@ -67,7 +67,7 @@ public class BerichtResource {
         return ResponseEntity.status(HttpStatus.OK).body(berichtList);
     }
 
-    @GetMapping( value = "/v1/bericht/wedstrijd/{wedstrijdId}")
+    @GetMapping( value = "/wedstrijd/{wedstrijdId}")
     public ResponseEntity getBerichtListFromWedstrijdId(@PathVariable("wedstrijdId") Long wedstrijdId) throws ParameterInvalidException, NotFoundException {
         if(wedstrijdId == null || !(wedstrijdId instanceof Long) || wedstrijdId <=0 ) {
             throw new ParameterInvalidException(wedstrijdId.toString());
@@ -83,7 +83,7 @@ public class BerichtResource {
         return ResponseEntity.status(HttpStatus.OK).body(berichtList);
     }
 
-    @GetMapping( value = "/v1/bericht/afzender/{afzenderId}")
+    @GetMapping( value = "/afzender/{afzenderId}")
     public ResponseEntity getBerichtListFromAfzenderId(@PathVariable("afzenderId") Long afzenderId) throws ParameterInvalidException, NotFoundException {
         if(afzenderId == null || !(afzenderId instanceof Long) || afzenderId <=0 ) {
             throw new ParameterInvalidException(afzenderId.toString());
@@ -99,7 +99,7 @@ public class BerichtResource {
         return ResponseEntity.status(HttpStatus.OK).body(berichtList);
     }
 
-    @PostMapping(value = "/v1/bericht")
+    @PostMapping(value = "/")
     @Operation(
             summary = "maak bericht",
             description = "Creeer een nieuw bericht"
@@ -129,17 +129,18 @@ public class BerichtResource {
         if(!persoon.isPresent()){
             throw new NotFoundException("Persoon with id"+bericht.getAfzenderId().toString());
         }
-        Bericht newBericht = berichtRepository.save(new Bericht.BerichtBuilder()
+        Bericht newBericht = new Bericht.BerichtBuilder()
         .boodschap(bericht.getBoodschap())
         .wedstrijdId(bericht.getWedstrijdId())
         .tijdstip(tijdstip)
         .afzenderId(bericht.getAfzenderId())
-        .build());
+        .build();
+        berichtRepository.save(newBericht);
         return ResponseEntity.status(HttpStatus.CREATED).body(newBericht);
 
     }
 
-    @PutMapping(value="/v1/bericht/{id}")
+    @PutMapping(value="/{id}")
     @Operation(
             summary = "Pas bericht aan",
             description = "Verander de inhoud van een bericht"
@@ -195,7 +196,7 @@ public class BerichtResource {
         ));
     }
 
-    @PutMapping( value = "/v1/bericht/{id}/boodschap")
+    @PutMapping( value = "/{id}/boodschap")
     public ResponseEntity putBerichtBoodschap(@PathVariable("id") Long id, @RequestBody String boodschap) throws ParameterInvalidException, NotFoundException {
         if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());
@@ -212,7 +213,7 @@ public class BerichtResource {
         return ResponseEntity.status(HttpStatus.OK).body(bericht.get());
     }
 
-    @DeleteMapping(value="/v1/bericht/{id}")
+    @DeleteMapping(value="/{id}")
     @Operation(
             summary = "Verwijder een bericht",
             description= "Geef id een mee en verwijder het bericht"
