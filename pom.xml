@@ -219,14 +219,12 @@
             <properties>
                 <vaadin.productionMode>true</vaadin.productionMode>
             </properties>
-
             <dependencies>
                 <dependency>
                     <groupId>com.vaadin</groupId>
                     <artifactId>flow-server-production-mode</artifactId>
                 </dependency>
             </dependencies>
-
             <build>
                 <plugins>
                     <plugin>
