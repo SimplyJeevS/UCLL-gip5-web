@@ -19,6 +19,9 @@ public class Deelname {
 
     @Column(name = "commentaar")
     private String commentaar;
+
+    //enum status toevoegen
+
     private Deelname(DeelnameBuilder builder) {
     }
 

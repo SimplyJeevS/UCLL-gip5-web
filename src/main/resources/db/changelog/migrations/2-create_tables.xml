@@ -109,7 +109,7 @@
             <column name="persoonId" type="SERIAL">
                 <constraints nullable="false"/>
             </column>
-            <column name="rolId" type="SERIAL">
+            <column name="rol" type="CHARACTER VARYING">
                 <constraints nullable="false"/>
             </column>
             <column name="ploegId" type="SERIAL">

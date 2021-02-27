@@ -27,13 +27,13 @@ public class Persoon {
     @Column(name = "adres")
     private String adres;
 
-    @Column(name = "telefoon")
+    @Column(name = "telefoon", length=15) //met lengte zetten
     private String telefoon;
 
     @Column(name = "gsm")
     private String gsm;
 
-    @Column(name = "email")
+    @Column(name = "email", nullable = false)
     private String email;
 
     @Column(name = "wachtwoord")

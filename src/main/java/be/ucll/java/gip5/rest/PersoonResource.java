@@ -2,7 +2,7 @@ package be.ucll.java.gip5.rest;
 
 import be.ucll.java.gip5.dao.PersoonRepository;
 import be.ucll.java.gip5.dao.PloegRepository;
-import be.ucll.java.gip5.dao.RolRepository;
+import be.ucll.java.gip5.dao.ToewijzingRepository;
 import be.ucll.java.gip5.dto.PersoonDTO;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
@@ -31,13 +31,13 @@ public class PersoonResource {
     private Logger logger = LoggerFactory.getLogger(BerichtResource.class);
     private PersoonRepository persoonRepository;
     private PloegRepository ploegRepository;
-    private RolRepository rolRepository;
+    private ToewijzingRepository toewijzingRepository;
 
     @Autowired
-    public PersoonResource(PersoonRepository persoonRepository,PloegRepository ploegRepository, RolRepository rolRepository){
+    public PersoonResource(PersoonRepository persoonRepository,PloegRepository ploegRepository, ToewijzingRepository toewijzingRepository){
         this.persoonRepository = persoonRepository;
         this.ploegRepository = ploegRepository;
-        this.rolRepository = rolRepository;
+        this.toewijzingRepository = toewijzingRepository;
     }
 
 
