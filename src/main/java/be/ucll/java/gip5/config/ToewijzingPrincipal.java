@@ -1,5 +1,9 @@
 package be.ucll.java.gip5.config;
 
+<<<<<<< HEAD
+=======
+import be.ucll.java.gip5.model.AdminRol;
+>>>>>>> 54b8ad2ddadb12a7382e566d3745e82e54e3b7bb
 import be.ucll.java.gip5.model.Persoon;
 import be.ucll.java.gip5.model.Toewijzing;
 import org.springframework.security.core.GrantedAuthority;
