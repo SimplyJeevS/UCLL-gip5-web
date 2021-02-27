@@ -20,9 +20,15 @@ public class Deelname {
     @Column(name = "commentaar")
     private String commentaar;
 
-    //enum status toevoegen
+    @Column(name = "Status")
+    private Status status;
 
     private Deelname(DeelnameBuilder builder) {
+        setCommentaar(builder.commentaar);
+        setPersoonId(builder.persoonId);
+        setId(builder.id);
+        setWedstrijdId(builder.wedstrijdId);
+        setStatus(builder.status);
     }
 
     public Deelname() {
@@ -34,7 +40,7 @@ public class Deelname {
         private Long persoonId;
         private Long wedstrijdId;
         private String commentaar;
-
+        private Status status;
         public DeelnameBuilder(){
         }
 
@@ -47,6 +53,7 @@ public class Deelname {
             this.persoonId = copy.id;
             this.wedstrijdId = copy.wedstrijdId;
             this.commentaar = copy.commentaar;
+            this.status = copy.status;
         }
 
         public DeelnameBuilder id(Long id){
@@ -65,6 +72,10 @@ public class Deelname {
             this.commentaar = commentaar;
             return this;
         }
+        public DeelnameBuilder status(Status status){
+            this.status = status;
+            return this;
+        }
         public Deelname build(){
             return new Deelname(this);
         }
@@ -74,7 +85,7 @@ public class Deelname {
         return id;
     }
 
-    public void setId(Long id) {
+    private void setId(Long id) {
         this.id = id;
     }
 
@@ -100,5 +111,13 @@ public class Deelname {
 
     public void setCommentaar(String commentaar) {
         this.commentaar = commentaar;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }
