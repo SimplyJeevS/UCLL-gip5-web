@@ -8,13 +8,9 @@ import be.ucll.java.gip5.model.Wedstrijd;
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Date;
 import java.util.Optional;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class BerichtRepositoryTest extends AbstractIntegrationTest {

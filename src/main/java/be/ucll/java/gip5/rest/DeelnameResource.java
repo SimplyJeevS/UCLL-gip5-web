@@ -2,11 +2,9 @@ package be.ucll.java.gip5.rest;
 
 import be.ucll.java.gip5.dao.*;
 import be.ucll.java.gip5.dto.DeelnameDTO;
-import be.ucll.java.gip5.dto.ToewijzingDTO;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
 import be.ucll.java.gip5.model.*;
-import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/v1/deelname")
+@RequestMapping("/rest/v1")
 public class DeelnameResource {
     private Logger logger = LoggerFactory.getLogger(BerichtResource.class);
     private DeelnameRepository deelnameRepository;
@@ -32,11 +30,7 @@ public class DeelnameResource {
         this.wedstrijdRepository = wedstrijdRepository;
     }
 
-    @GetMapping(value="/{id}")
-    @Operation(
-            summary = "Verkrijg deelname",
-            description = "Geef een deelname ID en verkrijg de deelname"
-    )
+    @GetMapping(value="/deelname/{id}")
     public ResponseEntity getDeelname(@PathVariable("deelname") Long id) throws ParameterInvalidException, NotFoundException {
         logger.debug("GET request voor deelname gekregen");
         if(id == null || !(id instanceof Long) || id <=0 ){
@@ -49,14 +43,14 @@ public class DeelnameResource {
         return ResponseEntity.status(HttpStatus.OK).body(deelname.get());
     }
 
-    @GetMapping( value = "/")
+    @GetMapping( value = "/deelname")
     public ResponseEntity getDeelnameList() throws NotFoundException {
         List<Deelname> deelnameList = deelnameRepository.findAll();
         if(deelnameList.isEmpty()) throw new NotFoundException("Deelnames");
         return ResponseEntity.status(HttpStatus.OK).body(deelnameList);
     }
 
-    @GetMapping( value = "/v1/deelname/wedstrijd/{wedstrijdId}")
+    @GetMapping( value = "/deelname/wedstrijd/{wedstrijdId}")
     public ResponseEntity getDeelnameWedstrijd(@PathVariable("wedstrijdId") Long wedstrijdId) throws NotFoundException, ParameterInvalidException {
         checkandFindWedstrijdId(wedstrijdId);
         Optional<List<Deelname>> deelnameList = deelnameRepository.findAllByWedstrijdId(wedstrijdId);
@@ -66,7 +60,7 @@ public class DeelnameResource {
         return ResponseEntity.status(HttpStatus.OK).body(deelnameList.get());
     }
 
-    @GetMapping( value = "/v1/deelname/persoon/{persoonId}")
+    @GetMapping( value = "/deelname/persoon/{persoonId}")
     public ResponseEntity getDeelnamePersoon(@PathVariable("persoonId") Long persoonId) throws NotFoundException, ParameterInvalidException {
         checkandFindPersoonId(persoonId);
         Optional<List<Deelname>> deelnameList = deelnameRepository.findAllByPersoonId(persoonId);
@@ -76,7 +70,7 @@ public class DeelnameResource {
         return ResponseEntity.status(HttpStatus.OK).body(deelnameList.get());
     }
 
-    @PutMapping("/{id}/commentaar")
+    @PutMapping("/deelname/{id}/commentaar")
     public ResponseEntity putDeelnameCommentaar(@PathVariable("id") Long id,@RequestParam(value = "commentaar",defaultValue = "") String commentaar) throws ParameterInvalidException, NotFoundException {
         if(commentaar.trim().length() <= 0){
             throw new ParameterInvalidException("Commentaar mag niet leeg zijn");
@@ -87,11 +81,7 @@ public class DeelnameResource {
         return ResponseEntity.status(HttpStatus.OK).body(deelname);
     }
 
-    @PostMapping(value="/")
-    @Operation(
-            summary = "Maak bericht",
-            description = "Creer een nieuwe deelname"
-    )
+    @PostMapping(value="/deelname")
     public ResponseEntity postDeelname(@RequestBody DeelnameDTO deelname) throws ParameterInvalidException, NotFoundException {
         logger.debug("POST request voor deelname gekregen");
         if(deelname.getPersoonId().equals(null) || deelname.getWedstrijdId().equals(null) || deelname.getCommentaar().equals(null)){
@@ -110,11 +100,7 @@ public class DeelnameResource {
         return ResponseEntity.status(HttpStatus.CREATED).body(newDeelname);
     }
 
-    @PutMapping( value = "/{id}")
-    @Operation(
-            summary = "Pas deelname aan",
-            description = "verander de rol, persoon en/of ploeg van de deelname"
-    )
+    @PutMapping( value = "/deelname/{id}")
     public ResponseEntity putDeelname(@PathVariable("id") Long id,@RequestBody DeelnameDTO deelname) throws ParameterInvalidException, NotFoundException {
         if(deelname.getCommentaar().trim().length() <= 0){
             throw new ParameterInvalidException("Deelname is niet ingvuld");
@@ -128,11 +114,7 @@ public class DeelnameResource {
         deelnameRepository.save(foundDeelname);
         return ResponseEntity.status(HttpStatus.OK).body(deelname);
     }
-    @DeleteMapping( value = "/{id}")
-    @Operation(
-            summary = "Verwijder een deelname",
-            description = "Geef het id van de deelname mee om het te verwijderen"
-    )
+    @DeleteMapping( value = "/deelname/{id}")
     public ResponseEntity deleteDeelname(@PathVariable("id") Long id) throws ParameterInvalidException, NotFoundException {
         logger.debug("DELETE request voor deelname gekregen");
         if(id == null || !(id instanceof Long) ||    id <=0 ){

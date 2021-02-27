@@ -5,7 +5,6 @@ import be.ucll.java.gip5.dto.RolDTO;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
 import be.ucll.java.gip5.model.Rol;
-import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/v1/rol")
+@RequestMapping("/rest/v1")
 public class RolResource {
     private Logger logger = LoggerFactory.getLogger(BerichtResource.class);
     private RolRepository rolRepository;
@@ -27,16 +26,12 @@ public class RolResource {
         this.rolRepository = rolRepository;
     }
 
-    @GetMapping(value = "/{id}")
-    @Operation(
-            summary = "Verkrijg rol",
-            description = "Geef een rol ID en verkrijg de rol"
-    )
+    @GetMapping(value = "/rol/{id}")
     public ResponseEntity getRol(@PathVariable("id") Long id) throws ParameterInvalidException, NotFoundException {
         logger.debug("GET request voor rol gekregen");
         return ResponseEntity.status(HttpStatus.OK).body(checkAndFindRolFromId(id));
     }
-    @PostMapping( value = "/v1/rol")
+    @PostMapping( value = "/rol")
     public ResponseEntity postRol(@RequestBody RolDTO rol) throws ParameterInvalidException {
         checkRolNaam(rol.getNaam());
         List<Rol> rolList = rolRepository.findAll();
@@ -45,7 +40,7 @@ public class RolResource {
         return ResponseEntity.status(HttpStatus.OK).body(newRol);
     }
 
-    @PutMapping( value = "/{id}")
+    @PutMapping( value = "/rol/{id}")
     public ResponseEntity putRol(@PathVariable("id") Long id, @RequestBody RolDTO rolDTO) throws NotFoundException, ParameterInvalidException {
         Rol rol = checkAndFindRolFromId(id);
         checkRolNaam(rol.getNaam());
@@ -54,7 +49,7 @@ public class RolResource {
         return ResponseEntity.status(HttpStatus.OK).body(rol);
     }
 
-    @GetMapping( value = "/")
+    @GetMapping( value = "/rol")
     public ResponseEntity getRolList() throws NotFoundException {
         List<Rol> rolList = rolRepository.findAll();
         if(rolList.isEmpty()){
@@ -63,7 +58,7 @@ public class RolResource {
         return ResponseEntity.status(HttpStatus.OK).body(rolList);
     }
 
-    @DeleteMapping( value="/{id}")
+    @DeleteMapping( value="/rol/{id}")
     public ResponseEntity deleteRol(@PathVariable("id") Long id) throws NotFoundException, ParameterInvalidException {
         Rol rol = checkAndFindRolFromId(id);
         rolRepository.delete(rol);

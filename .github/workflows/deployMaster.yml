@@ -45,7 +45,7 @@ jobs:
       run: mvn -B clean package -DskipTests
       
     - name: Maven Verify
-      run: mvn -B clean verify
+      run: mvn -B clean verify -DskipTests
     
     - name: rename target .jar file
       run: mv target/gip5-starter-1.0.jar target/deploy-${{ steps.time.outputs.time }}.jar
@@ -59,7 +59,7 @@ jobs:
         environment_name: Ucllteam3gip5web-env
         region: eu-west-1
         version_label: "stable-${{ steps.time.outputs.time }}"
-        version_description: CI/CD using Github actions
+        version_description: ${{ github.event.head_commit.message }}
         deployment_package: target/deploy-${{ steps.time.outputs.time }}.jar
         wait_for_environment_recovery: 120
 

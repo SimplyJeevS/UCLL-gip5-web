@@ -5,9 +5,6 @@ import be.ucll.java.gip5.dto.ToewijzingDTO;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
 import be.ucll.java.gip5.model.*;
-import io.swagger.v3.oas.annotations.Operation;
-import liquibase.pro.packaged.T;
-import org.atmosphere.config.service.Put;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/v1/toewijzing")
+@RequestMapping("/rest/v1")
 public class ToewijzingResource {
     private Logger logger = LoggerFactory.getLogger(BerichtResource.class);
     private ToewijzingRepository toewijzingRepository;
@@ -36,16 +33,12 @@ public class ToewijzingResource {
         this.wedstrijdRepository = wedstrijdRepository;
     }
 
-    @GetMapping(value="/{id}")
-    @Operation(
-            summary = "Verkrijg een toewijzing",
-            description = "Geef een toewijzing Id en verkrijg een toewijzing"
-    )
+    @GetMapping(value="/toewijzing/{id}")
     public ResponseEntity getToewijzing(@PathVariable("id") Long id) throws ParameterInvalidException, NotFoundException {
         return ResponseEntity.status(HttpStatus.OK).body(checkIdAndGetToewijzing(id));
     }
 
-    @GetMapping(value="/")
+    @GetMapping(value="/toewijzing")
     public ResponseEntity getToewijzingList() throws NotFoundException {
         List<Toewijzing> toewijzingList = toewijzingRepository.findAll();
         if(toewijzingList.isEmpty()){
@@ -53,7 +46,7 @@ public class ToewijzingResource {
         }
         return ResponseEntity.status(HttpStatus.OK).body(toewijzingList);
     }
-    @GetMapping("/persoon/{persoonId}")
+    @GetMapping("/toewijzing/persoon/{persoonId}")
     public ResponseEntity getToewijzingListVanPersoon(@PathVariable("persoonId") Long persoonId) throws NotFoundException, ParameterInvalidException {
         checkIdAndGetPersoon(persoonId);
         Optional<List<Toewijzing>> toewijzingList = toewijzingRepository.findAllByPersoonId(persoonId);
@@ -63,7 +56,7 @@ public class ToewijzingResource {
         return ResponseEntity.status(HttpStatus.OK).body(toewijzingList.get());
     }
 
-    @PostMapping( value = "/")
+    @PostMapping( value = "/toewijzing")
     public ResponseEntity postToewijzing(@RequestBody ToewijzingDTO toewijzing) throws ParameterInvalidException, NotFoundException {
         if(toewijzing.equals(null)){
             throw new ParameterInvalidException("Geen toewijzing meegegeven");
@@ -78,7 +71,7 @@ public class ToewijzingResource {
         return ResponseEntity.status(HttpStatus.OK).body(newToewijzing);
     }
 
-    @PutMapping( value = "/{id}")
+    @PutMapping( value = "/toewijzing/{id}")
     public ResponseEntity putToewijzing(@PathVariable("id") Long id,@RequestBody ToewijzingDTO toewijzing) throws ParameterInvalidException, NotFoundException {
         if(toewijzing.equals(null)){
             throw new ParameterInvalidException("Geen toewijzing meegegeven");
@@ -91,14 +84,14 @@ public class ToewijzingResource {
         return ResponseEntity.status(HttpStatus.OK).body(foundToewijzing);
     }
 
-    @DeleteMapping(value = "/{id}" )
+    @DeleteMapping(value = "/toewijzing/{id}" )
     public ResponseEntity deleteToewijzing(@PathVariable("id") Long id) throws NotFoundException, ParameterInvalidException {
         Toewijzing toewijzing = checkIdAndGetToewijzing(id);
         toewijzingRepository.delete(toewijzing);
         return ResponseEntity.status(HttpStatus.OK).body(toewijzing);
     }
 
-    @DeleteMapping( value = "/persoon/{persoonId}" )
+    @DeleteMapping( value = "/toewijzing/persoon/{persoonId}" )
     public ResponseEntity deleteToewijzingenVanPersoon(@PathVariable("persoonId") Long persoonId) throws NotFoundException, ParameterInvalidException {
         checkIdAndGetPersoon(persoonId);
         Optional<List<Toewijzing>> toewijzingList = toewijzingRepository.findAllByPersoonId(persoonId);
@@ -109,7 +102,7 @@ public class ToewijzingResource {
         return ResponseEntity.status(HttpStatus.OK).body(toewijzingList);
     }
 
-    @DeleteMapping( value = "/ploeg/{ploegId}" )
+    @DeleteMapping( value = "/toewijzing/ploeg/{ploegId}" )
     public ResponseEntity deleteToewijzingenVanPloeg(@PathVariable("ploegId") Long ploegId) throws NotFoundException, ParameterInvalidException {
         checkIdAndGetPloeg(ploegId);
         Optional<List<Toewijzing>> toewijzingList = toewijzingRepository.findAllByPloegId(ploegId);
@@ -120,7 +113,7 @@ public class ToewijzingResource {
         return ResponseEntity.status(HttpStatus.OK).body(toewijzingList);
     }
 
-    @DeleteMapping( value = "/rol/{rolId}" )
+    @DeleteMapping( value = "/toewijzing/rol/{rolId}" )
     public ResponseEntity deleteToewijzingenVanRol(@PathVariable("rolId") Long rolId) throws NotFoundException, ParameterInvalidException {
         checkIdAndGetRol(rolId);
         Optional<List<Toewijzing>> toewijzingList = toewijzingRepository.findAllByRolId(rolId);
