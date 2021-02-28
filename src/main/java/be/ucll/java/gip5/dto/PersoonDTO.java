@@ -1,5 +1,7 @@
 package be.ucll.java.gip5.dto;
 
+import be.ucll.java.gip5.model.Rol;
+
 import java.util.Date;
 
 public class PersoonDTO {
@@ -12,6 +14,7 @@ public class PersoonDTO {
     private String gsm;
     private String email;
     private String wachtwoord;
+    private Rol defaultRol;
 
     public PersoonDTO(){}
     public PersoonDTO(String voornaam, String naam, String geboortedatum, String geslacht, String adres, String telefoon, String gsm, String email) {
@@ -23,6 +26,7 @@ public class PersoonDTO {
         this.telefoon = telefoon;
         this.gsm = gsm;
         this.email = email;
+        this.defaultRol = Rol.GUEST;
     }
 
     public PersoonDTO(String voornaam, String naam, String geboortedatum, String geslacht, String adres, String telefoon, String gsm, String email,String wachtwoord) {
@@ -35,7 +39,22 @@ public class PersoonDTO {
         this.gsm = gsm;
         this.email = email;
         this.wachtwoord = wachtwoord;
+        this.defaultRol = Rol.GUEST;
     }
+
+    public PersoonDTO(String voornaam, String naam, String geboortedatum, String geslacht, String adres, String telefoon, String gsm, String email,String wachtwoord, Rol defaultRol) {
+        this.voornaam = voornaam;
+        this.naam = naam;
+        this.geboortedatum = geboortedatum;
+        this.geslacht = geslacht;
+        this.adres = adres;
+        this.telefoon = telefoon;
+        this.gsm = gsm;
+        this.email = email;
+        this.wachtwoord = wachtwoord;
+        this.defaultRol = defaultRol;
+    }
+
     public String getVoornaam() {
         return voornaam;
     }
@@ -106,5 +125,13 @@ public class PersoonDTO {
 
     public void setWachtwoord(String wachtwoord) {
         this.wachtwoord = wachtwoord;
+    }
+
+    public Rol getDefaultRol() {
+        return defaultRol;
+    }
+
+    public void setDefaultRol(Rol defaultRol) {
+        this.defaultRol = defaultRol;
     }
 }
