@@ -7,16 +7,16 @@ import be.ucll.java.gip5.dto.PersoonDTO;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
 import be.ucll.java.gip5.model.Persoon;
+import be.ucll.java.gip5.model.Rol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/rest/v1")
@@ -34,7 +34,13 @@ public class PersoonResource {
     }
 
 
-
+    /**
+     * Zoek en krijg een persoon via id
+     * @param id Het id van de persoon
+     * @return krijg de persoon terug
+     * @throws ParameterInvalidException Als de gegeven id geen correct formaat is
+     * @throws NotFoundException Als er geen persoon gevonden is voor het gegeven id
+     */
     @GetMapping(value = "/persoon/{id}")
     public ResponseEntity getPersoon(@PathVariable("id") Long id) throws ParameterInvalidException, NotFoundException {
         logger.debug("GET request voor persoon gekregen");
@@ -49,6 +55,11 @@ public class PersoonResource {
         }
     }
 
+    /**
+     * Krijg alle spelers in de database
+     * @return krijg een list van personen terug
+     * @throws NotFoundException als er geen personen gevonden zijn in de database
+     */
     @GetMapping(value = "/persoon")
     public ResponseEntity getPersonen() throws NotFoundException {
         List<Persoon> personen = persoonRepository.findAll();
@@ -58,16 +69,48 @@ public class PersoonResource {
         return ResponseEntity.status(HttpStatus.OK).body(personen);
     }
 
+    /**
+     * Krijg een lijst van personen op basis van voornaam
+     * @param voornaam De voornaam word bekijken met een containing check (bvb: voornaam="bcd" => "abcd", "abcde", "bcdef")
+     * @param ignoreCase Optioneel, is default op true. Als op false gezet word, gaat hij hoofdletters gevoelig zoeken
+     * @return een lijst van personen
+     * @throws ParameterInvalidException Als de voornaam of ignoreCase niet correct is meegegeven
+     * @throws NotFoundException Als er geen personen zijn gevonden
+     */
     @GetMapping(value = "/persoon/voornaam/{voornaam}")
-    public ResponseEntity getPersonenVoornaam(@PathVariable("voornaam") String voornaam) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity getPersonenVoornaam(@PathVariable("voornaam") String voornaam, @RequestParam(value="ignoreCase", required = false, defaultValue="true") Boolean ignoreCase ) throws ParameterInvalidException, NotFoundException {
         if(voornaam == null || voornaam.trim().length() == 0){
             throw new ParameterInvalidException("Voornaam met waarde "+voornaam);
         }
-        Optional<List<Persoon>> personen = persoonRepository.findAllByVoornaamContaining(voornaam);
+        Optional<List<Persoon>> personen = Optional.empty();
+        if(ignoreCase){
+            personen = persoonRepository.findAllByVoornaamContaining(voornaam);
+        }else{
+            personen = persoonRepository.findAllByVoornaamContainingIgnoreCase(voornaam);
+        }
         if(!personen.isPresent()){
             throw new NotFoundException("Personen met voornaam "+voornaam);
         }
         return ResponseEntity.status(HttpStatus.OK).body(personen);
+    }
+
+    /**
+     *
+     * @param id
+     * @param rol
+     * @return
+     * @throws NotFoundException
+     */
+    @PutMapping(value="/persoon/{id}/rol")
+    public ResponseEntity putDefaultPersonenNaam(@PathVariable("id") Long id, @RequestBody("rol") String rol) throws NotFoundException {
+        Rol nieuweDefaultRol = Rol.valueOf(rol.trim().toUpperCase());
+        Optional<Persoon> persoon = persoonRepository.findPersoonById(id);
+        if(!persoon.isPresent()){
+            throw new NotFoundException(id.toString());
+        }
+        persoon.get().setDefault_rol(nieuweDefaultRol);
+        persoonRepository.save(persoon.get());
+        return ResponseEntity.status(HttpStatus.OK).body(persoon.get());
     }
 
     @GetMapping(value = "/persoon/naam/{naam}")
@@ -83,7 +126,7 @@ public class PersoonResource {
     }
 
     @GetMapping(value = "/persoon/geslacht/{geslacht}")
-    public ResponseEntity getPersonenGeslacht(@PathVariable("geslacht") Boolean geslacht) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity getPersonenGeslacht(@PathVariable("geslacht") String geslacht) throws ParameterInvalidException, NotFoundException {
         if(geslacht == null || !(geslacht instanceof Boolean)){
             throw new ParameterInvalidException("Geslacht met waarde "+geslacht);
         }

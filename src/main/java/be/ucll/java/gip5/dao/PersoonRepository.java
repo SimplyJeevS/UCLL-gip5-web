@@ -12,8 +12,10 @@ public interface PersoonRepository extends JpaRepository<Persoon, Long> {
     Optional<Persoon> findPersoonById(Long id);
     List<Persoon> findAll();
     Optional<List<Persoon>> findAllByVoornaamContaining(String voornaam);
+    Optional<List<Persoon>> findAllByVoornaamContainingIgnoreCase(String voornaam);
     Optional<List<Persoon>> findAllByNaamContaining(String voornaam);
-    Optional<List<Persoon>> findAllByGeslacht(Boolean geslacht);
+    Optional<List<Persoon>> findAllByNaamContainingIgnoreCase(String voornaam);
+    Optional<List<Persoon>> findAllByGeslacht(String geslacht);
     Optional<List<Persoon>> findAllByAdresContaining(String adres);
     Optional<Persoon> findPersoonByEmailAndWachtwoord(String email, String wachtwoord);
     Optional<Persoon> findPersoonByEmailIgnoreCase(String email);
