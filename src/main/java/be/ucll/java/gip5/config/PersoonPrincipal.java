@@ -2,7 +2,6 @@ package be.ucll.java.gip5.config;
 
 import be.ucll.java.gip5.model.Persoon;
 import be.ucll.java.gip5.model.Rol;
-import be.ucll.java.gip5.model.Toewijzing;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
