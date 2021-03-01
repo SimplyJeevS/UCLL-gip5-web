@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 
-@Route("")
+@Route("/")
 @Theme(value = Lumo.class)
 @PageTitle("Hello UCLL")
 public class HelloView extends VerticalLayout {

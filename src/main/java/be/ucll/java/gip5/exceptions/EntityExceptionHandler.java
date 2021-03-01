@@ -24,4 +24,8 @@ public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity ParameterInvalidException(ParameterInvalidException exception){
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(exception.getMessage());
     }
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity InvalidCredentialsException(InvalidCredentialsException exception){
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(exception.getMessage());
+    }
 }

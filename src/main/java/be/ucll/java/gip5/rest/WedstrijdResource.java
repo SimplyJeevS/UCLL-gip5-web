@@ -58,8 +58,16 @@ public class WedstrijdResource {
         return ResponseEntity.status(HttpStatus.OK).body(wedstrijdList);
     }
 
+    //tijdstip
+
+    /**
+     *
+     * (zone='na/voor/tussen', tijdstip="tijd" )
+     */
+
     @GetMapping("/wedstrijd/locatie/{locatie}")
     public ResponseEntity getWedstrijdFromLocatie(@PathVariable("locatie") String locatie) throws ParameterInvalidException, NotFoundException {
+        //check de rol => secre, mag alles bekijken anders hun wedstrijden
         if(locatie.isEmpty() || locatie.trim().length() <= 0){
             throw new ParameterInvalidException("Locatie is niet correct , kreeg "+locatie);
         }

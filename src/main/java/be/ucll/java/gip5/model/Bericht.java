@@ -10,14 +10,19 @@ public class Bericht {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+
     @Column(name="wedstrijdId")
     private Long wedstrijdId;
+
     @Column(name="boodschap")
     private String boodschap;
+
     @Column(name="afzenderId")
     private Long afzenderId;
+
     @Column(name="tijdstip")
     private LocalDateTime tijdstip;
+
     private Bericht(BerichtBuilder builder){
 
     }
