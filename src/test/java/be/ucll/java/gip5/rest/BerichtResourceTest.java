@@ -1,6 +1,8 @@
 package be.ucll.java.gip5.rest;
 
 import be.ucll.java.gip5.dao.BerichtRepository;
+import be.ucll.java.gip5.dao.PersoonRepository;
+import be.ucll.java.gip5.dao.WedstrijdRepository;
 import be.ucll.java.gip5.dto.BerichtDTO;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
@@ -35,7 +37,14 @@ public class BerichtResourceTest {
         @Mock
         BerichtResource mockberichtResource;
         @InjectMocks
-        BerichtResource resourceController = new BerichtResource();
+        @Autowired
+        BerichtRepository berichtRepository;
+        @Autowired
+        WedstrijdRepository wedstrijdRepository;
+        @Autowired
+        PersoonRepository persoonRepository;
+        @InjectMocks
+        BerichtResource resourceController = new BerichtResource(berichtRepository,wedstrijdRepository,persoonRepository);
 
         @Before
         public void init(){
