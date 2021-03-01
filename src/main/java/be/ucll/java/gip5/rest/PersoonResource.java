@@ -61,12 +61,21 @@ public class PersoonResource {
      * @throws NotFoundException als er geen personen gevonden zijn in de database
      */
     @GetMapping(value = "/persoon")
-    public ResponseEntity getPersonen() throws NotFoundException {
+    public ResponseEntity getPersonen(
+            @RequestParam(value="voornaam", required=false) String voornaam,
+            @RequestParam(value="naam", required=false) String naam,
+            @RequestParam(value="geslacht", required=false) String geslacht,
+            @RequestParam(value="default_rol", required = false) Rol default_rol,
+            @RequestParam(value="telefoon", required = false) String telefoon,
+            @RequestParam(value="adres", required=false) String adres,
+            @RequestParam(value="email", required = false) String email,
+            @RequestParam(value="gsm", required = false) String gsm
+    ) throws NotFoundException {
         List<Persoon> personen = persoonRepository.findAll();
         if(personen.isEmpty()){
             throw new NotFoundException("Personen ");
         }
-        return ResponseEntity.status(HttpStatus.OK).body(personen);
+        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("This endpint is not implemented yet");
     }
 
     /**
@@ -95,14 +104,14 @@ public class PersoonResource {
     }
 
     /**
-     *
-     * @param id
-     * @param rol
-     * @return
-     * @throws NotFoundException
+     * Verander de default rol van een persoon
+     * @param id De id van een persoon
+     * @param rol de nieuwe default rol voor de persoon
+     * @return Het persoon object met nieuwe rol
+     * @throws NotFoundException als de persoon niet gevonden word
      */
     @PutMapping(value="/persoon/{id}/rol")
-    public ResponseEntity putDefaultPersonenNaam(@PathVariable("id") Long id, @RequestBody("rol") String rol) throws NotFoundException {
+    public ResponseEntity putDefaultPersonenNaam(@PathVariable("id") Long id, @RequestBody String rol) throws NotFoundException {
         Rol nieuweDefaultRol = Rol.valueOf(rol.trim().toUpperCase());
         Optional<Persoon> persoon = persoonRepository.findPersoonById(id);
         if(!persoon.isPresent()){
@@ -113,21 +122,41 @@ public class PersoonResource {
         return ResponseEntity.status(HttpStatus.OK).body(persoon.get());
     }
 
+    /**
+     * Krijg een lijst van personen op basis van naam
+     * @param naam De naam word bekijken met een containing check (bvb: naam="bcd" => "abcd", "abcde", "bcdef")
+     * @param ignoreCase Optioneel, is default op true. Als op false gezet word, gaat hij hoofdletters gevoelig zoeken
+     * @return een lijst van personen
+     * @throws ParameterInvalidException Als de naam of ignoreCase niet correct is meegegeven
+     * @throws NotFoundException Als er geen personen zijn gevonden
+     */
     @GetMapping(value = "/persoon/naam/{naam}")
-    public ResponseEntity getPersonenNaam(@PathVariable("naam") String naam) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity getPersonenNaam(@PathVariable("naam") String naam, @RequestParam(value="ignoreCase", required = false, defaultValue="true") Boolean ignoreCase) throws ParameterInvalidException, NotFoundException {
         if(naam == null || naam.trim().length() == 0){
             throw new ParameterInvalidException("Naam met waarde "+naam);
         }
-        Optional<List<Persoon>> personen = persoonRepository.findAllByNaamContaining(naam);
+        Optional<List<Persoon>> personen = Optional.empty();
+        if(ignoreCase){
+            personen = persoonRepository.findAllByNaamContainingIgnoreCase(naam);
+        }else{
+            personen = persoonRepository.findAllByNaamContaining(naam);
+        }
         if(!personen.isPresent()){
             throw new NotFoundException("Personen met naam "+naam);
         }
         return ResponseEntity.status(HttpStatus.OK).body(personen);
     }
 
+    /**
+     * Krijg een lijst van personen op basis van geslacht
+     * @param geslacht Het geslacht van de persoon
+     * @return Een lijst van persoon
+     * @throws ParameterInvalidException Als het geslacht niet
+     * @throws NotFoundException
+     */
     @GetMapping(value = "/persoon/geslacht/{geslacht}")
     public ResponseEntity getPersonenGeslacht(@PathVariable("geslacht") String geslacht) throws ParameterInvalidException, NotFoundException {
-        if(geslacht == null || !(geslacht instanceof Boolean)){
+        if(geslacht == null || !(geslacht instanceof String)){
             throw new ParameterInvalidException("Geslacht met waarde "+geslacht);
         }
         Optional<List<Persoon>> personen = persoonRepository.findAllByGeslacht(geslacht);
@@ -279,7 +308,6 @@ public class PersoonResource {
         return geboortedatum;
     }
     private void checkPersoonWachtwoord(String wachtwoord) throws ParameterInvalidException {
-
         if(wachtwoord == null || wachtwoord.trim().length() < 8){
             throw new ParameterInvalidException("Wachtwoord moet minstens 8 characters bevatten, u gaf "+wachtwoord);
         }
