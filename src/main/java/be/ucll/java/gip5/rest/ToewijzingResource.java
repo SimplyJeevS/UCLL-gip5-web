@@ -112,8 +112,8 @@ public class ToewijzingResource {
     }
 
     @DeleteMapping( value = "/toewijzing/rol/{rolId}" )
-    public ResponseEntity deleteToewijzingenVanRol(@PathVariable("rolId") Long rolId) throws NotFoundException, ParameterInvalidException {
-        Optional<List<Toewijzing>> toewijzingList = toewijzingRepository.findAllByRolId(rolId);
+    public ResponseEntity deleteToewijzingenVanRol(@PathVariable("rolId") Rol rolId) throws NotFoundException, ParameterInvalidException {
+        Optional<List<Toewijzing>> toewijzingList = toewijzingRepository.findAllByRol(rolId);
         if(!toewijzingList.isPresent()){
             throw new NotFoundException("Geen toewijzingen gevonden voor deze rol");
         }
