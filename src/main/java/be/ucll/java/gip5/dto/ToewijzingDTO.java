@@ -1,15 +1,17 @@
 package be.ucll.java.gip5.dto;
 
+import be.ucll.java.gip5.model.Rol;
+
 public class ToewijzingDTO {
     private Long persoonId;
-    private Long rolId;
+    private Rol rol;
     private Long ploegId;
     private Long wedstrijdId;
 
     public ToewijzingDTO(){}
-    public ToewijzingDTO(Long persoonId, Long rolId, Long ploegId){
+    public ToewijzingDTO(Long persoonId, Rol rol, Long ploegId){
         this.persoonId = persoonId;
-        this.rolId = rolId;
+        this.rol = rol;
         this.ploegId = ploegId;
     }
 
@@ -21,12 +23,12 @@ public class ToewijzingDTO {
         this.persoonId = persoonId;
     }
 
-    public Long getRolId() {
-        return rolId;
+    public Rol getRol() {
+        return rol;
     }
 
-    public void setRolId(Long rolId) {
-        this.rolId = rolId;
+    public void setRol(Rol rol) {
+        this.rol = rol;
     }
 
     public Long getPloegId() {

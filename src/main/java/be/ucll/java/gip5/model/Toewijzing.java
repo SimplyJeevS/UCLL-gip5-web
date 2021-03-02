@@ -13,21 +13,24 @@ public class Toewijzing {
     @Column(name="persoonId")
     private Long persoonId;
 
-    @Column(name="rolId")
-    private Long rolId;
+    @Column(name="rol")
+    private Rol rol;
 
     @Column(name="ploegId")
     private Long ploegId;
 
     private Toewijzing(ToewijzingBuilder builder){
-
+        setId(builder.id);
+        setPloegId(builder.ploegId);
+        setRol(builder.rol);
+        setPersoonId(builder.persoonId);
     }
     public Toewijzing(){}
 
     public static final class ToewijzingBuilder{
         private Long id;
         private Long persoonId;
-        private Long rolId;
+        private Rol rol;
         private Long ploegId;
 
         public ToewijzingBuilder(){}
@@ -35,7 +38,7 @@ public class Toewijzing {
         public ToewijzingBuilder(Toewijzing copy){
             this.id = copy.id;
             this.persoonId = copy.persoonId;
-            this.rolId = copy.rolId;
+            this.rol = copy.rol;
             this.ploegId = copy.ploegId;
         }
         public ToewijzingBuilder id(Long id){
@@ -46,8 +49,8 @@ public class Toewijzing {
             this.persoonId = persoonId;
             return this;
         }
-        public ToewijzingBuilder rolId(Long rolId){
-            this.rolId = rolId;
+        public ToewijzingBuilder rol(Rol rol){
+            this.rol = rol;
             return this;
         }
         public ToewijzingBuilder ploegId(Long ploegId){
@@ -73,12 +76,12 @@ public class Toewijzing {
         this.persoonId = persoonId;
     }
 
-    public Long getRolId() {
-        return rolId;
+    public Rol getRolId() {
+        return rol;
     }
 
-    public void setRolId(Long rolId) {
-        this.rolId = rolId;
+    public void setRol(Rol rol) {
+        this.rol = rol;
     }
 
     public Long getPloegId() {

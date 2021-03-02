@@ -10,14 +10,19 @@ public class Bericht {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+
     @Column(name="wedstrijdId")
     private Long wedstrijdId;
+
     @Column(name="boodschap")
     private String boodschap;
+
     @Column(name="afzenderId")
     private Long afzenderId;
+
     @Column(name="tijdstip")
     private LocalDateTime tijdstip;
+
     private Bericht(BerichtBuilder builder){
 
     }
@@ -46,18 +51,32 @@ public class Bericht {
             return this;
         }
         public BerichtBuilder wedstrijdId(Long wedstrijdId){
+            if(wedstrijdId==null || wedstrijdId <= 0){
+                throw new IllegalArgumentException("WedstrijdId werd niet juist gegeven");
+            }
             this.wedstrijdId = wedstrijdId;
             return this;
         }
         public BerichtBuilder boodschap(String boodschap){
+            if(boodschap.isEmpty() || boodschap.trim().length() <= 0){
+                throw new IllegalArgumentException("boodschap werd niet juist gegeven");
+            }
             this.boodschap = boodschap;
             return this;
         }
         public BerichtBuilder afzenderId(Long afzenderId){
+            if(afzenderId==null || afzenderId <= 0){
+                throw new IllegalArgumentException("afzenderId werd niet juist gegeven");
+            }
             this.afzenderId = afzenderId;
             return this;
         }
         public BerichtBuilder tijdstip(LocalDateTime tijdstip){
+            if(tijdstip.equals(null) ){
+                throw new IllegalArgumentException("tijdstip mag niet leeg zijn");
+            }else if(tijdstip.isAfter(LocalDateTime.now().plusMinutes(1))){
+                throw new IllegalArgumentException("tijdstip mag niet in de toekomst liggen");
+            }
             this.tijdstip = tijdstip;
             return this;
         }
@@ -68,7 +87,7 @@ public class Bericht {
         return id;
     }
 
-    public void setId(Long id) {
+    private void setId(Long id) {
         this.id = id;
     }
 
@@ -77,6 +96,7 @@ public class Bericht {
     }
 
     public void setWedstrijdId(Long wedstrijdId) {
+
         this.wedstrijdId = wedstrijdId;
     }
 
@@ -85,6 +105,7 @@ public class Bericht {
     }
 
     public void setBoodschap(String boodschap) {
+
         this.boodschap = boodschap;
     }
 
@@ -93,6 +114,7 @@ public class Bericht {
     }
 
     public void setAfzenderId(Long afzenderId) {
+
         this.afzenderId = afzenderId;
     }
 

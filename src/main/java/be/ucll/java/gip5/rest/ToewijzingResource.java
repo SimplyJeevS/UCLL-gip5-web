@@ -21,15 +21,13 @@ public class ToewijzingResource {
     private Logger logger = LoggerFactory.getLogger(BerichtResource.class);
     private ToewijzingRepository toewijzingRepository;
     private PersoonRepository persoonRepository;
-    private RolRepository rolRepository;
     private PloegRepository ploegRepository;
     private WedstrijdRepository wedstrijdRepository;
 
     @Autowired
-    public ToewijzingResource(ToewijzingRepository toewijzingRepository,PersoonRepository persoonRepository,RolRepository rolRepository,PloegRepository ploegRepository, WedstrijdRepository wedstrijdRepository){
+    public ToewijzingResource(ToewijzingRepository toewijzingRepository,PersoonRepository persoonRepository,PloegRepository ploegRepository, WedstrijdRepository wedstrijdRepository){
         this.toewijzingRepository = toewijzingRepository;
         this.persoonRepository = persoonRepository;
-        this.rolRepository = rolRepository;
         this.wedstrijdRepository = wedstrijdRepository;
     }
 
@@ -65,7 +63,7 @@ public class ToewijzingResource {
         Toewijzing newToewijzing = new Toewijzing.ToewijzingBuilder()
                 .persoonId(toewijzing.getPersoonId())
                 .ploegId(toewijzing.getPloegId())
-                .rolId(toewijzing.getRolId())
+                .rol(toewijzing.getRol())
                 .build();
         toewijzingRepository.save(newToewijzing);
         return ResponseEntity.status(HttpStatus.OK).body(newToewijzing);
@@ -80,7 +78,7 @@ public class ToewijzingResource {
         checkToewijzingDto(toewijzing);
         foundToewijzing.setPersoonId(toewijzing.getPersoonId());
         foundToewijzing.setPloegId(toewijzing.getPloegId());
-        foundToewijzing.setRolId(toewijzing.getRolId());
+        foundToewijzing.setRol(toewijzing.getRol());
         return ResponseEntity.status(HttpStatus.OK).body(foundToewijzing);
     }
 
@@ -115,7 +113,6 @@ public class ToewijzingResource {
 
     @DeleteMapping( value = "/toewijzing/rol/{rolId}" )
     public ResponseEntity deleteToewijzingenVanRol(@PathVariable("rolId") Long rolId) throws NotFoundException, ParameterInvalidException {
-        checkIdAndGetRol(rolId);
         Optional<List<Toewijzing>> toewijzingList = toewijzingRepository.findAllByRolId(rolId);
         if(!toewijzingList.isPresent()){
             throw new NotFoundException("Geen toewijzingen gevonden voor deze rol");
@@ -131,20 +128,13 @@ public class ToewijzingResource {
         if(toewijzing.getPloegId().equals(null) || toewijzing.getPloegId() <= 0 ){
             throw new ParameterInvalidException("RolId moet een positief getal zijn");
         }
-        if(toewijzing.getRolId().equals(null) || toewijzing.getRolId() <= 0 ){
-            throw new ParameterInvalidException("PloegId moet een positief getal zijn");
-        }
         Optional<Persoon> persoon = persoonRepository.findPersoonById(toewijzing.getPersoonId());
         Optional<Ploeg> ploeg = ploegRepository.findPloegById(toewijzing.getPloegId());
-        Optional<Rol> rol = rolRepository.findRolById(toewijzing.getRolId());
         if(!persoon.isPresent()){
             throw new NotFoundException("Geen persoon gevonden met id "+toewijzing.getPersoonId());
         }
         if(!ploeg.isPresent()){
             throw new NotFoundException("Geen ploeg gevonden met id "+toewijzing.getPloegId());
-        }
-        if(!rol.isPresent()){
-            throw new NotFoundException("Geen rol gevonden met id "+toewijzing.getRolId());
         }
     }
 
@@ -178,16 +168,5 @@ public class ToewijzingResource {
             throw new NotFoundException(id.toString());
         }
         return ploeg.get();
-    }
-
-    private Rol checkIdAndGetRol(Long id) throws NotFoundException, ParameterInvalidException {
-        if(id == null || !(id instanceof Long) || id <=0 ){
-            throw new ParameterInvalidException(id.toString());
-        }
-        Optional<Rol> rol = rolRepository.findRolById(id);
-        if(!rol.isPresent()){
-            throw new NotFoundException(id.toString());
-        }
-        return rol.get();
     }
 }
