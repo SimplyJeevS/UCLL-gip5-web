@@ -7,6 +7,7 @@ import be.ucll.java.gip5.dto.PersoonDTO;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
 import be.ucll.java.gip5.model.Persoon;
+import be.ucll.java.gip5.model.Rol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 @RestController
 @RequestMapping("/rest/v1")
@@ -34,7 +34,13 @@ public class PersoonResource {
     }
 
 
-
+    /**
+     * Zoek en krijg een persoon via id
+     * @param id Het id van de persoon
+     * @return krijg de persoon terug
+     * @throws ParameterInvalidException Als de gegeven id geen correct formaat is
+     * @throws NotFoundException Als er geen persoon gevonden is voor het gegeven id
+     */
     @GetMapping(value = "/persoon/{id}")
     public ResponseEntity getPersoon(@PathVariable("id") Long id) throws ParameterInvalidException, NotFoundException {
         logger.debug("GET request voor persoon gekregen");
@@ -49,42 +55,184 @@ public class PersoonResource {
         }
     }
 
+    /**
+     * Krijg alle spelers in de database, performance van deze functie kan verbeterd worden (duurt lang nu)
+     * @return krijg een list van personen terug
+     * @throws NotFoundException als er geen personen gevonden zijn in de database
+     */
     @GetMapping(value = "/persoon")
-    public ResponseEntity getPersonen() throws NotFoundException {
+    public ResponseEntity getPersonen(
+            @RequestParam(value="voornaam", required=false) String voornaam,
+            @RequestParam(value="naam", required=false) String naam,
+            @RequestParam(value="geslacht", required=false) String geslacht,
+            @RequestParam(value="default_rol", required = false) Rol default_rol,
+            @RequestParam(value="telefoon", required = false) String telefoon,
+            @RequestParam(value="adres", required=false) String adres,
+            @RequestParam(value="email", required = false) String email,
+            @RequestParam(value="gsm", required = false) String gsm
+    ) throws NotFoundException {
         List<Persoon> personen = persoonRepository.findAll();
-        if(personen.isEmpty()){
-            throw new NotFoundException("Personen ");
+        List<Persoon> persoonVoornaam = Collections.emptyList();
+        List<Persoon> persoonNaam = Collections.emptyList();
+        List<Persoon> persoonGeslacht = Collections.emptyList();
+        List<Persoon> persoonDefault_rol = Collections.emptyList();
+        List<Persoon> persoonTelefoon = Collections.emptyList();
+        List<Persoon> persoonAdres = Collections.emptyList();
+        List<Persoon> persoonEmail = Collections.emptyList();
+        List<Persoon> persoonGsm = Collections.emptyList();
+
+        if(!(voornaam.isEmpty()||voornaam.trim()=="")){
+            personen.forEach(persoon -> {
+                if(persoon.getVoornaam().toLowerCase().contains(voornaam.toLowerCase())){
+                    persoonVoornaam.add(persoon);
+                }
+            });
         }
-        return ResponseEntity.status(HttpStatus.OK).body(personen);
+        if(!(naam.isEmpty()||naam.trim()=="")){
+            personen.forEach(persoon -> {
+                if(persoon.getNaam().toLowerCase().contains(naam.toLowerCase())){
+                    persoonNaam.add(persoon);
+                }
+            });
+        }
+        if(!(geslacht.isEmpty()||geslacht.trim()=="")){
+            personen.forEach(persoon -> {
+                if(persoon.getGeslacht().toLowerCase().contains(geslacht.toLowerCase())){
+                    persoonGeslacht.add(persoon);
+                }
+            });
+        }
+        if(!(default_rol.equals(null)||default_rol.toString().trim()=="")){
+            personen.forEach(persoon -> {
+                if(persoon.getDefault_rol().equals(default_rol)){
+                    persoonDefault_rol.add(persoon);
+                }
+            });
+        }
+        if(!(telefoon.isEmpty()||telefoon.trim()=="")){
+            personen.forEach(persoon -> {
+                if(persoon.getTelefoon().toLowerCase().contains(telefoon.toLowerCase())){
+                    persoonTelefoon.add(persoon);
+                }
+            });
+        }
+        if(!(adres.isEmpty()||adres.trim()=="")){
+            personen.forEach(persoon -> {
+                if(persoon.getAdres().toLowerCase().contains(adres.toLowerCase())){
+                    persoonAdres.add(persoon);
+                }
+            });
+        }
+        if(!(email.isEmpty()||email.trim()=="")){
+            personen.forEach(persoon -> {
+                if(persoon.getEmail().toLowerCase().contains(email.toLowerCase())){
+                    persoonEmail.add(persoon);
+                }
+            });
+        }
+        if(!(gsm.isEmpty()||gsm.trim()=="")){
+            personen.forEach(persoon -> {
+                if(persoon.getGsm().toLowerCase().contains(gsm.toLowerCase())){
+                    persoonGsm.add(persoon);
+                }
+            });
+        }
+        //finally create a distinct list of all list (except personen)
+        List<Persoon> finalPersonen = persoonVoornaam;
+        createDisctinctListFromPersonen(finalPersonen,persoonNaam);
+        createDisctinctListFromPersonen(finalPersonen,persoonAdres);
+        createDisctinctListFromPersonen(finalPersonen,persoonEmail);
+        createDisctinctListFromPersonen(finalPersonen,persoonDefault_rol);
+        createDisctinctListFromPersonen(finalPersonen,persoonGsm);
+        createDisctinctListFromPersonen(finalPersonen,persoonGeslacht);
+        createDisctinctListFromPersonen(finalPersonen,persoonTelefoon);
+
+        if(finalPersonen.isEmpty()){
+            throw new NotFoundException("Geen personen gevonden");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(finalPersonen);
     }
 
+    /**
+     * Krijg een lijst van personen op basis van voornaam
+     * @param voornaam De voornaam word bekijken met een containing check (bvb: voornaam="bcd" => "abcd", "abcde", "bcdef")
+     * @param ignoreCase Optioneel, is default op true. Als op false gezet word, gaat hij hoofdletters gevoelig zoeken
+     * @return een lijst van personen
+     * @throws ParameterInvalidException Als de voornaam of ignoreCase niet correct is meegegeven
+     * @throws NotFoundException Als er geen personen zijn gevonden
+     */
     @GetMapping(value = "/persoon/voornaam/{voornaam}")
-    public ResponseEntity getPersonenVoornaam(@PathVariable("voornaam") String voornaam) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity getPersonenVoornaam(@PathVariable("voornaam") String voornaam, @RequestParam(value="ignoreCase", required = false, defaultValue="true") Boolean ignoreCase ) throws ParameterInvalidException, NotFoundException {
         if(voornaam == null || voornaam.trim().length() == 0){
             throw new ParameterInvalidException("Voornaam met waarde "+voornaam);
         }
-        Optional<List<Persoon>> personen = persoonRepository.findAllByVoornaamContaining(voornaam);
+        Optional<List<Persoon>> personen = Optional.empty();
+        if(ignoreCase){
+            personen = persoonRepository.findAllByVoornaamContaining(voornaam);
+        }else{
+            personen = persoonRepository.findAllByVoornaamContainingIgnoreCase(voornaam);
+        }
         if(!personen.isPresent()){
             throw new NotFoundException("Personen met voornaam "+voornaam);
         }
         return ResponseEntity.status(HttpStatus.OK).body(personen);
     }
 
+    /**
+     * Verander de default rol van een persoon
+     * @param id De id van een persoon
+     * @param rol de nieuwe default rol voor de persoon
+     * @return Het persoon object met nieuwe rol
+     * @throws NotFoundException als de persoon niet gevonden word
+     */
+    @PutMapping(value="/persoon/{id}/rol")
+    public ResponseEntity putDefaultPersonenNaam(@PathVariable("id") Long id, @RequestBody String rol) throws NotFoundException {
+        Rol nieuweDefaultRol = Rol.valueOf(rol.trim().toUpperCase());
+        Optional<Persoon> persoon = persoonRepository.findPersoonById(id);
+        if(!persoon.isPresent()){
+            throw new NotFoundException(id.toString());
+        }
+        persoon.get().setDefault_rol(nieuweDefaultRol);
+        persoonRepository.save(persoon.get());
+        return ResponseEntity.status(HttpStatus.OK).body(persoon.get());
+    }
+
+    /**
+     * Krijg een lijst van personen op basis van naam
+     * @param naam De naam word bekijken met een containing check (bvb: naam="bcd" => "abcd", "abcde", "bcdef")
+     * @param ignoreCase Optioneel, is default op true. Als op false gezet word, gaat hij hoofdletters gevoelig zoeken
+     * @return een lijst van personen
+     * @throws ParameterInvalidException Als de naam of ignoreCase niet correct is meegegeven
+     * @throws NotFoundException Als er geen personen zijn gevonden
+     */
     @GetMapping(value = "/persoon/naam/{naam}")
-    public ResponseEntity getPersonenNaam(@PathVariable("naam") String naam) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity getPersonenNaam(@PathVariable("naam") String naam, @RequestParam(value="ignoreCase", required = false, defaultValue="true") Boolean ignoreCase) throws ParameterInvalidException, NotFoundException {
         if(naam == null || naam.trim().length() == 0){
             throw new ParameterInvalidException("Naam met waarde "+naam);
         }
-        Optional<List<Persoon>> personen = persoonRepository.findAllByNaamContaining(naam);
+        Optional<List<Persoon>> personen = Optional.empty();
+        if(ignoreCase){
+            personen = persoonRepository.findAllByNaamContainingIgnoreCase(naam);
+        }else{
+            personen = persoonRepository.findAllByNaamContaining(naam);
+        }
         if(!personen.isPresent()){
             throw new NotFoundException("Personen met naam "+naam);
         }
         return ResponseEntity.status(HttpStatus.OK).body(personen);
     }
 
+    /**
+     * Krijg een lijst van personen op basis van geslacht
+     * @param geslacht Het geslacht van de persoon
+     * @return Een lijst van persoon
+     * @throws ParameterInvalidException Als het geslacht niet
+     * @throws NotFoundException
+     */
     @GetMapping(value = "/persoon/geslacht/{geslacht}")
-    public ResponseEntity getPersonenGeslacht(@PathVariable("geslacht") Boolean geslacht) throws ParameterInvalidException, NotFoundException {
-        if(geslacht == null || !(geslacht instanceof Boolean)){
+    public ResponseEntity getPersonenGeslacht(@PathVariable("geslacht") String geslacht) throws ParameterInvalidException, NotFoundException {
+        if(geslacht == null || !(geslacht instanceof String)){
             throw new ParameterInvalidException("Geslacht met waarde "+geslacht);
         }
         Optional<List<Persoon>> personen = persoonRepository.findAllByGeslacht(geslacht);
@@ -236,9 +384,21 @@ public class PersoonResource {
         return geboortedatum;
     }
     private void checkPersoonWachtwoord(String wachtwoord) throws ParameterInvalidException {
-
         if(wachtwoord == null || wachtwoord.trim().length() < 8){
             throw new ParameterInvalidException("Wachtwoord moet minstens 8 characters bevatten, u gaf "+wachtwoord);
         }
+    }
+    private void createDisctinctListFromPersonen(List<Persoon> finalList, List<Persoon> addingList){
+        addingList.forEach(persoon -> {
+            AtomicReference<Boolean> notFoundAdding = new AtomicReference<>(true);
+            addingList.forEach(f-> {
+                if(f.getId()==persoon.getId()){
+                    notFoundAdding.set(false);
+                }
+            });
+            if(notFoundAdding.get()){
+                finalList.add(persoon);
+            }
+        });
     }
 }

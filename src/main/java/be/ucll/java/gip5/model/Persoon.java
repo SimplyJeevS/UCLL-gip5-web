@@ -39,17 +39,41 @@ public class Persoon {
     @Column(name = "wachtwoord")
     private String wachtwoord;
 
-    private Persoon(PersoonBuilder builder){
+    @Column(name="default_rol")
+    private Rol default_rol;
 
+    private Persoon(PersoonBuilder builder){
+        setWachtwoord(builder.wachtwoord);
+        setGsm(builder.gsm);
+        setGeboortedatum(builder.geboortedatum);
+        setEmail(builder.email);
+        setDefault_rol(builder.default_rol);
+        setAdres(builder.adres);
+        setGeslacht(builder.geslacht);
+        setId(builder.id);
+        setEmail(builder.email);
+        setGsm(builder.gsm);
+        setNaam(builder.naam);
+        setVoornaam(builder.voornaam);
+        setTelefoon(builder.telefoon);
+        setDefault_rol(builder.default_rol);
     }
 
     public Persoon(){};
+
+    public Rol getDefault_rol() {
+        return default_rol;
+    }
+
+    public void setDefault_rol(Rol default_rol) {
+        this.default_rol = default_rol;
+    }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    private void setId(Long id) {
         this.id = id;
     }
 
@@ -136,6 +160,7 @@ public class Persoon {
         private String gsm;
         private String email;
         private String wachtwoord;
+        private Rol default_rol;
 
         public PersoonBuilder() {
         }
@@ -154,6 +179,7 @@ public class Persoon {
             this.gsm = copy.gsm;
             this.email = copy.email;
             this.wachtwoord = copy.wachtwoord;
+            this.default_rol = copy.default_rol;
         }
 
         public PersoonBuilder id(Long id){
@@ -191,6 +217,10 @@ public class Persoon {
             return this;
         }public PersoonBuilder wachtwoord(String wachtwoord){
             this.wachtwoord = wachtwoord;
+            return this;
+        }
+        public PersoonBuilder default_rol(Rol default_rol){
+            this.default_rol = default_rol;
             return this;
         }
         public Persoon build(){return new Persoon(this);}
