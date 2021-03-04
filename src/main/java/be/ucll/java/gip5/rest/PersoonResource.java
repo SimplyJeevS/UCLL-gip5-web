@@ -55,12 +55,22 @@ public class PersoonResource {
         }
     }
 
+    @GetMapping(value = "/persoon")
+    public ResponseEntity getPersonen() throws NotFoundException {
+        List<Persoon> personen = persoonRepository.findAll();
+        if(personen.isEmpty()){
+            throw new NotFoundException("geen personen gevonden");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(personen);
+    }
+
+
     /**
      * Krijg alle spelers in de database, performance van deze functie kan verbeterd worden (duurt lang nu)
      * @return krijg een list van personen terug
      * @throws NotFoundException als er geen personen gevonden zijn in de database
      */
-    @GetMapping(value = "/persoon")
+    @GetMapping(value = "/persoon/filter")
     public ResponseEntity getPersonen(
             @RequestParam(value="voornaam", required=false) String voornaam,
             @RequestParam(value="naam", required=false) String naam,
