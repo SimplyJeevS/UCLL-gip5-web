@@ -15,6 +15,7 @@ public class Gip5StarterSpringApplication {
     private SpringVars vars;
 
     public static void main(String[] args) {
+
         SpringApplication.run(Gip5StarterSpringApplication.class, args);
     }
 

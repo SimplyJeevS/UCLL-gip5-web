@@ -177,11 +177,11 @@ public class PersoonView extends VerticalLayout {
         if (txtNaam.getValue().trim().length() == 0) {
             //  grid.setItems(persoonResource.getPersonen());
         } else {
-            try {
-                grid.setItems((Collection<PersoonDTO>) persoonResource.getPersonen());
-            } catch (IllegalArgumentException | NotFoundException e) {
-                Notification.show(e.getMessage(), 3000, Notification.Position.MIDDLE);
-            }
+//            try {
+//                grid.setItems((Collection<PersoonDTO>) persoonResource.getPersonen());
+//            } catch (IllegalArgumentException | NotFoundException e) {
+//                Notification.show(e.getMessage(), 3000, Notification.Position.MIDDLE);
+//            }
         }
     }
 
