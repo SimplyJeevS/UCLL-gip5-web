@@ -23,6 +23,8 @@ public class BerichtRepositoryTest extends AbstractIntegrationTest {
     PersoonRepository persoonRepository;
     @Autowired
     PloegRepository ploegRepository;
+    @Autowired
+    ToewijzingRepository toewijzingRepository;
 
     private Persoon testPersoon;
     private Wedstrijd testWedstrijd;

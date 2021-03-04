@@ -20,5 +20,6 @@ public interface PersoonRepository extends JpaRepository<Persoon, Long> {
     Optional<List<Persoon>> findAllByAdresContaining(String adres);
     Optional<Persoon> findPersoonByEmailAndWachtwoord(String email, String wachtwoord);
     Optional<Persoon> findPersoonByEmailIgnoreCase(String email);
-    
+    Optional<List<Persoon>> findAllByVoornaamContainingIgnoreCaseAndNaamContainingIgnoreCaseAndGeslachtIgnoreCaseAndDefault_rolAndTelefoonContainingIgnoreCaseAndAdresContainingIgnoreCaseAndEmailContainingIgnoreCaseAndGsmContainingIgnoreCase(String voornaam, String naam, String geslacht, Rol default_rol, String telefoon, String adres, String email,String gsm);
+    Optional<List<Persoon>> findAllByVoornaamContainingIgnoreCaseAndNaamContainingIgnoreCaseAndGeslachtIgnoreCaseAndTelefoonContainingIgnoreCaseAndAdresContainingIgnoreCaseAndEmailContainingIgnoreCaseAndGsmContainingIgnoreCase(String voornaam, String naam, String geslacht, String telefoon, String adres, String email,String gsm);
 }

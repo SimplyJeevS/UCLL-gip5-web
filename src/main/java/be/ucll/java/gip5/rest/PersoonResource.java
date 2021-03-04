@@ -11,12 +11,12 @@ import be.ucll.java.gip5.model.Rol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 @RestController
 @RequestMapping("/rest/v1")
@@ -56,7 +56,7 @@ public class PersoonResource {
     }
 
     /**
-     * Krijg alle spelers in de database
+     * Krijg alle spelers in de database, performance van deze functie kan verbeterd worden (duurt lang nu)
      * @return krijg een list van personen terug
      * @throws NotFoundException als er geen personen gevonden zijn in de database
      */
@@ -72,10 +72,86 @@ public class PersoonResource {
             @RequestParam(value="gsm", required = false) String gsm
     ) throws NotFoundException {
         List<Persoon> personen = persoonRepository.findAll();
-        if(personen.isEmpty()){
-            throw new NotFoundException("Personen ");
+        List<Persoon> persoonVoornaam = Collections.emptyList();
+        List<Persoon> persoonNaam = Collections.emptyList();
+        List<Persoon> persoonGeslacht = Collections.emptyList();
+        List<Persoon> persoonDefault_rol = Collections.emptyList();
+        List<Persoon> persoonTelefoon = Collections.emptyList();
+        List<Persoon> persoonAdres = Collections.emptyList();
+        List<Persoon> persoonEmail = Collections.emptyList();
+        List<Persoon> persoonGsm = Collections.emptyList();
+
+        if(!(voornaam.isEmpty()||voornaam.trim()=="")){
+            personen.forEach(persoon -> {
+                if(persoon.getVoornaam().toLowerCase().contains(voornaam.toLowerCase())){
+                    persoonVoornaam.add(persoon);
+                }
+            });
         }
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("This endpint is not implemented yet");
+        if(!(naam.isEmpty()||naam.trim()=="")){
+            personen.forEach(persoon -> {
+                if(persoon.getNaam().toLowerCase().contains(naam.toLowerCase())){
+                    persoonNaam.add(persoon);
+                }
+            });
+        }
+        if(!(geslacht.isEmpty()||geslacht.trim()=="")){
+            personen.forEach(persoon -> {
+                if(persoon.getGeslacht().toLowerCase().contains(geslacht.toLowerCase())){
+                    persoonGeslacht.add(persoon);
+                }
+            });
+        }
+        if(!(default_rol.equals(null)||default_rol.toString().trim()=="")){
+            personen.forEach(persoon -> {
+                if(persoon.getDefault_rol().equals(default_rol)){
+                    persoonDefault_rol.add(persoon);
+                }
+            });
+        }
+        if(!(telefoon.isEmpty()||telefoon.trim()=="")){
+            personen.forEach(persoon -> {
+                if(persoon.getTelefoon().toLowerCase().contains(telefoon.toLowerCase())){
+                    persoonTelefoon.add(persoon);
+                }
+            });
+        }
+        if(!(adres.isEmpty()||adres.trim()=="")){
+            personen.forEach(persoon -> {
+                if(persoon.getAdres().toLowerCase().contains(adres.toLowerCase())){
+                    persoonAdres.add(persoon);
+                }
+            });
+        }
+        if(!(email.isEmpty()||email.trim()=="")){
+            personen.forEach(persoon -> {
+                if(persoon.getEmail().toLowerCase().contains(email.toLowerCase())){
+                    persoonEmail.add(persoon);
+                }
+            });
+        }
+        if(!(gsm.isEmpty()||gsm.trim()=="")){
+            personen.forEach(persoon -> {
+                if(persoon.getGsm().toLowerCase().contains(gsm.toLowerCase())){
+                    persoonGsm.add(persoon);
+                }
+            });
+        }
+        //finally create a distinct list of all list (except personen)
+        List<Persoon> finalPersonen = persoonVoornaam;
+        createDisctinctListFromPersonen(finalPersonen,persoonNaam);
+        createDisctinctListFromPersonen(finalPersonen,persoonAdres);
+        createDisctinctListFromPersonen(finalPersonen,persoonEmail);
+        createDisctinctListFromPersonen(finalPersonen,persoonDefault_rol);
+        createDisctinctListFromPersonen(finalPersonen,persoonGsm);
+        createDisctinctListFromPersonen(finalPersonen,persoonGeslacht);
+        createDisctinctListFromPersonen(finalPersonen,persoonTelefoon);
+
+        if(finalPersonen.isEmpty()){
+            throw new NotFoundException("Geen personen gevonden");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(finalPersonen);
     }
 
     /**
@@ -311,5 +387,18 @@ public class PersoonResource {
         if(wachtwoord == null || wachtwoord.trim().length() < 8){
             throw new ParameterInvalidException("Wachtwoord moet minstens 8 characters bevatten, u gaf "+wachtwoord);
         }
+    }
+    private void createDisctinctListFromPersonen(List<Persoon> finalList, List<Persoon> addingList){
+        addingList.forEach(persoon -> {
+            AtomicReference<Boolean> notFoundAdding = new AtomicReference<>(true);
+            addingList.forEach(f-> {
+                if(f.getId()==persoon.getId()){
+                    notFoundAdding.set(false);
+                }
+            });
+            if(notFoundAdding.get()){
+                finalList.add(persoon);
+            }
+        });
     }
 }
