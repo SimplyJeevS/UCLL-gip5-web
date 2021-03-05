@@ -27,6 +27,7 @@ public class LoginResource {
 
     @PostMapping( value = "/login")
     public ResponseEntity postCheckLogin(@RequestParam(value = "email") String email, @RequestParam("wachtwoord") String wachtwoord) throws InvalidCredentialsException {
+        System.out.println(email+""+wachtwoord);
         Optional<Persoon> persoon = persoonRepository.findPersoonByEmailAndWachtwoord(email, wachtwoord);
         if(!persoon.isPresent()){
             throw new InvalidCredentialsException();
