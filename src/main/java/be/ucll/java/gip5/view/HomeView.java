@@ -12,7 +12,6 @@ import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.PageTitle;
@@ -27,7 +26,7 @@ import javax.annotation.PostConstruct;
 import java.util.Locale;
 
 
-@Route("")
+@Route("Home")
 @Theme(value = Lumo.class)
 @PageTitle("Home UCLL")
 public class HomeView extends AppLayout {
