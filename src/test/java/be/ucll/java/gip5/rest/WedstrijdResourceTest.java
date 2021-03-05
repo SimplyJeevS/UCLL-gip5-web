@@ -1,5 +1,6 @@
 package be.ucll.java.gip5.rest;
 
+import be.ucll.java.gip5.AbstractIntegrationTest;
 import be.ucll.java.gip5.dao.*;
 import be.ucll.java.gip5.dto.BerichtDTO;
 import be.ucll.java.gip5.dto.WedstrijdDTO;
@@ -9,39 +10,43 @@ import be.ucll.java.gip5.model.Ploeg;
 import be.ucll.java.gip5.model.Wedstrijd;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MockMvcBuilder;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(MockitoJUnitRunner.class)
-public class WedstrijdResourceTest {
+public class WedstrijdResourceTest extends AbstractIntegrationTest {
 
+    private MockMvc mockMvc;
     @Autowired
     WedstrijdResource wedstrijdResource;
     @Autowired
     WedstrijdRepository wedstrijdRepository;
 
-    Wedstrijd testwedstrijd;
-    Ploeg testthuisploeg;
-    Ploeg testtegenstander;
 
-    @RunWith(MockitoJUnitRunner.class)
-    public class TestWedStrijd{
 
-        @Mock
-        WedstrijdResource mockwedstrijdResource;
-        @InjectMocks
-        @Autowired
-        WedstrijdRepository wedstrijdRepository;
         @Autowired
         PloegRepository ploegRepository;
         @Autowired
@@ -50,44 +55,92 @@ public class WedstrijdResourceTest {
         DeelnameRepository deelnameRepository;
         WedstrijdResource resourceController = new WedstrijdResource(wedstrijdRepository, ploegRepository,  toewijzingRepository, deelnameRepository);
 
-        @Before
-        public void init(){
-            testthuisploeg = new Ploeg.PloegBuilder()
+        @Autowired
+        private WebApplicationContext wac;
+        @BeforeEach
+        void setUp() {
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
+    }
+
+
+        @Test
+        public void testPostWedstrijd() throws Exception {     //Testen of het posten van een wedstrijd werkt
+            Ploeg testthuisploeg = new Ploeg.PloegBuilder()
                     .naam("thuisploeg")
                     .build();
-            ploegRepository.save(testthuisploeg);
-            testtegenstander = new Ploeg.PloegBuilder()
+            Ploeg testtegenstander = new Ploeg.PloegBuilder()
                     .naam("tegenstander")
                     .build();
-            ploegRepository.save(testtegenstander);
-            testwedstrijd = new Wedstrijd.WedstrijdBuilder()
-                    .id(1L)
+            Wedstrijd testwedstrijd = new Wedstrijd.WedstrijdBuilder()
                     .locatie("Haasrode")
-                    .tegenstander(1L)
-                    .thuisPloeg(2L)
+                    .tegenstander(testtegenstander.getId())
+                    .thuisPloeg(testthuisploeg.getId())
                     .build();
+
+
+            MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post("/wedstrijd")
+                    .content(toJson(testwedstrijd))
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.id").exists())
+                    .andReturn();
+            Wedstrijd gemaakteWedstrijd = fromMvcResult(mvcResult, Wedstrijd.class);
+
+            assertEquals(gemaakteWedstrijd.getLocatie(), testwedstrijd.getLocatie());
         }
 
         @Test
-        public void testPostWedstrijd() throws NotFoundException, ParameterInvalidException {     //Testen of het posten van een wedstrijd werkt
-
-            WedstrijdDTO wedstrijd = new WedstrijdDTO();
-
-            resourceController.postWedstrijd(wedstrijd);
-
-            verify(wedstrijdResource, times(1)).postWedstrijd(wedstrijd);
+        public void testGetWedstrijdList() throws Exception {     //Testen of het getten van een wedstrijd werkt
+            mockMvc.perform(
+                    MockMvcRequestBuilders.get("/wedstrijd")
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andReturn();
         }
+    @Test
+    public void testDeleteWedstrijd() throws Exception {     //Testen of het posten van een wedstrijd werkt
+        Ploeg testthuisploeg = new Ploeg.PloegBuilder()
+                .naam("thuisploeg")
+                .build();
+        Ploeg testtegenstander = new Ploeg.PloegBuilder()
+                .naam("tegenstander")
+                .build();
+        Wedstrijd testwedstrijd = new Wedstrijd.WedstrijdBuilder()
+                .locatie("Haasrode")
+                .tegenstander(testtegenstander.getId())
+                .thuisPloeg(testthuisploeg.getId())
+                .build();
+        wedstrijdRepository.save(testwedstrijd);
 
-        @Test
-        public void testGetWedstrijd() throws NotFoundException, ParameterInvalidException {     //Testen of het getten van een wedstrijd werkt
-
-            WedstrijdDTO wedstrijd = new WedstrijdDTO();
-
-            resourceController.getWedstrijd(1L);
-
-            verify(wedstrijdResource, times(1)).getWedstrijd(1L);
-
-            Assert.assertEquals(wedstrijd.getLocatie(), testwedstrijd.getLocatie());
-        }
+        mockMvc.perform(MockMvcRequestBuilders.delete("/wedstrijd/" + testwedstrijd.getId().toString())
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
+    @Test
+    public void testEditWedstrijd() throws Exception {     //Testen of het posten van een wedstrijd werkt
+        Ploeg testthuisploeg = new Ploeg.PloegBuilder()
+                .naam("thuisploeg")
+                .build();
+        Ploeg testtegenstander = new Ploeg.PloegBuilder()
+                .naam("tegenstander")
+                .build();
+        Wedstrijd testwedstrijd = new Wedstrijd.WedstrijdBuilder()
+                .locatie("Haasrode")
+                .tegenstander(testtegenstander.getId())
+                .thuisPloeg(testthuisploeg.getId())
+                .build();
+        wedstrijdRepository.save(testwedstrijd);
+        Wedstrijd updatedWedstrijd = new Wedstrijd.WedstrijdBuilder()
+                .locatie("Leuven")
+                .tegenstander(testtegenstander.getId())
+                .thuisPloeg(testthuisploeg.getId())
+                .build();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/wedstrijd/" + testwedstrijd.getId().toString())
+                .content(toJson(updatedWedstrijd))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+    }
+
 }

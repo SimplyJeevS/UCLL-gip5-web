@@ -15,7 +15,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 @Transactional
 @ActiveProfiles("local")
 @ExtendWith(SpringExtension.class)
-public abstract class AbstractIntegrationTest {
+public abstract class AbstractIntegrationTest  {
 
     private static PostgreSQLContainer POSTGRES;
 
