@@ -9,7 +9,8 @@ import java.time.LocalDateTime;
 public class Wedstrijd {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @SequenceGenerator(name = "dseq", sequenceName = "wedstrijd_sequence", allocationSize = 1)
+    @Column(name = "id", updatable = false, nullable = false)
     private Long id;
     @Column(name="tijdstip")
     private LocalDateTime tijdstip;

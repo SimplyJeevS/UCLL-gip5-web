@@ -7,7 +7,8 @@ import javax.persistence.*;
 public class Ploeg {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @SequenceGenerator(name = "dseq", sequenceName = "ploeg_sequence", allocationSize = 1)
+    @Column(name = "id", updatable = false, nullable = false)
     private Long id;
     @Column(name="naam")
     private String naam;

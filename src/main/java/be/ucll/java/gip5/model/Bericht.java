@@ -8,7 +8,8 @@ import java.time.LocalDateTime;
 public class Bericht {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @SequenceGenerator(name = "dseq", sequenceName = "bericht_sequence", allocationSize = 1)
+    @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
     @Column(name="wedstrijdId")

@@ -53,16 +53,11 @@
             <column name="wachtwoord" type="CHARACTER VARYING(50)">
                 <constraints nullable="false"/>
             </column>
-        </createTable>
-        <createTable tableName="ploeg" schemaName="gip5">
-            <column name="id" type="SERIAL" autoIncrement="true">
-                <constraints primaryKey="true"/>
-            </column>
-            <column name="naam" type="CHARACTER VARYING(50)">
+            <column name="default_rol" type="CHARACTER VARYING">
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <createTable tableName="rol" schemaName="gip5">
+        <createTable tableName="ploeg" schemaName="gip5">
             <column name="id" type="SERIAL" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
@@ -98,6 +93,9 @@
                 <constraints nullable="false"/>
             </column>
             <column name="commentaar" type="CHARACTER VARYING(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="CHARACTER VARYING">
                 <constraints nullable="false"/>
             </column>
         </createTable>

@@ -9,7 +9,8 @@ import java.util.UUID;
 public class Persoon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @SequenceGenerator(name = "dseq", sequenceName = "persoon_sequence", allocationSize = 1)
+    @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
     @Column(name = "voornaam")
