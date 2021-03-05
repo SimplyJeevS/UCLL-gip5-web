@@ -5,5 +5,6 @@ public enum Rol {
     COACH,
     SPELER,
     JOURNALIST,
+    SUPPORTER,
     GUEST
 }
