@@ -4,7 +4,6 @@ import be.ucll.java.gip5.controller.PersoonController;
 import be.ucll.java.gip5.dto.PersoonDTO;
 import be.ucll.java.gip5.util.BeanUtil;
 import com.vaadin.flow.component.login.LoginForm;
-import com.vaadin.flow.component.login.LoginI18n;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -36,14 +35,8 @@ public class LoginView extends VerticalLayout {
         loc = new Locale("en_US");
         logger.debug("Browser/Session locale: " + loc.toString());
 
-        LoginI18n i18n = LoginI18n.createDefault();
-        i18n.getForm().setTitle(messageSrc.getMessage("app.title", null, loc));
-        i18n.getForm().setUsername(messageSrc.getMessage("login.lbl.userid", null, loc));
-        i18n.getForm().setPassword(messageSrc.getMessage("login.lbl.password", null, loc));
-        i18n.getErrorMessage().setTitle(messageSrc.getMessage("login.failure.tit", null, loc));
-        i18n.getErrorMessage().setMessage(messageSrc.getMessage("login.failure.msg", null, loc));
 
-        LoginForm frmLogin = new LoginForm(i18n);
+        LoginForm frmLogin = new LoginForm();
         frmLogin.setForgotPasswordButtonVisible(true);
         frmLogin.addLoginListener(e -> {
             PersoonDTO loginUser = userCtrl.authenticateUser(new PersoonDTO(e.getUsername(), e.getPassword()));
