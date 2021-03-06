@@ -38,26 +38,6 @@ public class LoginResource {
         ServletRequestAttributes attr = (ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes();
         HttpSession session= attr.getRequest().getSession(true); // true == allow create
-        if(session.getAttribute("api")!=null){
-            Optional<Persoon> persoon = persoonRepository.findPersoonByApi(session.getAttribute("api").toString());
-            if(persoon.isPresent()){
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(
-                        new PersoonDTO(
-                                persoon.get().getId(),
-                                persoon.get().getVoornaam(),
-                                persoon.get().getNaam(),
-                                persoon.get().getGeboortedatum().toString(),
-                                persoon.get().getGeslacht(),
-                                persoon.get().getAdres(),
-                                persoon.get().getTelefoon(),
-                                persoon.get().getGsm(),
-                                persoon.get().getEmail(),
-                                persoon.get().getDefault_rol(),
-                                persoon.get().getApi()
-                        )
-                );
-            }
-        }
         Optional<Persoon> persoon = persoonRepository.findPersoonByEmailAndWachtwoord(email, wachtwoord);
         if(!persoon.isPresent()){
             System.out.println("not found");
@@ -69,7 +49,7 @@ public class LoginResource {
                         persoon.get().getId(),
                         persoon.get().getVoornaam(),
                         persoon.get().getNaam(),
-                        persoon.get().getGeboortedatum().toString(),
+                        persoon.get().getGeboortedatum(),
                         persoon.get().getGeslacht(),
                         persoon.get().getAdres(),
                         persoon.get().getTelefoon(),
@@ -79,5 +59,14 @@ public class LoginResource {
                         persoon.get().getApi()
                 )
         );
+    }
+    @ResponseBody
+    @GetMapping("/logout")
+    public ResponseEntity getLogout(){
+        ServletRequestAttributes attr = (ServletRequestAttributes)
+                RequestContextHolder.currentRequestAttributes();
+        HttpSession session= attr.getRequest().getSession(true); // true == allow create
+        session.invalidate();
+        return ResponseEntity.status(HttpStatus.OK).body("logged out");
     }
 }

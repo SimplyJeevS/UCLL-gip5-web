@@ -77,7 +77,7 @@ public class Toewijzing {
         this.persoonId = persoonId;
     }
 
-    public Rol getRolId() {
+    public Rol getRol() {
         return rol;
     }
 
