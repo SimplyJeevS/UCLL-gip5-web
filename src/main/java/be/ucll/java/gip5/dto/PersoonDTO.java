@@ -2,8 +2,6 @@ package be.ucll.java.gip5.dto;
 
 import be.ucll.java.gip5.model.Rol;
 
-import java.util.Date;
-
 public class PersoonDTO {
     private String voornaam;
     private String naam;
@@ -67,6 +65,9 @@ public class PersoonDTO {
         this.email = email;
         this.defaultRol = defaultRol;
         this.api = api;
+    }
+
+    public PersoonDTO(String username, String password) {
     }
 
     public String getVoornaam() {
