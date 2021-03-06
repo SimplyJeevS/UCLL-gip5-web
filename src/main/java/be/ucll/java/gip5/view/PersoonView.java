@@ -1,7 +1,9 @@
 package be.ucll.java.gip5.view;
 
 import be.ucll.java.gip5.dto.PersoonDTO;
+import be.ucll.java.gip5.exceptions.InvalidCredentialsException;
 import be.ucll.java.gip5.exceptions.NotFoundException;
+import be.ucll.java.gip5.exceptions.ParameterInvalidException;
 import be.ucll.java.gip5.rest.PersoonResource;
 import be.ucll.java.gip5.util.BeanUtil;
 import com.vaadin.flow.component.ClickEvent;
@@ -24,7 +26,9 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.server.VaadinSession;
+import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.context.MessageSource;
+import org.springframework.http.ResponseEntity;
 
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
@@ -33,6 +37,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+@UIScope
 public class PersoonView extends VerticalLayout {
 
     // Spring controllers
@@ -64,7 +69,7 @@ public class PersoonView extends VerticalLayout {
         // Load Spring Beans via a utility class
         // We can't use @Autowired because Vaadin Views are preferably NOT declared as SpringComponent
         persoonResource = BeanUtil.getBean(PersoonResource.class);
-        //persoonResource.setLocale(VaadinSession.getCurrent().getLocale());
+        persoonResource.setLocale(VaadinSession.getCurrent().getLocale());
         msgSource = BeanUtil.getBean(MessageSource.class);
 
         this.setSizeFull();
@@ -101,7 +106,7 @@ public class PersoonView extends VerticalLayout {
         grid.addColumn(PersoonDTO::getTelefoon).setHeader("Telefoon").setSortable(true);
         grid.addColumn(PersoonDTO::getGsm).setHeader("Gsm").setSortable(true);
         grid.addColumn(PersoonDTO::getEmail).setHeader("E-mail").setSortable(true);
-        grid.addColumn(new ComponentRenderer<>(pers -> pers.getGeboortedatum() == null ? new Label("Geen info") : new Label(sdf.format(pers.getGeboortedatum())))).setHeader("Geboortedatum");
+        grid.addColumn(PersoonDTO::getGeboortedatum).setHeader("Geboortedatum").setSortable(true);
         grid.addColumn(new ComponentRenderer<>(pers -> {
             Button b = new Button(new Icon(VaadinIcon.BULLETS));
             b.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
@@ -166,8 +171,8 @@ public class PersoonView extends VerticalLayout {
 
     public void loadData() {
         if (persoonResource != null) {
-            // List<PersoonDTO> lst = persoonResource.getPersoon();
-            // grid.setItems(lst);
+            List<PersoonDTO> lst = persoonResource.getAllPersonen();
+            grid.setItems(lst);
         } else {
             System.err.println("Autowiring failed");
         }
@@ -175,13 +180,10 @@ public class PersoonView extends VerticalLayout {
 
     private void handleClickSearch(ClickEvent event) {
         if (txtNaam.getValue().trim().length() == 0) {
-            //  grid.setItems(persoonResource.getPersonen());
+            grid.setItems(persoonResource.getAllPersonen());
         } else {
-//            try {
-//                grid.setItems((Collection<PersoonDTO>) persoonResource.getPersonen());
-//            } catch (IllegalArgumentException | NotFoundException e) {
-//                Notification.show(e.getMessage(), 3000, Notification.Position.MIDDLE);
-//            }
+            String searchterm = txtNaam.getValue().trim();
+            grid.setItems(persoonResource.getSearchPersonen(searchterm));
         }
     }
 
@@ -202,16 +204,22 @@ public class PersoonView extends VerticalLayout {
         try {
             Date d = Date.from(frm.datGeboorte.getValue().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
 
-            // String voornaam, String naam, String geboortedatum, String geslacht, String adres, String telefoon, String gsm, String email
+            //String voornaam, String naam, String geboortedatum, String geslacht, String adres, String telefoon, String gsm, String email
 
-             //PersoonDTO s = new PersoonDTO(frm.txtVoornaam.getValue(), frm.txtNaam.getValue(), frm.datGeboorte.getValue(), frm.txtGeslacht.getValue(), frm.txtAdres.getValue(), frm.txtTelefoon.getValue(), frm.txtGsm.getValue(), frm.txtEmail.getValue());
-            // long i = persoonResource.postPersoon(s);
+             PersoonDTO s = new PersoonDTO(frm.txtVoornaam.getValue(), frm.txtNaam.getValue(), java.sql.Date.valueOf(frm.datGeboorte.getValue()), frm.txtGeslacht.getValue(), frm.txtAdres.getValue(), frm.txtTelefoon.getValue(), frm.txtGsm.getValue(), frm.txtEmail.getValue());
+            ResponseEntity i = persoonResource.postPersoon(s, "");
 
-            //  Notification.show("Persoon created (id: " + i + ")", 3000, Notification.Position.TOP_CENTER);
+            Notification.show("Persoon created (id: " + i + ")", 3000, Notification.Position.TOP_CENTER);
             frm.resetForm();
             handleClickSearch(null);
         } catch (IllegalArgumentException e) {
             Notification.show(e.getMessage(), 5000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
+        } catch (ParameterInvalidException e) {
+            e.printStackTrace();
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+        } catch (InvalidCredentialsException e) {
+            e.printStackTrace();
         }
     }
 
@@ -241,10 +249,16 @@ public class PersoonView extends VerticalLayout {
 
         Button confirmButton = new Button("Bevestig Persoon verwijderen", event2 -> {
             try {
-                // persoonResource.deletePersoon(Integer.parseInt(frm.lblID.getText()));
+                persoonResource.deletePersoon(Long.parseLong(frm.lblID.getText()), "");
                 Notification.show("Persoon verwijderd", 3000, Notification.Position.TOP_CENTER);
             } catch (IllegalArgumentException e) {
                 Notification.show("Het is NIET mogelijk de persson te verwijderen wegens geregistreerde toewijzigingen.", 5000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
+            } catch (ParameterInvalidException e) {
+                e.printStackTrace();
+            } catch (NotFoundException e) {
+                e.printStackTrace();
+            } catch (InvalidCredentialsException e) {
+                e.printStackTrace();
             }
             frm.resetForm();
             handleClickSearch(null);
@@ -271,7 +285,7 @@ public class PersoonView extends VerticalLayout {
 
         if (p != null) {
             // Copy the ID in a hidden field
-            //frm.lblID.setText("" + p.getId());
+            frm.lblID.setText("" + p.getId());
             if (p.getVoornaam() != null) {
                 frm.txtVoornaam.setValue(p.getVoornaam());
             } else {
@@ -310,7 +324,7 @@ public class PersoonView extends VerticalLayout {
 
             if (p.getGeboortedatum() != null) {
                 try {
-                    // frm.datGeboorte.setValue(p.getGeboortedatum().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+                    //frm.datGeboorte.setValue(p.getGeboortedatum().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
                 } catch (NullPointerException e) {
                     frm.datGeboorte.setValue(null);
                 }

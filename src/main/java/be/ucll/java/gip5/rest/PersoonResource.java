@@ -21,6 +21,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import be.ucll.java.gip5.util.Api;
 
 import static be.ucll.java.gip5.util.Api.checkApiKey;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/rest/v1")
@@ -29,6 +31,7 @@ public class PersoonResource {
     private PersoonRepository persoonRepository;
     private PloegRepository ploegRepository;
     private ToewijzingRepository toewijzingRepository;
+    private Locale loc = new Locale("en");
 
     @Autowired
     public PersoonResource(PersoonRepository persoonRepository,PloegRepository ploegRepository, ToewijzingRepository toewijzingRepository){
@@ -186,13 +189,13 @@ public class PersoonResource {
         if(voornaam == null || voornaam.trim().length() == 0){
             throw new ParameterInvalidException("Voornaam met waarde "+voornaam);
         }
-        Optional<List<Persoon>> personen = Optional.empty();
+        List<Persoon> personen = new ArrayList();
         if(ignoreCase){
             personen = persoonRepository.findAllByVoornaamContaining(voornaam);
         }else{
             personen = persoonRepository.findAllByVoornaamContainingIgnoreCase(voornaam);
         }
-        if(!personen.isPresent()){
+        if(personen.isEmpty()){
             throw new NotFoundException("Personen met voornaam "+voornaam);
         }
         return ResponseEntity.status(HttpStatus.OK).body(personen);
@@ -428,5 +431,34 @@ public class PersoonResource {
                 finalList.add(persoon);
             }
         });
+    }
+
+    public void setLocale(Locale loc) {this.loc = loc;
+    }
+    private List<PersoonDTO> queryListToPersoonDtoList(List<Persoon> lst){
+        Stream<PersoonDTO> stream = lst.stream()
+                .map(rec -> {
+                    PersoonDTO dto = new PersoonDTO();
+                    dto.setAdres(rec.getAdres());
+                    dto.setGeslacht(rec.getGeslacht());
+                    dto.setDefaultRol(rec.getDefault_rol());
+                    dto.setGeboortedatum(rec.getGeboortedatum());
+                    dto.setEmail(rec.getEmail());
+                    dto.setNaam(rec.getNaam());
+                    dto.setWachtwoord(rec.getWachtwoord());
+                    dto.setVoornaam(rec.getVoornaam());
+                    dto.setTelefoon(rec.getTelefoon());
+                    dto.setGsm(rec.getGsm());
+                    return dto;
+                });
+        return stream.collect(Collectors.toList());
+    }
+    public List<PersoonDTO> getAllPersonen() {return queryListToPersoonDtoList(persoonRepository.findAll());}
+    public List<PersoonDTO> getSearchPersonen(String naam) throws IllegalArgumentException {
+        if (naam == null || naam.trim().length() == 0)
+            throw new IllegalArgumentException("Personen ophalen met de naam gefaald. Naam leeg");
+
+        List<Persoon> lst = persoonRepository.findAllByVoornaamContaining(naam);
+        return queryListToPersoonDtoList(lst);
     }
 }
