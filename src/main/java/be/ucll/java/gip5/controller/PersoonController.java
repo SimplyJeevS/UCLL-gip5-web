@@ -1,12 +1,11 @@
 package be.ucll.java.gip5.controller;
 
 import be.ucll.java.gip5.dto.PersoonDTO;
-import be.ucll.java.gip5.model.Rol;
 import com.vaadin.flow.spring.annotation.VaadinSessionScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import java.util.ArrayList;
+
 import java.util.List;
 
 @VaadinSessionScope
@@ -18,11 +17,11 @@ public class PersoonController {
 
     private static List<PersoonDTO> users;
 
-    static {
-        users = new ArrayList<>(1);
-        users.add(new PersoonDTO("admin", "admin", "09/12/2000", "M", "Bergenhof 56",
-                "0486947755", "0486947755", "admin@admin.com", "admin", Rol.SECRETARIS));
-    }
+//    static {
+//        users = new ArrayList<>(1);
+//        users.add(new PersoonDTO("admin", "admin", "09/12/2000", "M", "Bergenhof 56",
+//                "0486947755", "0486947755", "admin@admin.com", "admin", Rol.SECRETARIS));
+//    }
 
     public PersoonDTO authenticateUser(PersoonDTO unauthenticateduser) {
         for (PersoonDTO user : users) {

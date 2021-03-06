@@ -1,10 +1,8 @@
 package be.ucll.java.gip5.rest;
 
 import be.ucll.java.gip5.dao.PersoonRepository;
-import be.ucll.java.gip5.dto.LoginDTO;
 import be.ucll.java.gip5.dto.PersoonDTO;
 import be.ucll.java.gip5.exceptions.InvalidCredentialsException;
-import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.model.Persoon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +14,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpSession;
-import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @RestController
@@ -46,7 +43,7 @@ public class LoginResource {
                                 persoon.get().getId(),
                                 persoon.get().getVoornaam(),
                                 persoon.get().getNaam(),
-                                persoon.get().getGeboortedatum().toString(),
+                                persoon.get().getGeboortedatum(),
                                 persoon.get().getGeslacht(),
                                 persoon.get().getAdres(),
                                 persoon.get().getTelefoon(),
@@ -69,7 +66,7 @@ public class LoginResource {
                         persoon.get().getId(),
                         persoon.get().getVoornaam(),
                         persoon.get().getNaam(),
-                        persoon.get().getGeboortedatum().toString(),
+                        persoon.get().getGeboortedatum(),
                         persoon.get().getGeslacht(),
                         persoon.get().getAdres(),
                         persoon.get().getTelefoon(),
