@@ -18,6 +18,8 @@ public class Api {
                     RequestContextHolder.currentRequestAttributes();
             HttpSession session= attr.getRequest().getSession(true); // true == allow create
             api = (String) session.getAttribute("api");
+            System.out.println(api);
+            return null;
         }
         Optional<Persoon> persoon = persoonRepository.findPersoonByApi(api);
         if(!persoon.isPresent()){

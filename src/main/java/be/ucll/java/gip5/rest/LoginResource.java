@@ -16,6 +16,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpSession;
+import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @RestController
@@ -30,17 +31,38 @@ public class LoginResource {
     }
 
     //inloggen, zou een sessie starten met de huidige rol
-    @PostMapping( value = "/login")
-    public ResponseEntity postCheckLogin(@RequestBody LoginDTO loginDTO) throws InvalidCredentialsException {
-        logger.debug(loginDTO.toString());
-        Optional<Persoon> persoon = persoonRepository.findPersoonByEmailAndWachtwoord(loginDTO.getEmail(), loginDTO.getWachtwoord());
+    @ResponseBody
+    @GetMapping( value = "/login")
+    public ResponseEntity getCheckLogin(@RequestParam String email, @RequestParam String wachtwoord) throws InvalidCredentialsException {
+        logger.debug(email);
+        ServletRequestAttributes attr = (ServletRequestAttributes)
+                RequestContextHolder.currentRequestAttributes();
+        HttpSession session= attr.getRequest().getSession(true); // true == allow create
+        if(session.getAttribute("api")!=null){
+            Optional<Persoon> persoon = persoonRepository.findPersoonByApi(session.getAttribute("api").toString());
+            if(persoon.isPresent()){
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(
+                        new PersoonDTO(
+                                persoon.get().getId(),
+                                persoon.get().getVoornaam(),
+                                persoon.get().getNaam(),
+                                persoon.get().getGeboortedatum().toString(),
+                                persoon.get().getGeslacht(),
+                                persoon.get().getAdres(),
+                                persoon.get().getTelefoon(),
+                                persoon.get().getGsm(),
+                                persoon.get().getEmail(),
+                                persoon.get().getDefault_rol(),
+                                persoon.get().getApi()
+                        )
+                );
+            }
+        }
+        Optional<Persoon> persoon = persoonRepository.findPersoonByEmailAndWachtwoord(email, wachtwoord);
         if(!persoon.isPresent()){
             System.out.println("not found");
             throw new InvalidCredentialsException();
         }
-        ServletRequestAttributes attr = (ServletRequestAttributes)
-                RequestContextHolder.currentRequestAttributes();
-        HttpSession session= attr.getRequest().getSession(true); // true == allow create
         session.setAttribute("api",persoon.get().getApi());
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(
                 new PersoonDTO(

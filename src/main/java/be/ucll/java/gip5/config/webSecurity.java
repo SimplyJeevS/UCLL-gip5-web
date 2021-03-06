@@ -17,11 +17,7 @@ public class webSecurity extends WebSecurityConfigurerAdapter {
     {
         security.httpBasic().disable();
         security.sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
-        security.sessionManagement()
-                .invalidSessionUrl("/login");
-        security.sessionManagement()
-                .sessionFixation().migrateSession();
+                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS);
     }
     @Bean
     public HttpSessionEventPublisher httpSessionEventPublisher() {
