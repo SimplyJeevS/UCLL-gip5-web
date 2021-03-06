@@ -20,41 +20,16 @@ public class PersoonDTO {
 
     public PersoonDTO(){}
 
-    public PersoonDTO(Long id, String voornaam, String naam, Date geboortedatum, String geslacht, String adres, String telefoon, String gsm, String email) {
-        this.id = id;
+    public PersoonDTO(String voornaam, String naam, String wachtwoord, Date geboortedatum, String geslacht, String adres, String telefoon, String gsm, String email) {
         this.voornaam = voornaam;
         this.naam = naam;
-        this.geboortedatum = geboortedatum;
-        this.geslacht = geslacht;
-        this.adres = adres;
-        this.telefoon = telefoon;
-        this.gsm = gsm;
-        this.email = email;
-        this.defaultRol = Rol.GUEST;
-    }
-    public PersoonDTO(String voornaam, String naam, Date geboortedatum, String geslacht, String adres, String telefoon, String gsm, String email) {
-        this.voornaam = voornaam;
-        this.naam = naam;
-        this.geboortedatum = geboortedatum;
-        this.geslacht = geslacht;
-        this.adres = adres;
-        this.telefoon = telefoon;
-        this.gsm = gsm;
-        this.email = email;
-        this.defaultRol = Rol.GUEST;
-    }
-
-    public PersoonDTO(String voornaam, String naam, Date geboortedatum, String geslacht, String adres, String telefoon, String gsm, String email,String wachtwoord) {
-        this.voornaam = voornaam;
-        this.naam = naam;
-        this.geboortedatum = geboortedatum;
-        this.geslacht = geslacht;
-        this.adres = adres;
-        this.telefoon = telefoon;
-        this.gsm = gsm;
-        this.email = email;
         this.wachtwoord = wachtwoord;
-        this.defaultRol = Rol.GUEST;
+        this.geboortedatum = geboortedatum;
+        this.geslacht = geslacht;
+        this.adres = adres;
+        this.telefoon = telefoon;
+        this.gsm = gsm;
+        this.email = email;
     }
 
     public PersoonDTO(String voornaam, String naam, Date geboortedatum, String geslacht, String adres, String telefoon, String gsm, String email,String wachtwoord, Rol defaultRol) {
@@ -82,8 +57,8 @@ public class PersoonDTO {
         this.api = api;
     }
 
-    public PersoonDTO(String username, String password) {
-    }
+//    public PersoonDTO(String voornaam, String naam, String value2, java.sql.Date valueOf, String value3, String value4, String value5, String value6, String value7) {
+////    }
 
 
     public void setId(long id) {

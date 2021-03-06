@@ -15,14 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.text.SimpleDateFormat;
+
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
-import be.ucll.java.gip5.util.Api;
-
-import static be.ucll.java.gip5.util.Api.checkApiKey;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static be.ucll.java.gip5.util.Api.checkApiKey;
 
 @RestController
 @RequestMapping("/rest/v1")

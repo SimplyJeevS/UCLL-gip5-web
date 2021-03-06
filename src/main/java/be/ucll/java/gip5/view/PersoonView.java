@@ -33,7 +33,6 @@ import org.springframework.http.ResponseEntity;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -98,9 +97,10 @@ public class PersoonView extends VerticalLayout {
         grid = new Grid<>();
         grid.setItems(new ArrayList<PersoonDTO>(0));
         grid.addColumn(PersoonDTO::getVoornaam).setHeader("Voornaam").setSortable(true);
-//        grid.addColumn(persoon -> persoon.getVoornaam()).setHeader("Voornaam").setSortable(true);
+        //grid.addColumn(persoon -> persoon.getVoornaam()).setHeader("Voornaam").setSortable(true);
         grid.addColumn(PersoonDTO::getNaam).setHeader("Naam").setSortable(true);
-        // grid.addColumn(PersoonDTO::getGeboortedatum).setHeader("Geboortedatum");
+        grid.addColumn(PersoonDTO::getWachtwoord).setHeader("Wachtwoord").setSortable(true);
+        //grid.addColumn(PersoonDTO::getGeboortedatum).setHeader("Geboortedatum");
         grid.addColumn(PersoonDTO::getGeslacht).setHeader("Geslacht").setSortable(true);
         grid.addColumn(PersoonDTO::getAdres).setHeader("Adres").setSortable(true);
         grid.addColumn(PersoonDTO::getTelefoon).setHeader("Telefoon").setSortable(true);
@@ -206,7 +206,7 @@ public class PersoonView extends VerticalLayout {
 
             //String voornaam, String naam, String geboortedatum, String geslacht, String adres, String telefoon, String gsm, String email
 
-             PersoonDTO s = new PersoonDTO(frm.txtVoornaam.getValue(), frm.txtNaam.getValue(), java.sql.Date.valueOf(frm.datGeboorte.getValue()), frm.txtGeslacht.getValue(), frm.txtAdres.getValue(), frm.txtTelefoon.getValue(), frm.txtGsm.getValue(), frm.txtEmail.getValue());
+            PersoonDTO s = new PersoonDTO(frm.txtVoornaam.getValue(),frm.txtNaam.getValue(),frm.txtWachtwoord.getValue(), java.sql.Date.valueOf(frm.datGeboorte.getValue()) ,frm.txtGeslacht.getValue(),frm.txtAdres.getValue(),frm.txtTelefoon.getValue(),frm.txtGsm.getValue(),frm.txtEmail.getValue());
             ResponseEntity i = persoonResource.postPersoon(s, "");
 
             Notification.show("Persoon created (id: " + i + ")", 3000, Notification.Position.TOP_CENTER);
@@ -279,7 +279,7 @@ public class PersoonView extends VerticalLayout {
     }
 
     private void populateForm(PersoonDTO p) {
-        btnCreate.setVisible(false);
+        btnCreate.setVisible(true);
         btnUpdate.setVisible(true);
         btnDelete.setVisible(true);
 
@@ -295,6 +295,11 @@ public class PersoonView extends VerticalLayout {
                 frm.txtNaam.setValue(p.getNaam());
             } else {
                 frm.txtNaam.setValue("");
+            }
+            if (p.getWachtwoord() != null) {
+                frm.txtWachtwoord.setValue(p.getWachtwoord());
+            } else {
+                frm.txtWachtwoord.setValue("");
             }
             if (p.getGeslacht() != null) {
                 frm.txtNaam.setValue(p.getGeslacht());
