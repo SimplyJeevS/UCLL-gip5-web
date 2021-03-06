@@ -42,19 +42,7 @@ public class LoginResource {
         }
         session.setAttribute("api",persoon.get().getApi());
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(
-                new PersoonDTO(
-                        persoon.get().getId(),
-                        persoon.get().getVoornaam(),
-                        persoon.get().getNaam(),
-                        persoon.get().getGeboortedatum(),
-                        persoon.get().getGeslacht(),
-                        persoon.get().getAdres(),
-                        persoon.get().getTelefoon(),
-                        persoon.get().getGsm(),
-                        persoon.get().getEmail(),
-                        persoon.get().getDefault_rol(),
-                        persoon.get().getApi()
-                )
+                persoon
         );
     }
     @ResponseBody

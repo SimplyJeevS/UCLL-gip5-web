@@ -72,7 +72,6 @@ public class PersoonResource {
         return ResponseEntity.status(HttpStatus.OK).body(personen);
     }
 
-
     /**
      * Krijg alle spelers in de database, performance van deze functie kan verbeterd worden (duurt lang nu)
      * @return krijg een list van personen terug
