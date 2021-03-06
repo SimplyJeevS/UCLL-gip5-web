@@ -56,9 +56,6 @@
             <column name="default_rol" type="CHARACTER VARYING">
                 <constraints nullable="false"/>
             </column>
-            <column name="default_rol" type="CHARACTER VARYING">
-                <constraints nullable="false"/>
-            </column>
             <column name="api" type="CHARACTER VARYING">
                 <constraints nullable="false"/>
             </column>

@@ -67,6 +67,9 @@ public class Persoon {
     public Persoon(){};
 
     public String getApi(){return api;}
+    private void setApi(String api){
+        this.api = api;
+    }
 
     public Rol getDefault_rol() {
         return default_rol;

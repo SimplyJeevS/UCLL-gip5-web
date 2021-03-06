@@ -177,7 +177,7 @@ public class PersoonResource {
      * @throws NotFoundException Als er geen personen zijn gevonden
      */
     @GetMapping(value = "/persoon/voornaam/{voornaam}")
-    public ResponseEntity getPersonenVoornaam(@PathVariable("voornaam") String voornaam, @RequestParam(value="ignoreCase", required = false, defaultValue="true") Boolean ignoreCase @RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity getPersonenVoornaam(@PathVariable("voornaam") String voornaam, @RequestParam(value="ignoreCase", required = false, defaultValue="true") Boolean ignoreCase, @RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException {
         if(voornaam == null || voornaam.trim().length() == 0){
             throw new ParameterInvalidException("Voornaam met waarde "+voornaam);
         }
