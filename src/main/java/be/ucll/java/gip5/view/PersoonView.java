@@ -302,34 +302,34 @@ public class PersoonView extends VerticalLayout {
                 frm.txtWachtwoord.setValue("");
             }
             if (p.getGeslacht() != null) {
-                frm.txtNaam.setValue(p.getGeslacht());
+                frm.txtGeslacht.setValue(p.getGeslacht());
             } else {
-                frm.txtNaam.setValue("");
+                frm.txtGeslacht.setValue("");
             }
             if (p.getAdres() != null) {
-                frm.txtNaam.setValue(p.getAdres());
+                frm.txtAdres.setValue(p.getAdres());
             } else {
-                frm.txtNaam.setValue("");
+                frm.txtAdres.setValue("");
             }
             if (p.getTelefoon() != null) {
-                frm.txtNaam.setValue(p.getTelefoon());
+                frm.txtTelefoon.setValue(p.getTelefoon());
             } else {
-                frm.txtNaam.setValue("");
+                frm.txtTelefoon.setValue("");
             }
             if (p.getGsm() != null) {
-                frm.txtNaam.setValue(p.getGsm());
+                frm.txtGsm.setValue(p.getGsm());
             } else {
-                frm.txtNaam.setValue("");
+                frm.txtGsm.setValue("");
             }
             if (p.getEmail() != null) {
-                frm.txtNaam.setValue(p.getEmail());
+                frm.txtEmail.setValue(p.getEmail());
             } else {
-                frm.txtNaam.setValue("");
+                frm.txtEmail.setValue("");
             }
 
             if (p.getGeboortedatum() != null) {
                 try {
-                    //frm.datGeboorte.setValue(p.getGeboortedatum().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+                    frm.datGeboorte.setValue(p.getGeboortedatum().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
                 } catch (NullPointerException e) {
                     frm.datGeboorte.setValue(null);
                 }
