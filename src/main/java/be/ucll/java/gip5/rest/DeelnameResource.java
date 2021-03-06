@@ -2,6 +2,7 @@ package be.ucll.java.gip5.rest;
 
 import be.ucll.java.gip5.dao.*;
 import be.ucll.java.gip5.dto.DeelnameDTO;
+import be.ucll.java.gip5.exceptions.InvalidCredentialsException;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
 import be.ucll.java.gip5.model.*;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+
+import static be.ucll.java.gip5.util.Api.checkApiKey;
 
 @RestController
 @RequestMapping("/rest/v1")
@@ -31,7 +34,8 @@ public class DeelnameResource {
     }
 
     @GetMapping(value="/deelname/{id}")
-    public ResponseEntity getDeelname(@PathVariable("deelname") Long id) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity getDeelname(@PathVariable("deelname") Long id,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         logger.debug("GET request voor deelname gekregen");
         if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());
@@ -44,14 +48,16 @@ public class DeelnameResource {
     }
 
     @GetMapping( value = "/deelname")
-    public ResponseEntity getDeelnameList() throws NotFoundException {
+    public ResponseEntity getDeelnameList(@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         List<Deelname> deelnameList = deelnameRepository.findAll();
         if(deelnameList.isEmpty()) throw new NotFoundException("Deelnames");
         return ResponseEntity.status(HttpStatus.OK).body(deelnameList);
     }
 
     @GetMapping( value = "/deelname/wedstrijd/{wedstrijdId}")
-    public ResponseEntity getDeelnameWedstrijd(@PathVariable("wedstrijdId") Long wedstrijdId) throws NotFoundException, ParameterInvalidException {
+    public ResponseEntity getDeelnameWedstrijd(@PathVariable("wedstrijdId") Long wedstrijdId,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, ParameterInvalidException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         checkandFindWedstrijdId(wedstrijdId);
         Optional<List<Deelname>> deelnameList = deelnameRepository.findAllByWedstrijdId(wedstrijdId);
         if(!deelnameList.isPresent() || deelnameList.get().isEmpty()){
@@ -61,7 +67,8 @@ public class DeelnameResource {
     }
 
     @GetMapping( value = "/deelname/persoon/{persoonId}")
-    public ResponseEntity getDeelnamePersoon(@PathVariable("persoonId") Long persoonId) throws NotFoundException, ParameterInvalidException {
+    public ResponseEntity getDeelnamePersoon(@PathVariable("persoonId") Long persoonId,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, ParameterInvalidException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         checkandFindPersoonId(persoonId);
         Optional<List<Deelname>> deelnameList = deelnameRepository.findAllByPersoonId(persoonId);
         if(!deelnameList.isPresent() || deelnameList.get().isEmpty()){
@@ -71,7 +78,8 @@ public class DeelnameResource {
     }
 
     @PutMapping("/deelname/{id}/commentaar")
-    public ResponseEntity putDeelnameCommentaar(@PathVariable("id") Long id,@RequestParam(value = "commentaar",defaultValue = "") String commentaar) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity putDeelnameCommentaar(@PathVariable("id") Long id,@RequestParam(value = "commentaar",defaultValue = "") String commentaar,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         if(commentaar.trim().length() <= 0){
             throw new ParameterInvalidException("Commentaar mag niet leeg zijn");
         }
@@ -82,7 +90,8 @@ public class DeelnameResource {
     }
 
     @PostMapping(value="/deelname")
-    public ResponseEntity postDeelname(@RequestBody DeelnameDTO deelname) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity postDeelname(@RequestBody DeelnameDTO deelname,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         logger.debug("POST request voor deelname gekregen");
         if(deelname.getPersoonId().equals(null) || deelname.getWedstrijdId().equals(null) || deelname.getCommentaar().equals(null)){
             throw new ParameterInvalidException("Geef een compleet object mee van deelname");
@@ -101,7 +110,8 @@ public class DeelnameResource {
     }
 
     @PutMapping( value = "/deelname/{id}")
-    public ResponseEntity putDeelname(@PathVariable("id") Long id,@RequestBody DeelnameDTO deelname) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity putDeelname(@PathVariable("id") Long id,@RequestBody DeelnameDTO deelname,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         if(deelname.getCommentaar().trim().length() <= 0){
             throw new ParameterInvalidException("Deelname is niet ingvuld");
         }
@@ -115,7 +125,8 @@ public class DeelnameResource {
         return ResponseEntity.status(HttpStatus.OK).body(deelname);
     }
     @DeleteMapping( value = "/deelname/{id}")
-    public ResponseEntity deleteDeelname(@PathVariable("id") Long id) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity deleteDeelname(@PathVariable("id") Long id,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         logger.debug("DELETE request voor deelname gekregen");
         if(id == null || !(id instanceof Long) ||    id <=0 ){
             throw new ParameterInvalidException(id.toString());

@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import be.ucll.java.gip5.util.Api;
+
+import static be.ucll.java.gip5.util.Api.checkApiKey;
 
 @RestController
 @RequestMapping("/rest/v1")
@@ -45,7 +48,7 @@ public class PersoonResource {
     @GetMapping(value = "/persoon/{id}")
     public ResponseEntity getPersoon(@PathVariable("id") Long id, @RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
         logger.debug("GET request voor persoon gekregen");
-        checkApiKey(api);
+        checkApiKey(api, persoonRepository);
         if(id == null && !(id instanceof Long) && id <=0 ){
             throw new ParameterInvalidException(id.toString());
         }
@@ -59,7 +62,7 @@ public class PersoonResource {
 
     @GetMapping(value = "/persoon")
     public ResponseEntity getPersonen(@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, InvalidCredentialsException {
-        checkApiKey(api);
+        checkApiKey(api,persoonRepository);
         List<Persoon> personen = persoonRepository.findAll();
         if(personen.isEmpty()){
             throw new NotFoundException("geen personen gevonden");
@@ -84,7 +87,8 @@ public class PersoonResource {
             @RequestParam(value="email", required = false) String email,
             @RequestParam(value="gsm", required = false) String gsm,
             @RequestParam(name = "api", required = false, defaultValue = "") String api
-    ) throws NotFoundException {
+    ) throws NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         List<Persoon> personen = persoonRepository.findAll();
         List<Persoon> persoonVoornaam = Collections.emptyList();
         List<Persoon> persoonNaam = Collections.emptyList();
@@ -177,7 +181,8 @@ public class PersoonResource {
      * @throws NotFoundException Als er geen personen zijn gevonden
      */
     @GetMapping(value = "/persoon/voornaam/{voornaam}")
-    public ResponseEntity getPersonenVoornaam(@PathVariable("voornaam") String voornaam, @RequestParam(value="ignoreCase", required = false, defaultValue="true") Boolean ignoreCase, @RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity getPersonenVoornaam(@PathVariable("voornaam") String voornaam, @RequestParam(value="ignoreCase", required = false, defaultValue="true") Boolean ignoreCase, @RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         if(voornaam == null || voornaam.trim().length() == 0){
             throw new ParameterInvalidException("Voornaam met waarde "+voornaam);
         }
@@ -201,7 +206,8 @@ public class PersoonResource {
      * @throws NotFoundException als de persoon niet gevonden word
      */
     @PutMapping(value="/persoon/{id}/rol")
-    public ResponseEntity putDefaultPersonenNaam(@PathVariable("id") Long id, @RequestBody String rol,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException {
+    public ResponseEntity putDefaultPersonenNaam(@PathVariable("id") Long id, @RequestBody String rol,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         Rol nieuweDefaultRol = Rol.valueOf(rol.trim().toUpperCase());
         Optional<Persoon> persoon = persoonRepository.findPersoonById(id);
         if(!persoon.isPresent()){
@@ -221,7 +227,8 @@ public class PersoonResource {
      * @throws NotFoundException Als er geen personen zijn gevonden
      */
     @GetMapping(value = "/persoon/naam/{naam}")
-    public ResponseEntity getPersonenNaam(@PathVariable("naam") String naam, @RequestParam(value="ignoreCase", required = false, defaultValue="true") Boolean ignoreCase,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity getPersonenNaam(@PathVariable("naam") String naam, @RequestParam(value="ignoreCase", required = false, defaultValue="true") Boolean ignoreCase,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         if(naam == null || naam.trim().length() == 0){
             throw new ParameterInvalidException("Naam met waarde "+naam);
         }
@@ -245,7 +252,8 @@ public class PersoonResource {
      * @throws NotFoundException
      */
     @GetMapping(value = "/persoon/geslacht/{geslacht}")
-    public ResponseEntity getPersonenGeslacht(@PathVariable("geslacht") String geslacht,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity getPersonenGeslacht(@PathVariable("geslacht") String geslacht,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         if(geslacht == null || !(geslacht instanceof String)){
             throw new ParameterInvalidException("Geslacht met waarde "+geslacht);
         }
@@ -257,7 +265,8 @@ public class PersoonResource {
     }
 
     @GetMapping(value = "/persoon/adres/{adres}")
-    public ResponseEntity getPersonenAdres(@PathVariable("adres") String adres,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity getPersonenAdres(@PathVariable("adres") String adres,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         if(adres == null || adres.trim().length() == 0){
             throw new ParameterInvalidException("Adres met waarde "+adres);
         }
@@ -269,7 +278,8 @@ public class PersoonResource {
     }
 
     @PostMapping(value = "/persoon")
-    public ResponseEntity postPersoon(@PathVariable PersoonDTO persoon,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity postPersoon(@PathVariable PersoonDTO persoon,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         logger.debug("POST request voor persoon gekregen");
         Date geboortedatum = checkPersoonInfo(persoon);
         checkPersoonWachtwoord(persoon.getWachtwoord());
@@ -290,7 +300,8 @@ public class PersoonResource {
     }
 
     @PutMapping (value = "/persoon/{id}")
-    public ResponseEntity putPersoon(@PathVariable("id") Long id, @RequestBody PersoonDTO persoon,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity putPersoon(@PathVariable("id") Long id, @RequestBody PersoonDTO persoon,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());
         }
@@ -312,7 +323,8 @@ public class PersoonResource {
     }
 
     @PutMapping (value = "/persoon/{id}/wachtwoord")
-    public ResponseEntity putPersoonWachtwoord(@PathVariable("id") Long id, @RequestBody String wachtwoord,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, ParameterInvalidException {
+    public ResponseEntity putPersoonWachtwoord(@PathVariable("id") Long id, @RequestBody String wachtwoord,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, ParameterInvalidException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());
         }
@@ -327,7 +339,8 @@ public class PersoonResource {
     }
 
     @PutMapping (value = "/persoon/{id}/info")
-    public ResponseEntity putPersoonPloegId(@PathVariable("id") Long id, @RequestBody PersoonDTO persoon,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, ParameterInvalidException {
+    public ResponseEntity putPersoonPloegId(@PathVariable("id") Long id, @RequestBody PersoonDTO persoon,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, ParameterInvalidException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());
         }
@@ -349,7 +362,8 @@ public class PersoonResource {
     }
 
     @DeleteMapping(value = "/persoon/{id}")
-    public ResponseEntity deletePersoon(@PathVariable("id") Long id,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity deletePersoon(@PathVariable("id") Long id,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         if(id == null && !(id instanceof Long) && id <=0 ){
             throw new ParameterInvalidException(id.toString());
         }
@@ -414,16 +428,5 @@ public class PersoonResource {
                 finalList.add(persoon);
             }
         });
-    }
-    private Persoon checkApiKey(String api) throws InvalidCredentialsException {
-        if(api.equals("")){
-            return null;
-        }else{
-            Optional<Persoon> persoon = persoonRepository.findPersoonByApi(api);
-            if(!persoon.isPresent()){
-                throw new InvalidCredentialsException();
-            }
-            return persoon.get();
-        }
     }
 }

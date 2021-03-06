@@ -3,6 +3,7 @@ package be.ucll.java.gip5.rest;
 import be.ucll.java.gip5.dao.BerichtRepository;
 import be.ucll.java.gip5.dao.PersoonRepository;
 import be.ucll.java.gip5.dao.WedstrijdRepository;
+import be.ucll.java.gip5.exceptions.InvalidCredentialsException;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
 import be.ucll.java.gip5.model.Bericht;
@@ -20,6 +21,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
+import static be.ucll.java.gip5.util.Api.checkApiKey;
+
 @RestController
 @RequestMapping("/rest/v1")
 public class BerichtResource {
@@ -35,7 +38,8 @@ public class BerichtResource {
     }
 
     @GetMapping(value = "/bericht/{id}")
-    public ResponseEntity getBericht(@PathVariable("id") Long id) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity getBericht(@PathVariable("id") Long id,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         logger.debug("GET request voor bericht gekregen");
         if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());
@@ -48,7 +52,8 @@ public class BerichtResource {
     }
 
     @GetMapping( value = "/bericht")
-    public ResponseEntity getBerichtList() throws NotFoundException {
+    public ResponseEntity getBerichtList(@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         List<Bericht> berichtList = berichtRepository.findAll();
         if(berichtList.isEmpty()){
             throw new NotFoundException("Geen berichten gevonden");
@@ -57,7 +62,8 @@ public class BerichtResource {
     }
 
     @GetMapping( value = "/bericht/wedstrijd/{wedstrijdId}")
-    public ResponseEntity getBerichtListFromWedstrijdId(@PathVariable("wedstrijdId") Long wedstrijdId) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity getBerichtListFromWedstrijdId(@PathVariable("wedstrijdId") Long wedstrijdId,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         if(wedstrijdId == null || !(wedstrijdId instanceof Long) || wedstrijdId <=0 ) {
             throw new ParameterInvalidException(wedstrijdId.toString());
         }
@@ -73,7 +79,8 @@ public class BerichtResource {
     }
 
     @GetMapping( value = "/bericht/afzender/{afzenderId}")
-    public ResponseEntity getBerichtListFromAfzenderId(@PathVariable("afzenderId") Long afzenderId) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity getBerichtListFromAfzenderId(@PathVariable("afzenderId") Long afzenderId,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         if(afzenderId == null || !(afzenderId instanceof Long) || afzenderId <=0 ) {
             throw new ParameterInvalidException(afzenderId.toString());
         }
@@ -89,7 +96,8 @@ public class BerichtResource {
     }
 
     @PostMapping(value = "/bericht/")
-    public ResponseEntity postBericht(@RequestBody BerichtDTO bericht) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity postBericht(@RequestBody BerichtDTO bericht,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         logger.debug("POST request voor bericht gekregen");
         if(bericht.getBoodschap().isEmpty() || bericht.getWedstrijdId() == null){
             throw new ParameterInvalidException(bericht.toString());
@@ -126,7 +134,8 @@ public class BerichtResource {
     }
 
     @PutMapping(value="/bericht/{id}")
-    public ResponseEntity putBericht(@PathVariable("id") Long id, @RequestBody BerichtDTO bericht) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity putBericht(@PathVariable("id") Long id, @RequestBody BerichtDTO bericht,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         logger.debug("PUT request voor bericht gekregen");
         if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());
@@ -178,7 +187,8 @@ public class BerichtResource {
     }
 
     @PutMapping( value = "/bericht/{id}/boodschap")
-    public ResponseEntity putBerichtBoodschap(@PathVariable("id") Long id, @RequestBody String boodschap) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity putBerichtBoodschap(@PathVariable("id") Long id, @RequestBody String boodschap,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());
         }
@@ -195,7 +205,8 @@ public class BerichtResource {
     }
 
     @DeleteMapping(value="/bericht/{id}")
-    public ResponseEntity deleteBericht(@PathVariable("id") Long id) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity deleteBericht(@PathVariable("id") Long id,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         logger.debug("DELETE request voor bericht gekregen");
         if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());

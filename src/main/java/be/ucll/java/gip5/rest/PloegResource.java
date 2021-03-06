@@ -1,8 +1,10 @@
 package be.ucll.java.gip5.rest;
 
+import be.ucll.java.gip5.dao.PersoonRepository;
 import be.ucll.java.gip5.dao.PloegRepository;
 import be.ucll.java.gip5.dao.WedstrijdRepository;
 import be.ucll.java.gip5.dto.PloegDTO;
+import be.ucll.java.gip5.exceptions.InvalidCredentialsException;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
 import be.ucll.java.gip5.model.Ploeg;
@@ -18,21 +20,26 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static be.ucll.java.gip5.util.Api.checkApiKey;
+
 @RestController
 @RequestMapping("/rest/v1")
 public class PloegResource {
     private Logger logger = LoggerFactory.getLogger(BerichtResource.class);
     private PloegRepository ploegRepository;
     private WedstrijdRepository wedstrijdRepository;
+    private PersoonRepository persoonRepository;
 
     @Autowired
-    public PloegResource(PloegRepository ploegRepository, WedstrijdRepository wedstrijdRepository){
+    public PloegResource(PloegRepository ploegRepository, WedstrijdRepository wedstrijdRepository, PersoonRepository persoonRepository){
         this.ploegRepository = ploegRepository;
         this.wedstrijdRepository = wedstrijdRepository;
+        this.persoonRepository = persoonRepository;
     }
 
     @GetMapping(value = "/ploeg/{id}")
-    public ResponseEntity getPloeg(@PathVariable("id") Long id) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity getPloeg(@PathVariable("id") Long id,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         logger.debug("GET request voor ploeg gekregen");
         if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());
@@ -46,7 +53,8 @@ public class PloegResource {
     }
 
     @GetMapping( value = "/ploeg")
-    public ResponseEntity getPloegen() throws NotFoundException {
+    public ResponseEntity getPloegen(@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         List<Ploeg> ploegen = ploegRepository.findAll();
         if(ploegen.isEmpty()){
             throw new NotFoundException("Geen ploegen gevonden");
@@ -55,7 +63,8 @@ public class PloegResource {
     }
 
     @PostMapping(value="/ploeg")
-    public ResponseEntity postPloeg(@RequestBody PloegDTO ploeg) throws ParameterInvalidException {
+    public ResponseEntity postPloeg(@RequestBody PloegDTO ploeg,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         checkPloegDTO(ploeg);
         Ploeg newPloeg = ploegRepository.save(
                 new Ploeg.PloegBuilder()
@@ -66,7 +75,8 @@ public class PloegResource {
     }
 
     @PutMapping( value = "/ploeg/{id}")
-    public ResponseEntity putPloeg(@PathVariable("id") Long id,@RequestBody PloegDTO ploeg) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity putPloeg(@PathVariable("id") Long id,@RequestBody PloegDTO ploeg,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());
         }
@@ -81,7 +91,8 @@ public class PloegResource {
     }
 
     @DeleteMapping( value = "/ploeg/{id}")
-    public ResponseEntity deletePloeg(@PathVariable("id") Long id) throws NotFoundException, ParameterInvalidException {
+    public ResponseEntity deletePloeg(@PathVariable("id") Long id,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, ParameterInvalidException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());
         }
@@ -100,7 +111,8 @@ public class PloegResource {
     }
 
     @GetMapping( value = "/ploeg/thuisploeg")
-    public ResponseEntity getThuisploegen() throws NotFoundException {
+    public ResponseEntity getThuisploegen(@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         List<Wedstrijd> wedstrijden = wedstrijdRepository.findAll();
         if(wedstrijden.isEmpty()){
             throw new NotFoundException("Er zijn nog geen wedstrijden gespeeld");
@@ -119,7 +131,8 @@ public class PloegResource {
     }
 
     @GetMapping( value = "/ploeg/tegenstander")
-    public ResponseEntity getTegenstanders() throws NotFoundException {
+    public ResponseEntity getTegenstanders(@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         List<Wedstrijd> wedstrijden = wedstrijdRepository.findAll();
         if(wedstrijden.isEmpty()){
             throw new NotFoundException("Er zijn nog geen wedstrijden gespeeld");

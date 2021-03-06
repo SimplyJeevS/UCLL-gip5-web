@@ -1,10 +1,8 @@
 package be.ucll.java.gip5.rest;
 
-import be.ucll.java.gip5.dao.DeelnameRepository;
-import be.ucll.java.gip5.dao.PloegRepository;
-import be.ucll.java.gip5.dao.ToewijzingRepository;
-import be.ucll.java.gip5.dao.WedstrijdRepository;
+import be.ucll.java.gip5.dao.*;
 import be.ucll.java.gip5.dto.WedstrijdDTO;
+import be.ucll.java.gip5.exceptions.InvalidCredentialsException;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
 import be.ucll.java.gip5.model.Deelname;
@@ -26,6 +24,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static be.ucll.java.gip5.util.Api.checkApiKey;
+
 @RestController
 @RequestMapping("/rest/v1")
 public class WedstrijdResource {
@@ -34,23 +34,26 @@ public class WedstrijdResource {
     private PloegRepository ploegRepository;
     private ToewijzingRepository toewijzingRepository;
     private DeelnameRepository deelnameRepository;
-
+    private PersoonRepository persoonRepository;
     @Autowired
-    public WedstrijdResource(WedstrijdRepository wedstrijdRepository, PloegRepository ploegRepository, ToewijzingRepository toewijzingRepository, DeelnameRepository deelnameRepository){
+    public WedstrijdResource(WedstrijdRepository wedstrijdRepository, PloegRepository ploegRepository, ToewijzingRepository toewijzingRepository, DeelnameRepository deelnameRepository, PersoonRepository persoonRepository){
         this.wedstrijdRepository = wedstrijdRepository;
         this.ploegRepository = ploegRepository;
         this.toewijzingRepository = toewijzingRepository;
         this.deelnameRepository = deelnameRepository;
+        this.persoonRepository = persoonRepository;
     }
 
     @GetMapping(value = "/wedstrijd/{id}")
-    public ResponseEntity getWedstrijd(@PathVariable("id") Long id) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity getWedstrijd(@PathVariable("id") Long id,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
+         checkApiKey(api,persoonRepository);
         logger.debug("GET request voor wedstrijd gekregen");
         return ResponseEntity.status(HttpStatus.OK).body(findWedstrijdFromId(id));
     }
 
     @GetMapping("/wedstrijd")
-    public ResponseEntity getWedstrijdList() throws NotFoundException {
+    public ResponseEntity getWedstrijdList(@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         List<Wedstrijd> wedstrijdList = wedstrijdRepository.findAll();
         if(wedstrijdList.isEmpty()){
             throw new NotFoundException("Geen wedstrijden gevonden");
@@ -66,7 +69,8 @@ public class WedstrijdResource {
      */
 
     @GetMapping("/wedstrijd/locatie/{locatie}")
-    public ResponseEntity getWedstrijdFromLocatie(@PathVariable("locatie") String locatie) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity getWedstrijdFromLocatie(@PathVariable("locatie") String locatie,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         //check de rol => secre, mag alles bekijken anders hun wedstrijden
         if(locatie.isEmpty() || locatie.trim().length() <= 0){
             throw new ParameterInvalidException("Locatie is niet correct , kreeg "+locatie);
@@ -79,7 +83,8 @@ public class WedstrijdResource {
     }
 
     @GetMapping("/wedstrijd/ploeg/{ploegId}")
-    public ResponseEntity getWedstrijdListFromPloegId(@PathVariable("ploegId") Long ploegId) throws NotFoundException, ParameterInvalidException {
+    public ResponseEntity getWedstrijdListFromPloegId(@PathVariable("ploegId") Long ploegId,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, ParameterInvalidException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         findploegFromId(ploegId);
         Optional<List<Wedstrijd>> alsThuisploeg = wedstrijdRepository.findWedstrijdByThuisPloeg(ploegId);
         Optional<List<Wedstrijd>> alsTegenstander = wedstrijdRepository.findWedstrijdByTegenstander(ploegId);
@@ -96,7 +101,8 @@ public class WedstrijdResource {
     }
 
     @GetMapping( value = "/wedstrijd/thuisploeg/{ploegId}")
-    public ResponseEntity getWedstrijdListFromThuisploeg(@PathVariable("ploegId") Long ploegId ) throws NotFoundException, ParameterInvalidException {
+    public ResponseEntity getWedstrijdListFromThuisploeg(@PathVariable("ploegId") Long ploegId ,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, ParameterInvalidException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         findploegFromId(ploegId);
         Optional<List<Wedstrijd>> wedstrijdList = wedstrijdRepository.findWedstrijdByThuisPloeg(ploegId);
         if(!wedstrijdList.isPresent() || wedstrijdList.get().isEmpty()){
@@ -106,7 +112,8 @@ public class WedstrijdResource {
     }
 
     @GetMapping( value = "/wedstrijd/tegenstander/{ploegId}")
-    public ResponseEntity getWedstrijdListFromTegenstander(@PathVariable("ploegId") Long ploegId ) throws NotFoundException, ParameterInvalidException {
+    public ResponseEntity getWedstrijdListFromTegenstander(@PathVariable("ploegId") Long ploegId,@RequestParam(name = "api", required = false, defaultValue = "") String api ) throws NotFoundException, ParameterInvalidException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         findploegFromId(ploegId);
         Optional<List<Wedstrijd>> wedstrijdList = wedstrijdRepository.findWedstrijdByTegenstander(ploegId);
         if(!wedstrijdList.isPresent() || wedstrijdList.get().isEmpty()){
@@ -116,7 +123,8 @@ public class WedstrijdResource {
     }
 
     @PutMapping( value = "/wedstrijd/{id}/uitnodig")
-    public ResponseEntity putUitnodigAlleSpelersVanThuisPloegNaarWedstrijd(@PathVariable("id") Long id,@RequestParam(value = "commentaar", required = false, defaultValue = "") String commentaar ) throws NotFoundException, ParameterInvalidException {
+    public ResponseEntity putUitnodigAlleSpelersVanThuisPloegNaarWedstrijd(@PathVariable("id") Long id,@RequestParam(value = "commentaar", required = false, defaultValue = "") String commentaar ,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, ParameterInvalidException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         Wedstrijd wedstrijd = findWedstrijdFromId(id);
         findploegFromId(wedstrijd.getThuisPloeg());
         Optional<List<Toewijzing>> toewijzingList = toewijzingRepository.findAllByPloegId(wedstrijd.getThuisPloeg());
@@ -137,7 +145,8 @@ public class WedstrijdResource {
     }
 
     @PostMapping( value = "/wedstrijd")
-    public ResponseEntity postWedstrijd(@RequestBody WedstrijdDTO wedstrijd) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity postWedstrijd(@RequestBody WedstrijdDTO wedstrijd,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         LocalDateTime tijdstip = checkWedstrijdDTOAndFindTijdstip(wedstrijd);
         Wedstrijd newWedstrijd = new Wedstrijd.WedstrijdBuilder()
                 .tegenstander(wedstrijd.getTegenstander())
@@ -150,7 +159,8 @@ public class WedstrijdResource {
     }
 
     @PutMapping( value = "/wedstrijd/{id}")
-    public ResponseEntity putWedstrijd(@PathVariable("id") Long id, @RequestBody WedstrijdDTO wedstrijd) throws NotFoundException, ParameterInvalidException {
+    public ResponseEntity putWedstrijd(@PathVariable("id") Long id, @RequestBody WedstrijdDTO wedstrijd,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, ParameterInvalidException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         Wedstrijd foundWedstrijd = findWedstrijdFromId(id);
         LocalDateTime tijdstip = checkWedstrijdDTOAndFindTijdstip(wedstrijd);
         foundWedstrijd.setLocatie(wedstrijd.getLocatie());
@@ -162,7 +172,8 @@ public class WedstrijdResource {
     }
 
     @DeleteMapping( value = "/wedstrijd/{id}")
-    public ResponseEntity deleteWedstrijd(@PathVariable("id") Long id) throws NotFoundException, ParameterInvalidException {
+    public ResponseEntity deleteWedstrijd(@PathVariable("id") Long id,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, ParameterInvalidException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         Wedstrijd wedstrijd = findWedstrijdFromId(id);
         wedstrijdRepository.delete(wedstrijd);
         return ResponseEntity.status(HttpStatus.OK).body(wedstrijd);

@@ -2,6 +2,7 @@ package be.ucll.java.gip5.rest;
 
 import be.ucll.java.gip5.dao.*;
 import be.ucll.java.gip5.dto.ToewijzingDTO;
+import be.ucll.java.gip5.exceptions.InvalidCredentialsException;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
 import be.ucll.java.gip5.model.*;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+
+import static be.ucll.java.gip5.util.Api.checkApiKey;
 
 @RestController
 @RequestMapping("/rest/v1")
@@ -32,12 +35,14 @@ public class ToewijzingResource {
     }
 
     @GetMapping(value="/toewijzing/{id}")
-    public ResponseEntity getToewijzing(@PathVariable("id") Long id) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity getToewijzing(@PathVariable("id") Long id,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         return ResponseEntity.status(HttpStatus.OK).body(checkIdAndGetToewijzing(id));
     }
 
     @GetMapping(value="/toewijzing")
-    public ResponseEntity getToewijzingList() throws NotFoundException {
+    public ResponseEntity getToewijzingList(@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         List<Toewijzing> toewijzingList = toewijzingRepository.findAll();
         if(toewijzingList.isEmpty()){
             throw new NotFoundException("Geen toewijzingen gevonden");
@@ -45,7 +50,8 @@ public class ToewijzingResource {
         return ResponseEntity.status(HttpStatus.OK).body(toewijzingList);
     }
     @GetMapping("/toewijzing/persoon/{persoonId}")
-    public ResponseEntity getToewijzingListVanPersoon(@PathVariable("persoonId") Long persoonId) throws NotFoundException, ParameterInvalidException {
+    public ResponseEntity getToewijzingListVanPersoon(@PathVariable("persoonId") Long persoonId,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, ParameterInvalidException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         checkIdAndGetPersoon(persoonId);
         Optional<List<Toewijzing>> toewijzingList = toewijzingRepository.findAllByPersoonId(persoonId);
         if(!toewijzingList.isPresent() || toewijzingList.get().isEmpty()){
@@ -55,7 +61,8 @@ public class ToewijzingResource {
     }
 
     @PostMapping( value = "/toewijzing")
-    public ResponseEntity postToewijzing(@RequestBody ToewijzingDTO toewijzing) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity postToewijzing(@RequestBody ToewijzingDTO toewijzing,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         if(toewijzing.equals(null)){
             throw new ParameterInvalidException("Geen toewijzing meegegeven");
         }
@@ -70,7 +77,8 @@ public class ToewijzingResource {
     }
 
     @PutMapping( value = "/toewijzing/{id}")
-    public ResponseEntity putToewijzing(@PathVariable("id") Long id,@RequestBody ToewijzingDTO toewijzing) throws ParameterInvalidException, NotFoundException {
+    public ResponseEntity putToewijzing(@PathVariable("id") Long id,@RequestBody ToewijzingDTO toewijzing,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         if(toewijzing.equals(null)){
             throw new ParameterInvalidException("Geen toewijzing meegegeven");
         }
@@ -83,14 +91,16 @@ public class ToewijzingResource {
     }
 
     @DeleteMapping(value = "/toewijzing/{id}" )
-    public ResponseEntity deleteToewijzing(@PathVariable("id") Long id) throws NotFoundException, ParameterInvalidException {
+    public ResponseEntity deleteToewijzing(@PathVariable("id") Long id,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, ParameterInvalidException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         Toewijzing toewijzing = checkIdAndGetToewijzing(id);
         toewijzingRepository.delete(toewijzing);
         return ResponseEntity.status(HttpStatus.OK).body(toewijzing);
     }
 
     @DeleteMapping( value = "/toewijzing/persoon/{persoonId}" )
-    public ResponseEntity deleteToewijzingenVanPersoon(@PathVariable("persoonId") Long persoonId) throws NotFoundException, ParameterInvalidException {
+    public ResponseEntity deleteToewijzingenVanPersoon(@PathVariable("persoonId") Long persoonId,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, ParameterInvalidException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         checkIdAndGetPersoon(persoonId);
         Optional<List<Toewijzing>> toewijzingList = toewijzingRepository.findAllByPersoonId(persoonId);
         if(!toewijzingList.isPresent()){
@@ -101,7 +111,8 @@ public class ToewijzingResource {
     }
 
     @DeleteMapping( value = "/toewijzing/ploeg/{ploegId}" )
-    public ResponseEntity deleteToewijzingenVanPloeg(@PathVariable("ploegId") Long ploegId) throws NotFoundException, ParameterInvalidException {
+    public ResponseEntity deleteToewijzingenVanPloeg(@PathVariable("ploegId") Long ploegId,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, ParameterInvalidException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         checkIdAndGetPloeg(ploegId);
         Optional<List<Toewijzing>> toewijzingList = toewijzingRepository.findAllByPloegId(ploegId);
         if(!toewijzingList.isPresent()){
@@ -112,7 +123,8 @@ public class ToewijzingResource {
     }
 
     @DeleteMapping( value = "/toewijzing/rol/{rolId}" )
-    public ResponseEntity deleteToewijzingenVanRol(@PathVariable("rolId") Rol rolId) throws NotFoundException, ParameterInvalidException {
+    public ResponseEntity deleteToewijzingenVanRol(@PathVariable("rolId") Rol rolId,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, ParameterInvalidException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
         Optional<List<Toewijzing>> toewijzingList = toewijzingRepository.findAllByRol(rolId);
         if(!toewijzingList.isPresent()){
             throw new NotFoundException("Geen toewijzingen gevonden voor deze rol");
