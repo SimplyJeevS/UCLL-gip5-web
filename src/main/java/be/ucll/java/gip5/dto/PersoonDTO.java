@@ -2,10 +2,12 @@ package be.ucll.java.gip5.dto;
 
 import be.ucll.java.gip5.model.Rol;
 
+import java.util.Date;
+
 public class PersoonDTO {
     private String voornaam;
     private String naam;
-    private String geboortedatum;
+    private Date geboortedatum;
     private String geslacht;
     private String adres;
     private String telefoon;
@@ -17,7 +19,7 @@ public class PersoonDTO {
     private String api;
 
     public PersoonDTO(){}
-    public PersoonDTO(String voornaam, String naam, String geboortedatum, String geslacht, String adres, String telefoon, String gsm, String email) {
+    public PersoonDTO(String voornaam, String naam, Date geboortedatum, String geslacht, String adres, String telefoon, String gsm, String email) {
         this.voornaam = voornaam;
         this.naam = naam;
         this.geboortedatum = geboortedatum;
@@ -29,7 +31,7 @@ public class PersoonDTO {
         this.defaultRol = Rol.GUEST;
     }
 
-    public PersoonDTO(String voornaam, String naam, String geboortedatum, String geslacht, String adres, String telefoon, String gsm, String email,String wachtwoord) {
+    public PersoonDTO(String voornaam, String naam, Date geboortedatum, String geslacht, String adres, String telefoon, String gsm, String email,String wachtwoord) {
         this.voornaam = voornaam;
         this.naam = naam;
         this.geboortedatum = geboortedatum;
@@ -42,7 +44,7 @@ public class PersoonDTO {
         this.defaultRol = Rol.GUEST;
     }
 
-    public PersoonDTO(String voornaam, String naam, String geboortedatum, String geslacht, String adres, String telefoon, String gsm, String email,String wachtwoord, Rol defaultRol) {
+    public PersoonDTO(String voornaam, String naam, Date geboortedatum, String geslacht, String adres, String telefoon, String gsm, String email,String wachtwoord, Rol defaultRol) {
         this.voornaam = voornaam;
         this.naam = naam;
         this.geboortedatum = geboortedatum;
@@ -54,7 +56,7 @@ public class PersoonDTO {
         this.wachtwoord = wachtwoord;
         this.defaultRol = defaultRol;
     }
-    public PersoonDTO(Long id, String voornaam, String naam, String geboortedatum, String geslacht, String adres, String telefoon, String gsm, String email, Rol defaultRol, String api) {
+    public PersoonDTO(Long id, String voornaam, String naam, Date geboortedatum, String geslacht, String adres, String telefoon, String gsm, String email, Rol defaultRol, String api) {
         this.voornaam = voornaam;
         this.naam = naam;
         this.geboortedatum = geboortedatum;
@@ -86,11 +88,11 @@ public class PersoonDTO {
         this.naam = naam;
     }
 
-    public String getGeboortedatum() {
+    public Date getGeboortedatum() {
         return geboortedatum;
     }
 
-    public void setGeboortedatum(String geboortedatum) {
+    public void setGeboortedatum(Date geboortedatum) {
         this.geboortedatum = geboortedatum;
     }
 
