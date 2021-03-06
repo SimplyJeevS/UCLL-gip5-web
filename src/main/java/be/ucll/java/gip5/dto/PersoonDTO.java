@@ -15,6 +15,8 @@ public class PersoonDTO {
     private String email;
     private String wachtwoord;
     private Rol defaultRol;
+    private Long id;
+    private String api;
 
     public PersoonDTO(){}
     public PersoonDTO(String voornaam, String naam, String geboortedatum, String geslacht, String adres, String telefoon, String gsm, String email) {
@@ -53,6 +55,18 @@ public class PersoonDTO {
         this.email = email;
         this.wachtwoord = wachtwoord;
         this.defaultRol = defaultRol;
+    }
+    public PersoonDTO(Long id, String voornaam, String naam, String geboortedatum, String geslacht, String adres, String telefoon, String gsm, String email, Rol defaultRol, String api) {
+        this.voornaam = voornaam;
+        this.naam = naam;
+        this.geboortedatum = geboortedatum;
+        this.geslacht = geslacht;
+        this.adres = adres;
+        this.telefoon = telefoon;
+        this.gsm = gsm;
+        this.email = email;
+        this.defaultRol = defaultRol;
+        this.api = api;
     }
 
     public String getVoornaam() {
@@ -133,5 +147,21 @@ public class PersoonDTO {
 
     public void setDefaultRol(Rol defaultRol) {
         this.defaultRol = defaultRol;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getApi() {
+        return api;
+    }
+
+    public void setApi(String api) {
+        this.api = api;
     }
 }

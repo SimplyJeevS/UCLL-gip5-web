@@ -1,6 +1,7 @@
 package be.ucll.java.gip5.rest;
 
 import be.ucll.java.gip5.dao.PersoonRepository;
+import be.ucll.java.gip5.dto.LoginDTO;
 import be.ucll.java.gip5.dto.PersoonDTO;
 import be.ucll.java.gip5.exceptions.InvalidCredentialsException;
 import be.ucll.java.gip5.exceptions.NotFoundException;
@@ -25,15 +26,18 @@ public class LoginResource {
         this.persoonRepository = persoonRepository;
     }
 
+    //inloggen, zou een sessie starten met de huidige rol
     @PostMapping( value = "/login")
-    public ResponseEntity postCheckLogin(@RequestParam(value = "email") String email, @RequestParam("wachtwoord") String wachtwoord) throws InvalidCredentialsException {
-        System.out.println(email+""+wachtwoord);
-        Optional<Persoon> persoon = persoonRepository.findPersoonByEmailAndWachtwoord(email, wachtwoord);
+    public ResponseEntity postCheckLogin(@RequestBody LoginDTO loginDTO) throws InvalidCredentialsException {
+        logger.debug(loginDTO.toString());
+        Optional<Persoon> persoon = persoonRepository.findPersoonByEmailAndWachtwoord(loginDTO.getEmail(), loginDTO.getWachtwoord());
         if(!persoon.isPresent()){
+            System.out.println("not found");
             throw new InvalidCredentialsException();
         }
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(
                 new PersoonDTO(
+                        persoon.get().getId(),
                         persoon.get().getVoornaam(),
                         persoon.get().getNaam(),
                         persoon.get().getGeboortedatum().toString(),
@@ -41,7 +45,9 @@ public class LoginResource {
                         persoon.get().getAdres(),
                         persoon.get().getTelefoon(),
                         persoon.get().getGsm(),
-                        persoon.get().getEmail()
+                        persoon.get().getEmail(),
+                        persoon.get().getDefault_rol(),
+                        persoon.get().getApi()
                 )
         );
     }

@@ -43,6 +43,9 @@ public class Persoon {
     @Column(name="default_rol")
     private Rol default_rol;
 
+    @Column(name="api")
+    private String api;
+
     private Persoon(PersoonBuilder builder){
         setWachtwoord(builder.wachtwoord);
         setGsm(builder.gsm);
@@ -58,9 +61,12 @@ public class Persoon {
         setVoornaam(builder.voornaam);
         setTelefoon(builder.telefoon);
         setDefault_rol(builder.default_rol);
+        setApi(builder.api);
     }
 
     public Persoon(){};
+
+    public String getApi(){return api;}
 
     public Rol getDefault_rol() {
         return default_rol;
@@ -162,6 +168,7 @@ public class Persoon {
         private String email;
         private String wachtwoord;
         private Rol default_rol;
+        private String api;
 
         public PersoonBuilder() {
         }
@@ -181,10 +188,15 @@ public class Persoon {
             this.email = copy.email;
             this.wachtwoord = copy.wachtwoord;
             this.default_rol = copy.default_rol;
+            this.api = copy.api;
         }
 
         public PersoonBuilder id(Long id){
             this.id = id;
+            return this;
+        }
+        public PersoonBuilder api(String api){
+            this.api = UUID.randomUUID().toString().replace("-", "");
             return this;
         }
         public PersoonBuilder voornaam(String voornaam){

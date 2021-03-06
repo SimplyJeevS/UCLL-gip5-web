@@ -56,6 +56,12 @@
             <column name="default_rol" type="CHARACTER VARYING">
                 <constraints nullable="false"/>
             </column>
+            <column name="default_rol" type="CHARACTER VARYING">
+                <constraints nullable="false"/>
+            </column>
+            <column name="api" type="CHARACTER VARYING">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
         <createTable tableName="ploeg" schemaName="gip5">
             <column name="id" type="SERIAL" autoIncrement="true">
