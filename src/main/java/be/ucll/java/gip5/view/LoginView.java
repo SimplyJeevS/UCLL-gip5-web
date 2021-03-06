@@ -30,7 +30,7 @@ public class LoginView extends VerticalLayout {
 
     public LoginView() {
         messageSrc = BeanUtil.getBean(MessageSource.class);
-
+        //
         // Locale derived from the Browser language settings
         loc = new Locale("en_US");
         logger.debug("Browser/Session locale: " + loc.toString());
@@ -42,9 +42,11 @@ public class LoginView extends VerticalLayout {
             PersoonDTO loginUser = userCtrl.authenticateUser(new PersoonDTO(e.getUsername(), e.getPassword()));
             if (loginUser == null) {
                 frmLogin.setError(true);
+                System.out.println("Failed!!");
                 logger.warn("Failed login attempt for user with id: " + (e.getUsername() != null ? e.getUsername() : "<undefined>"));
             } else {
                 userCtrl.setUser(loginUser);
+                System.out.println("Succes!!");
                 logger.info("User '" + loginUser.getEmail() + "' successfully authenticated");
                 getUI().ifPresent(ui -> ui.navigate("main"));
             }
