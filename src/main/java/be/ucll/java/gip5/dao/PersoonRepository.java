@@ -12,8 +12,8 @@ import java.util.Optional;
 public interface PersoonRepository extends JpaRepository<Persoon, Long> {
     Optional<Persoon> findPersoonById(Long id);
     List<Persoon> findAll();
-    Optional<List<Persoon>> findAllByVoornaamContaining(String voornaam);
-    Optional<List<Persoon>> findAllByVoornaamContainingIgnoreCase(String voornaam);
+    List<Persoon> findAllByVoornaamContaining(String voornaam);
+    List<Persoon> findAllByVoornaamContainingIgnoreCase(String voornaam);
     Optional<List<Persoon>> findAllByNaamContaining(String voornaam);
     Optional<List<Persoon>> findAllByNaamContainingIgnoreCase(String voornaam);
     Optional<List<Persoon>> findAllByGeslacht(String geslacht);

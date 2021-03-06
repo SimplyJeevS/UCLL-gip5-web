@@ -17,17 +17,11 @@ public class PersoonController {
 
     private static List<PersoonDTO> users;
 
-//    static {
-//        users = new ArrayList<>(1);
-//        users.add(new PersoonDTO("admin", "admin", "09/12/2000", "M", "Bergenhof 56",
-//                "0486947755", "0486947755", "admin@admin.com", "admin", Rol.SECRETARIS));
-//    }
-
     public PersoonDTO authenticateUser(PersoonDTO unauthenticateduser) {
         for (PersoonDTO user : users) {
             if (user.getEmail().equalsIgnoreCase(unauthenticateduser.getEmail()) &&
                     user.getWachtwoord().equals(unauthenticateduser.getWachtwoord())) {
-                logger.info("User succesfully authenticated as '" + (user != null && user.getEmail() != null ? user.getEmail() : "<unknown>") + "'");
+                logger.info("User succesfully authenticated as '" + (user.getEmail() != null ? user.getEmail() : "<unknown>") + "'");
                 return user;
             }
         }

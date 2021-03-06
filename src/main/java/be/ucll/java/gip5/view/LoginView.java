@@ -1,7 +1,8 @@
 package be.ucll.java.gip5.view;
 
 import be.ucll.java.gip5.controller.PersoonController;
-import be.ucll.java.gip5.dto.PersoonDTO;
+import be.ucll.java.gip5.exceptions.InvalidCredentialsException;
+import be.ucll.java.gip5.rest.LoginResource;
 import be.ucll.java.gip5.util.BeanUtil;
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -25,11 +26,15 @@ public class LoginView extends VerticalLayout {
     private PersoonController userCtrl;
 
     @Autowired
+    private LoginResource loginResource;
+
+    @Autowired
     private MessageSource messageSrc;
     private Locale loc;
 
     public LoginView() {
         messageSrc = BeanUtil.getBean(MessageSource.class);
+        loginResource = BeanUtil.getBean(LoginResource.class);
 
         // Locale derived from the Browser language settings
         loc = new Locale("en_US");
@@ -39,14 +44,12 @@ public class LoginView extends VerticalLayout {
         LoginForm frmLogin = new LoginForm();
         frmLogin.setForgotPasswordButtonVisible(true);
         frmLogin.addLoginListener(e -> {
-            PersoonDTO loginUser = userCtrl.authenticateUser(new PersoonDTO(e.getUsername(), e.getPassword()));
-            if (loginUser == null) {
+            try {
+                loginResource.getCheckLogin(e.getUsername(), e.getPassword());
+                getUI().ifPresent(ui -> ui.navigate("Home"));
+            } catch (InvalidCredentialsException ex) {
                 frmLogin.setError(true);
-                logger.warn("Failed login attempt for user with id: " + (e.getUsername() != null ? e.getUsername() : "<undefined>"));
-            } else {
-                userCtrl.setUser(loginUser);
-                logger.info("User '" + loginUser.getEmail() + "' successfully authenticated");
-                getUI().ifPresent(ui -> ui.navigate("main"));
+                ex.printStackTrace();
             }
         });
 

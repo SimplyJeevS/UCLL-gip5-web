@@ -1,1 +1,16 @@
 INSERT INTO gip5.persoon(id, adres, default_rol, email, geboortedatum, geslacht, gsm, naam, telefoon, voornaam,wachtwoord, api)VALUES (1, 'adminstraat', 0, 'admin', '1900-01-01', 'M', 'admin', ' + 321051601 ', '0413513150', 'admin', 'admin', 'admin');
+INSERT INTO gip5.persoon(id, adres, default_rol, email, geboortedatum, geslacht, gsm, naam, telefoon, voornaam,wachtwoord, api)VALUES (2, 'spelerstraat', 2, 'speler', '1912-01-01', 'V', 'speler', ' + 32102221 ', '0413663150', 'speler', 'speler', 'speler');
+INSERT INTO gip5.persoon(id, adres, default_rol, email, geboortedatum, geslacht, gsm, naam, telefoon, voornaam,wachtwoord, api)VALUES (3, 'coachstraat', 1, 'coach', '1915-01-01', 'M', 'coach', ' + 32106621 ', '0223663150', 'coach', 'coach', 'coach');
+INSERT INTO gip5.persoon(id, adres, default_rol, email, geboortedatum, geslacht, gsm, naam, telefoon, voornaam,wachtwoord, api)VALUES (4, 'journaliststraat', 3, 'journalist', '1917-01-01', 'M', 'journalist', ' + 602106621 ', '026663150', 'journalist', 'journalist', 'journalist');
+INSERT INTO gip5.ploeg(id, naam) VALUES (1, 'ploeg1');
+INSERT INTO gip5.ploeg(id, naam) VALUES (2, 'ploeg2');
+INSERT INTO gip5.ploeg(id, naam) VALUES (3, 'ploeg3');
+INSERT INTO gip5.ploeg(id, naam) VALUES (4, 'ploeg4');
+INSERT INTO gip5.ploeg(id, naam) VALUES (5, 'ploeg5');
+INSERT INTO gip5.wedstrijd(id, locatie, tegenstander,thuis_ploeg, tijdstip) VALUES (1,'leuven',1,2,'2021-01-01');
+INSERT INTO gip5.wedstrijd(id, locatie, tegenstander,thuis_ploeg, tijdstip) VALUES (2,'leuven',3,4,'2021-01-01');
+INSERT INTO gip5.wedstrijd(id, locatie, tegenstander,thuis_ploeg, tijdstip) VALUES (3,'brussel',4,5,'2021-01-01');
+INSERT INTO gip5.wedstrijd(id, locatie, tegenstander,thuis_ploeg, tijdstip) VALUES (4,'leuven',2,5,'2021-01-01');
+INSERT INTO gip5.deelname(id,commentaar,persoon_id,status,wedstrijd_id) VALUES (1,'geen commentaar',2,1,1);
+INSERT INTO gip5.deelname(id,commentaar,persoon_id,status,wedstrijd_id) VALUES (2,'Goed gespeeld',3,4,2);
+INSERT INTO gip5.toewijzing(id, persoon_id, ploeg_id, rol) VALUES(1,2,1,2);
