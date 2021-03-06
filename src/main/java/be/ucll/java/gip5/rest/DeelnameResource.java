@@ -89,6 +89,12 @@ public class DeelnameResource {
         return ResponseEntity.status(HttpStatus.OK).body(deelname);
     }
 
+//    @PutMapping("/deelname/{id}/status")
+//    public ResponseEntity putDeelnameStatus(@PathVariable("id") Long id,  @RequestBody Status status,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, ParameterInvalidException {
+//        Deelname deelname = checkandFindDeelnameId(id);
+//        deelnameRepository.save(Deelname);
+//    }
+
     @PostMapping(value="/deelname")
     public ResponseEntity postDeelname(@RequestBody DeelnameDTO deelname,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
         checkApiKey(api,persoonRepository);
