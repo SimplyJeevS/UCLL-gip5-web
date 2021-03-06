@@ -12,7 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
 @RestController
@@ -35,6 +38,10 @@ public class LoginResource {
             System.out.println("not found");
             throw new InvalidCredentialsException();
         }
+        ServletRequestAttributes attr = (ServletRequestAttributes)
+                RequestContextHolder.currentRequestAttributes();
+        HttpSession session= attr.getRequest().getSession(true); // true == allow create
+        session.setAttribute("api",persoon.get().getApi());
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(
                 new PersoonDTO(
                         persoon.get().getId(),

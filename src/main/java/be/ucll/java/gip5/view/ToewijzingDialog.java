@@ -5,6 +5,7 @@ package be.ucll.java.gip5.view;
 import be.ucll.java.gip5.dto.PersoonDTO;
 import be.ucll.java.gip5.dto.PloegDTO;
 import be.ucll.java.gip5.dto.ToewijzingDTO;
+import be.ucll.java.gip5.exceptions.InvalidCredentialsException;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
 import be.ucll.java.gip5.rest.PloegResource;
@@ -50,6 +51,7 @@ public class ToewijzingDialog extends Dialog {
         // Load Spring beans
         toewijzingMngr = BeanUtil.getBean(ToewijzingResource.class);
         PloegMngr = BeanUtil.getBean(PloegResource.class);
+        selectedToewijzing = BeanUtil.getBean(ToewijzingDTO.class);
 
         lblStudInfo = new Label("Inschrijvingen voor persoon: " + p.getVoornaam() + " " + p.getNaam() + " (" + p.getGeboortedatum() + ")");
         lblStudInfo.setId("bold-label");
@@ -90,8 +92,8 @@ public class ToewijzingDialog extends Dialog {
         cmbPloegen = new ComboBox<>();
         cmbPloegen.setItemLabelGenerator(PloegDTO::toString);
         try {
-            cmbPloegen.setItems((ComboBox.ItemFilter<PloegDTO>) PloegMngr.getPloegen());
-        } catch (NotFoundException e) {
+            cmbPloegen.setItems((ComboBox.ItemFilter<PloegDTO>) PloegMngr.getPloegen(""));
+        } catch (NotFoundException | InvalidCredentialsException e) {
             e.printStackTrace();
         }
         cmbPloegen.setWidth("500px");
@@ -110,11 +112,13 @@ public class ToewijzingDialog extends Dialog {
         btnInschrijven.addClickListener(e -> {
             try {
                 try {
-                    toewijzingMngr.postToewijzing(selectedToewijzing);
+                    toewijzingMngr.postToewijzing(selectedToewijzing,"");
                 } catch (ParameterInvalidException parameterInvalidException) {
                     parameterInvalidException.printStackTrace();
                 } catch (NotFoundException notFoundException) {
                     notFoundException.printStackTrace();
+                } catch (InvalidCredentialsException invalidCredentialsException) {
+                    invalidCredentialsException.printStackTrace();
                 }
                 //lstInsch.setItems(toewijzingMngr.getToewijzingList(p.getId()));
                 Notification.show("Student ingeschreven", 3000, Notification.Position.TOP_CENTER);

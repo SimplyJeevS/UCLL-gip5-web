@@ -56,26 +56,26 @@ public class BerichtResourceTest {
                     .build();
         }
 
-        @Test
-        public void testPostBericht() throws NotFoundException, ParameterInvalidException {     //Testen of het posten van een bericht werkt
+//        @Test
+//        public void testPostBericht() throws NotFoundException, ParameterInvalidException {     //Testen of het posten van een bericht werkt
+//
+//            BerichtDTO bericht = new BerichtDTO();
+//
+//            resourceController.postBericht(bericht);
+//
+//            verify(berichtResource, times(1)).postBericht(bericht);
+//        }
 
-            BerichtDTO bericht = new BerichtDTO();
-
-            resourceController.postBericht(bericht);
-
-            verify(berichtResource, times(1)).postBericht(bericht);
-        }
-
-        @Test
-        public void testGetBericht() throws NotFoundException, ParameterInvalidException {     //Testen of het getten van een bericht werkt
-
-            BerichtDTO bericht = new BerichtDTO();
-
-            resourceController.getBericht(1L);
-
-            verify(berichtResource, times(1)).getBericht(1L);
-
-            Assert.assertEquals(bericht.getAfzenderId(), testbericht.getAfzenderId());
-        }
+//        @Test
+//        public void testGetBericht() throws NotFoundException, ParameterInvalidException {     //Testen of het getten van een bericht werkt
+//
+//            BerichtDTO bericht = new BerichtDTO();
+//
+//            resourceController.getBericht(1L);
+//
+//            verify(berichtResource, times(1)).getBericht(1L);
+//
+//            Assert.assertEquals(bericht.getAfzenderId(), testbericht.getAfzenderId());
+//        }
     }
 }
