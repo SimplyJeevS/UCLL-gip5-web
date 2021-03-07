@@ -9,7 +9,7 @@ import java.util.UUID;
 public class Persoon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false, nullable = false)
+    @Column(name = "id", updatable = false, nullable = false, unique = true)
     private Long id;
 
     @Column(name = "voornaam")

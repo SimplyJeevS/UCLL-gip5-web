@@ -3,6 +3,7 @@ package be.ucll.java.gip5.view;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 
 import java.time.LocalDate;
@@ -15,7 +16,7 @@ public class PersoonFragment extends FormLayout {
     public Label lblID;
     public TextField txtVoornaam;
     public TextField txtNaam;
-    public TextField txtWachtwoord;
+    public PasswordField txtWachtwoord;
     public DatePicker datGeboorte;
     public TextField txtGeslacht;
     public TextField txtAdres;
@@ -40,7 +41,7 @@ public class PersoonFragment extends FormLayout {
         txtNaam.setMaxLength(128);
         txtNaam.setErrorMessage("Verplicht veld");
 
-        txtWachtwoord = new TextField();
+        txtWachtwoord = new PasswordField();
         txtWachtwoord.setRequired(true);
         txtWachtwoord.setMaxLength(128);
         txtWachtwoord.setErrorMessage("Verplicht veld");

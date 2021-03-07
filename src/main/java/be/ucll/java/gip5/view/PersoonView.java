@@ -65,8 +65,6 @@ public class PersoonView extends VerticalLayout {
     public PersoonView() {
         super();
 
-        // Load Spring Beans via a utility class
-        // We can't use @Autowired because Vaadin Views are preferably NOT declared as SpringComponent
         persoonResource = BeanUtil.getBean(PersoonResource.class);
         persoonResource.setLocale(VaadinSession.getCurrent().getLocale());
         msgSource = BeanUtil.getBean(MessageSource.class);
@@ -99,7 +97,6 @@ public class PersoonView extends VerticalLayout {
         grid.addColumn(PersoonDTO::getVoornaam).setHeader("Voornaam").setSortable(true);
         //grid.addColumn(persoon -> persoon.getVoornaam()).setHeader("Voornaam").setSortable(true);
         grid.addColumn(PersoonDTO::getNaam).setHeader("Naam").setSortable(true);
-        grid.addColumn(PersoonDTO::getWachtwoord).setHeader("Wachtwoord").setSortable(true);
         //grid.addColumn(PersoonDTO::getGeboortedatum).setHeader("Geboortedatum");
         grid.addColumn(PersoonDTO::getGeslacht).setHeader("Geslacht").setSortable(true);
         grid.addColumn(PersoonDTO::getAdres).setHeader("Adres").setSortable(true);
@@ -204,9 +201,7 @@ public class PersoonView extends VerticalLayout {
         try {
             Date d = Date.from(frm.datGeboorte.getValue().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
 
-            //String voornaam, String naam, String geboortedatum, String geslacht, String adres, String telefoon, String gsm, String email
-
-            PersoonDTO s = new PersoonDTO(frm.txtVoornaam.getValue(),frm.txtNaam.getValue(),frm.txtWachtwoord.getValue(), java.sql.Date.valueOf(frm.datGeboorte.getValue()) ,frm.txtGeslacht.getValue(),frm.txtAdres.getValue(),frm.txtTelefoon.getValue(),frm.txtGsm.getValue(),frm.txtEmail.getValue());
+            PersoonDTO s = new PersoonDTO( frm.txtVoornaam.getValue(),frm.txtNaam.getValue(),frm.txtWachtwoord.getValue(), java.sql.Date.valueOf(frm.datGeboorte.getValue()) ,frm.txtGeslacht.getValue(),frm.txtAdres.getValue(),frm.txtTelefoon.getValue(),frm.txtGsm.getValue(),frm.txtEmail.getValue());
             ResponseEntity i = persoonResource.postPersoon(s, "");
 
             Notification.show("Persoon created (id: " + i + ")", 3000, Notification.Position.TOP_CENTER);
@@ -285,7 +280,8 @@ public class PersoonView extends VerticalLayout {
 
         if (p != null) {
             // Copy the ID in a hidden field
-            frm.lblID.setText("" + p.getId());
+            frm.lblID.setText(p.getId().toString());
+
             if (p.getVoornaam() != null) {
                 frm.txtVoornaam.setValue(p.getVoornaam());
             } else {

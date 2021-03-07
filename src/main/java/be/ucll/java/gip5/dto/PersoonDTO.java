@@ -32,35 +32,6 @@ public class PersoonDTO {
         this.email = email;
     }
 
-    public PersoonDTO(String voornaam, String naam, Date geboortedatum, String geslacht, String adres, String telefoon, String gsm, String email,String wachtwoord, Rol defaultRol) {
-        this.voornaam = voornaam;
-        this.naam = naam;
-        this.geboortedatum = geboortedatum;
-        this.geslacht = geslacht;
-        this.adres = adres;
-        this.telefoon = telefoon;
-        this.gsm = gsm;
-        this.email = email;
-        this.wachtwoord = wachtwoord;
-        this.defaultRol = defaultRol;
-    }
-    public PersoonDTO(Long id, String voornaam, String naam, Date geboortedatum, String geslacht, String adres, String telefoon, String gsm, String email, Rol defaultRol, String api) {
-        this.voornaam = voornaam;
-        this.naam = naam;
-        this.geboortedatum = geboortedatum;
-        this.geslacht = geslacht;
-        this.adres = adres;
-        this.telefoon = telefoon;
-        this.gsm = gsm;
-        this.email = email;
-        this.defaultRol = defaultRol;
-        this.api = api;
-    }
-
-//    public PersoonDTO(String voornaam, String naam, String value2, java.sql.Date valueOf, String value3, String value4, String value5, String value6, String value7) {
-////    }
-
-
     public void setId(long id) {
         this.id = id;
     }
