@@ -460,7 +460,7 @@ public class PersoonResource {
         if (naam == null || naam.trim().length() == 0)
             throw new IllegalArgumentException("Personen ophalen met de naam gefaald. Naam leeg");
 
-        List<Persoon> lst = persoonRepository.findAllByVoornaamContaining(naam);
+        List<Persoon> lst = persoonRepository.findAllByVoornaamContainingIgnoreCase(naam);
         return queryListToPersoonDtoList(lst);
     }
     private void checkIfEmailIsUnique(String email) throws ParameterInvalidException {
