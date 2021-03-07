@@ -112,13 +112,32 @@ public class PersoonView extends VerticalLayout {
             b.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
             //b.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate("inschrijvingen/" + pers.getId())));
             b.addClickListener(e -> {
-                ToewijzingDialog dialog = new ToewijzingDialog(pers);
+                ToewijzingDialog dialog = null;
+                try {
+                    dialog = new ToewijzingDialog(pers);
+                } catch (NotFoundException ex) {
+                    ex.printStackTrace();
+                } catch (InvalidCredentialsException ex) {
+                    ex.printStackTrace();
+                } catch (ParameterInvalidException ex) {
+                    ex.printStackTrace();
+                }
+                try {
+                    dialog = new ToewijzingDialog(pers);
+                } catch (NotFoundException ex) {
+                    ex.printStackTrace();
+                } catch (InvalidCredentialsException ex) {
+                    ex.printStackTrace();
+                } catch (ParameterInvalidException ex) {
+                    ex.printStackTrace();
+                }
+                ToewijzingDialog finalDialog = dialog;
                 UI.getCurrent().getPage().retrieveExtendedClientDetails(receiver -> {
                     int browserInnerWindowsWidth = receiver.getWindowInnerWidth();
                     int browserInnerWindowsHeight = receiver.getWindowInnerHeight();
 
-                    dialog.setWidth((browserInnerWindowsWidth / 2) + "px");
-                    dialog.setHeight((browserInnerWindowsHeight / 2) + "px");
+                    finalDialog.setWidth((browserInnerWindowsWidth / 2.0) + "px");
+                    finalDialog.setHeight((browserInnerWindowsHeight / 2.0) + "px");
                 });
                 dialog.open();
             });
