@@ -284,6 +284,7 @@ public class PersoonResource {
         logger.debug("POST request voor persoon gekregen");
         checkPersoonInfo(persoon);
         checkPersoonWachtwoord(persoon.getWachtwoord());
+        checkIfEmailIsUnique(persoon.getEmail());
         Persoon newPersoon = persoonRepository.save(
                 new Persoon.PersoonBuilder()
                 .adres(persoon.getAdres())
@@ -310,6 +311,7 @@ public class PersoonResource {
             throw new ParameterInvalidException(id.toString());
         }
         checkPersoonInfo(persoon);
+        checkIfEmailIsUnique(persoon.getEmail());
         Optional<Persoon> foundPersoon = persoonRepository.findPersoonById(id);
         if(!foundPersoon.isPresent()){
             throw new NotFoundException("Persoon met id "+id);
@@ -461,5 +463,11 @@ public class PersoonResource {
 
         List<Persoon> lst = persoonRepository.findAllByVoornaamContaining(naam);
         return queryListToPersoonDtoList(lst);
+    }
+    private void checkIfEmailIsUnique(String email) throws ParameterInvalidException {
+        Optional<Persoon> persoon = persoonRepository.findPersoonByEmailIgnoreCase(email);
+        if(persoon.isPresent()){
+            throw new ParameterInvalidException("Email bestaat al");
+        }
     }
 }
