@@ -104,7 +104,7 @@ public class HomeView extends AppLayout {
         pView.loadData();
 
         plView = new PloegenView();
-        //plView.loadData();
+        plView.loadData();
 
         // As default load the persoonView
         setContent(pView);
@@ -117,7 +117,7 @@ public class HomeView extends AppLayout {
             if (selTab.getLabel().equals(TABNAME1)) {
                 setContent(pView);
             } else if (selTab.getLabel().equals(TABNAME2)) {
-                //setContent(plView);
+                setContent(plView);
             } else {
                 setContent(new Label("Te implementeren scherm voor Admins only"));
             }

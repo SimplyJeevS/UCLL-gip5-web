@@ -3,10 +3,12 @@ package be.ucll.java.gip5.rest;
 import be.ucll.java.gip5.dao.PersoonRepository;
 import be.ucll.java.gip5.dao.PloegRepository;
 import be.ucll.java.gip5.dao.WedstrijdRepository;
+import be.ucll.java.gip5.dto.PersoonDTO;
 import be.ucll.java.gip5.dto.PloegDTO;
 import be.ucll.java.gip5.exceptions.InvalidCredentialsException;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
+import be.ucll.java.gip5.model.Persoon;
 import be.ucll.java.gip5.model.Ploeg;
 import be.ucll.java.gip5.model.Wedstrijd;
 import org.slf4j.Logger;
@@ -18,7 +20,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static be.ucll.java.gip5.util.Api.checkApiKey;
 
@@ -29,6 +34,7 @@ public class PloegResource {
     private PloegRepository ploegRepository;
     private WedstrijdRepository wedstrijdRepository;
     private PersoonRepository persoonRepository;
+    private Locale loc = new Locale("en");
 
     @Autowired
     public PloegResource(PloegRepository ploegRepository, WedstrijdRepository wedstrijdRepository, PersoonRepository persoonRepository){
@@ -149,5 +155,24 @@ public class PloegResource {
         }
         return ResponseEntity.status(HttpStatus.OK).body(ploegen);
     }
+    public void setLocale(Locale loc) {this.loc = loc;
+    }
+    private List<PloegDTO> queryListToPloegDtoList(List<Ploeg> lst){
+        Stream<PloegDTO> stream = lst.stream()
+                .map(rec -> {
+                    PloegDTO dto = new PloegDTO();
+                    dto.setId(rec.getId());
+                    dto.setNaam(rec.getNaam());
+                    return dto;
+                });
+        return stream.collect(Collectors.toList());
+    }
+    public List<PloegDTO> getAllPloegen() {return queryListToPloegDtoList(ploegRepository.findAll());}
+    public List<PloegDTO> getSearchPloegen(String naam) throws IllegalArgumentException {
+        if (naam == null || naam.trim().length() == 0)
+            throw new IllegalArgumentException("Personen ophalen met de naam gefaald. Naam leeg");
 
+        List<Ploeg> lst = ploegRepository.getAllByNaamContainingIgnoreCase(naam);
+        return queryListToPloegDtoList(lst);
+    }
 }
