@@ -311,7 +311,6 @@ public class PersoonResource {
             throw new ParameterInvalidException(id.toString());
         }
         checkPersoonInfo(persoon);
-        checkIfEmailIsUnique(persoon.getEmail());
         Optional<Persoon> foundPersoon = persoonRepository.findPersoonById(id);
         if(!foundPersoon.isPresent()){
             throw new NotFoundException("Persoon met id "+id);
