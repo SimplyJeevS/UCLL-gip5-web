@@ -32,6 +32,19 @@ public class PersoonDTO {
         this.email = email;
     }
 
+    public PersoonDTO(Long id, String voornaam, String naam, String wachtwoord, Date geboortedatum, String geslacht, String adres, String telefoon, String gsm, String email) {
+        this.id = id;
+        this.voornaam = voornaam;
+        this.naam = naam;
+        this.wachtwoord = wachtwoord;
+        this.geboortedatum = geboortedatum;
+        this.geslacht = geslacht;
+        this.adres = adres;
+        this.telefoon = telefoon;
+        this.gsm = gsm;
+        this.email = email;
+    }
+
     public void setId(long id) {
         this.id = id;
     }
