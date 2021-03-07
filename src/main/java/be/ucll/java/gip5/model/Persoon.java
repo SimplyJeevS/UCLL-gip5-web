@@ -33,7 +33,7 @@ public class Persoon {
     @Column(name = "gsm")
     private String gsm;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @Column(name = "wachtwoord")
