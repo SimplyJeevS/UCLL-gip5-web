@@ -2,13 +2,11 @@ package be.ucll.java.gip5.rest;
 
 import be.ucll.java.gip5.dao.*;
 import be.ucll.java.gip5.dto.WedstrijdDTO;
+import be.ucll.java.gip5.dto.WedstrijdMetPloegenDTO;
 import be.ucll.java.gip5.exceptions.InvalidCredentialsException;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
-import be.ucll.java.gip5.model.Deelname;
-import be.ucll.java.gip5.model.Ploeg;
-import be.ucll.java.gip5.model.Toewijzing;
-import be.ucll.java.gip5.model.Wedstrijd;
+import be.ucll.java.gip5.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +47,32 @@ public class WedstrijdResource {
          checkApiKey(api,persoonRepository);
         logger.debug("GET request voor wedstrijd gekregen");
         return ResponseEntity.status(HttpStatus.OK).body(findWedstrijdFromId(id));
+    }
+
+    @GetMapping("/wedstrijdMetPloegen")
+    public ResponseEntity getNaamPloegen(@RequestParam(name = "api", required = false, defaultValue = "") String api) throws InvalidCredentialsException, NotFoundException {
+        Persoon persoon = checkApiKey(api,persoonRepository);
+        Long id = persoon.getId();
+        Optional<List<Toewijzing>> toewijzingList = toewijzingRepository.findAllByPloegId(id);
+        if(!toewijzingList.isPresent()){
+            throw new NotFoundException("Deze persoon heeft geen toewijzing(en)");
+        }
+        List<WedstrijdMetPloegenDTO> wedstrijdMetPloegenDTOList = Collections.emptyList();
+        List<Ploeg> ploegList = Collections.emptyList();
+        toewijzingList.get().forEach(t->{
+            Optional<Ploeg> ploeg = ploegRepository.findPloegById(t.getPloegId());
+            ploegList.add(ploeg.get());
+        });
+        ploegList.forEach(p->{
+            Optional<List<Wedstrijd>> wedstrijd = wedstrijdRepository.findWedstrijdByThuisPloeg(p.getId());
+            if(wedstrijd.isPresent()){
+                wedstrijd.get().forEach(w->{
+                    Optional<Ploeg> tegenstander = ploegRepository.findPloegById(w.getTegenstander());
+                    new WedstrijdMetPloegenDTO(w.getTijdstip(),w.getLocatie(),p.getId(),w.getTegenstander(),p.getNaam(),tegenstander.get().getNaam());
+                });
+            }
+        });
+        return ResponseEntity.status(HttpStatus.OK).body(wedstrijdMetPloegenDTOList);
     }
 
     @GetMapping("/wedstrijd")
