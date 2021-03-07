@@ -280,7 +280,7 @@ public class PersoonResource {
     }
 
     @PostMapping(value = "/persoon")
-    public ResponseEntity postPersoon(@PathVariable PersoonDTO persoon,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
+    public ResponseEntity postPersoon(@RequestBody PersoonDTO persoon,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
         checkApiKey(api,persoonRepository);
         logger.debug("POST request voor persoon gekregen");
         checkPersoonInfo(persoon);
@@ -296,10 +296,13 @@ public class PersoonResource {
                 .naam(persoon.getNaam())
                 .wachtwoord(persoon.getWachtwoord())
                 .telefoon(persoon.getTelefoon())
+                .default_rol()
+                .api()
                 .build()
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(newPersoon);
     }
+
 
     @PutMapping (value = "/persoon/{id}")
     public ResponseEntity putPersoon(@PathVariable("id") Long id, @RequestBody PersoonDTO persoon,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {

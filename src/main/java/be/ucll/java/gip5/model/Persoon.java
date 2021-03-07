@@ -9,7 +9,6 @@ import java.util.UUID;
 public class Persoon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @SequenceGenerator(name = "dseq", sequenceName = "persoon_sequence", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
@@ -60,7 +59,6 @@ public class Persoon {
         setNaam(builder.naam);
         setVoornaam(builder.voornaam);
         setTelefoon(builder.telefoon);
-        setDefault_rol(builder.default_rol);
         setApi(builder.api);
     }
 
@@ -76,7 +74,7 @@ public class Persoon {
     }
 
     public void setDefault_rol(Rol default_rol) {
-        this.default_rol = default_rol;
+        this.default_rol = Rol.GUEST;
     }
 
     public Long getId() {
@@ -198,7 +196,7 @@ public class Persoon {
             this.id = id;
             return this;
         }
-        public PersoonBuilder api(String api){
+        public PersoonBuilder api(){
             this.api = UUID.randomUUID().toString().replace("-", "");
             return this;
         }
@@ -235,8 +233,8 @@ public class Persoon {
             this.wachtwoord = wachtwoord;
             return this;
         }
-        public PersoonBuilder default_rol(Rol default_rol){
-            this.default_rol = default_rol;
+        public PersoonBuilder default_rol(){
+            this.default_rol = Rol.GUEST;
             return this;
         }
         public Persoon build(){return new Persoon(this);}
