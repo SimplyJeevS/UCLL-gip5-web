@@ -15,6 +15,7 @@ public class PersoonFragment extends FormLayout {
     public Label lblID;
     public TextField txtVoornaam;
     public TextField txtNaam;
+    public TextField txtWachtwoord;
     public DatePicker datGeboorte;
     public TextField txtGeslacht;
     public TextField txtAdres;
@@ -38,6 +39,11 @@ public class PersoonFragment extends FormLayout {
         txtNaam.setRequired(true);
         txtNaam.setMaxLength(128);
         txtNaam.setErrorMessage("Verplicht veld");
+
+        txtWachtwoord = new TextField();
+        txtWachtwoord.setRequired(true);
+        txtWachtwoord.setMaxLength(128);
+        txtWachtwoord.setErrorMessage("Verplicht veld");
 
         txtGeslacht = new TextField();
         txtGeslacht.setRequired(true);
@@ -78,6 +84,7 @@ public class PersoonFragment extends FormLayout {
 
         addFormItem(txtVoornaam, "Voornaam");
         addFormItem(txtNaam, "Naam");
+        addFormItem(txtWachtwoord, "Wachtwoord");
         addFormItem(datGeboorte, "Geboortedatum");
         addFormItem(txtGeslacht, "Geslacht");
         addFormItem(txtAdres, "Adres");
@@ -92,6 +99,8 @@ public class PersoonFragment extends FormLayout {
         txtVoornaam.setInvalid(false);
         txtNaam.clear();
         txtNaam.setInvalid(false);
+        txtWachtwoord.clear();
+        txtWachtwoord.setInvalid(false);
         datGeboorte.clear();
         datGeboorte.setInvalid(false);
         txtGeslacht.clear();
@@ -122,6 +131,14 @@ public class PersoonFragment extends FormLayout {
         }
         if (txtVoornaam.getValue().trim().length() == 0) {
             txtVoornaam.setInvalid(true);
+            result = false;
+        }
+        if (txtWachtwoord.getValue() == null) {
+            txtWachtwoord.setInvalid(true);
+            result = false;
+        }
+        if (txtWachtwoord.getValue().trim().length() == 0) {
+            txtWachtwoord.setInvalid(true);
             result = false;
         }
         if (datGeboorte.getValue() == null) {
