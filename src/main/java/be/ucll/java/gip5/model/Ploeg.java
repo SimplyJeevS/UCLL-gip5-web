@@ -14,7 +14,8 @@ public class Ploeg {
     private String naam;
 
     private Ploeg(PloegBuilder builder){
-
+        setId(builder.id);
+        setNaam(builder.naam);
     }
     public Ploeg(){}
 
