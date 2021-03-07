@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface PloegRepository extends JpaRepository<Ploeg, Long> {
     Optional<Ploeg> findPloegById(Long id);
     List<Ploeg> findAll();
+    Optional<Ploeg> findPloegByNaamIgnoreCase(String naam);
 }

@@ -65,6 +65,7 @@ public class PloegResource {
     @PostMapping(value="/ploeg")
     public ResponseEntity postPloeg(@RequestBody PloegDTO ploeg,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, InvalidCredentialsException {
         checkApiKey(api,persoonRepository);
+        checkIfPloegExists(ploeg.getNaam());
         checkPloegDTO(ploeg);
         Ploeg newPloeg = ploegRepository.save(
                 new Ploeg.PloegBuilder()
@@ -77,6 +78,7 @@ public class PloegResource {
     @PutMapping( value = "/ploeg/{id}")
     public ResponseEntity putPloeg(@PathVariable("id") Long id,@RequestBody PloegDTO ploeg,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
         checkApiKey(api,persoonRepository);
+        checkIfPloegExists(ploeg.getNaam());
         if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());
         }
@@ -150,4 +152,10 @@ public class PloegResource {
         return ResponseEntity.status(HttpStatus.OK).body(ploegen);
     }
 
+    private void checkIfPloegExists(String ploeg) throws ParameterInvalidException {
+        Optional<Ploeg> foundPloeg = ploegRepository.findPloegByNaamIgnoreCase(ploeg);
+        if(foundPloeg.isPresent()){
+            throw new ParameterInvalidException("Ploeg met die naam bestaat al.");
+        }
+    }
 }

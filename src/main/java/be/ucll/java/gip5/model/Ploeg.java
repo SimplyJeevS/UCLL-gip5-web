@@ -10,7 +10,7 @@ public class Ploeg {
     @SequenceGenerator(name = "dseq", sequenceName = "ploeg_sequence", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
-    @Column(name="naam")
+    @Column(name="naam", unique = true)
     private String naam;
 
     private Ploeg(PloegBuilder builder){
