@@ -32,6 +32,7 @@ public class ToewijzingResource {
         this.toewijzingRepository = toewijzingRepository;
         this.persoonRepository = persoonRepository;
         this.wedstrijdRepository = wedstrijdRepository;
+        this.ploegRepository = ploegRepository;
     }
 
     @GetMapping(value="/toewijzing/{id}")
@@ -63,9 +64,6 @@ public class ToewijzingResource {
     @PostMapping( value = "/toewijzing")
     public ResponseEntity postToewijzing(@RequestBody ToewijzingDTO toewijzing,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
         checkApiKey(api,persoonRepository);
-        if(toewijzing.equals(null)){
-            throw new ParameterInvalidException("Geen toewijzing meegegeven");
-        }
         checkToewijzingDto(toewijzing);
         Toewijzing newToewijzing = new Toewijzing.ToewijzingBuilder()
                 .persoonId(toewijzing.getPersoonId())

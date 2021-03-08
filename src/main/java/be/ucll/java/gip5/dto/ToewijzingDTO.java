@@ -6,7 +6,6 @@ public class ToewijzingDTO {
     private Long persoonId;
     private Rol rol;
     private Long ploegId;
-    private Long wedstrijdId;
 
     public ToewijzingDTO(){}
     public ToewijzingDTO(Long persoonId, Rol rol, Long ploegId){
