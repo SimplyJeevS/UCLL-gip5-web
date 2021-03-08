@@ -178,7 +178,7 @@ public class PloegenView extends VerticalLayout {
         }
 
         try {
-            PloegDTO s = new PloegDTO( frm.txtNaam.getValue());
+            PloegDTO s = new PloegDTO( frm.txtNaam.getValue(), frm.txtOmschrijving.getValue());
             ResponseEntity i = ploegResource.postPloeg(s, "");
 
             Notification.show("Ploeg created (id: " + i + ")", 3000, Notification.Position.TOP_CENTER);
@@ -201,7 +201,7 @@ public class PloegenView extends VerticalLayout {
         }
 
         try {
-            PloegDTO pdto = new PloegDTO(frm.txtNaam.getValue());
+            PloegDTO pdto = new PloegDTO(frm.txtOmschrijving.getValue(), frm.txtNaam.getValue());
             ploegResource.putPloeg(Long.parseLong(frm.lblID.getText()), pdto, "");
 
             Notification.show("Ploeg aangepast", 3000, Notification.Position.TOP_CENTER);
@@ -284,6 +284,12 @@ public class PloegenView extends VerticalLayout {
             }
             else {
                 frm.txtNaam.setValue("");
+            }
+            if (p.getOmschrijving() != null){
+                frm.txtOmschrijving.setValue(p.getOmschrijving());
+            }
+            else {
+                frm.txtOmschrijving.setValue("");
             }
         }
 

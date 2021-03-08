@@ -95,6 +95,7 @@ public class PloegResource {
         Ploeg newPloeg = ploegRepository.save(
                 new Ploeg.PloegBuilder()
                 .naam(ploeg.getNaam())
+                .omschrijving(ploeg.getOmschrijving())
                 .build()
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(newPloeg);
@@ -113,6 +114,7 @@ public class PloegResource {
         }
         checkPloegDTO(ploeg);
         foundPloeg.get().setNaam(ploeg.getNaam());
+        foundPloeg.get().setOmschrijving(ploeg.getOmschrijving());
         ploegRepository.save(foundPloeg.get());
         return ResponseEntity.status(HttpStatus.OK).body(foundPloeg);
     }
@@ -184,6 +186,7 @@ public class PloegResource {
                     PloegDTO dto = new PloegDTO();
                     dto.setId(rec.getId());
                     dto.setNaam(rec.getNaam());
+                    dto.setOmschrijving(rec.getOmschrijving());
                     return dto;
                 });
         return stream.collect(Collectors.toList());

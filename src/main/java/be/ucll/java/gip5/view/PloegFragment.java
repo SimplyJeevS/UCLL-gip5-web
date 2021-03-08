@@ -13,6 +13,7 @@ public class PloegFragment extends FormLayout {
     // Public fields for ease of access
     public Label lblID;
     public TextField txtNaam;
+    public TextField txtOmschrijving;
 
 
 
@@ -27,6 +28,11 @@ public class PloegFragment extends FormLayout {
         txtNaam.setMaxLength(128);
         txtNaam.setErrorMessage("Verplicht veld");
 
+        txtOmschrijving = new TextField();
+        txtOmschrijving.setRequired(true);
+        txtOmschrijving.setMaxLength(128);
+        txtOmschrijving.setErrorMessage("Verplicht veld");
+
 
         addFormItem(txtNaam, "Naam");
     }
@@ -35,6 +41,8 @@ public class PloegFragment extends FormLayout {
         lblID.setText("");
         txtNaam.clear();
         txtNaam.setInvalid(false);
+        txtOmschrijving.clear();
+        txtOmschrijving.setInvalid(false);
     }
 
     public boolean isformValid() {
@@ -45,6 +53,14 @@ public class PloegFragment extends FormLayout {
         }
         if (txtNaam.getValue().trim().length() == 0) {
             txtNaam.setInvalid(true);
+            result = false;
+        }
+        if (txtOmschrijving.getValue() == null) {
+            txtOmschrijving.setInvalid(true);
+            result = false;
+        }
+        if (txtOmschrijving.getValue().trim().length() == 0) {
+            txtOmschrijving.setInvalid(true);
             result = false;
         }
         return result;
