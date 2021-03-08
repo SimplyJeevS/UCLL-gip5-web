@@ -4,7 +4,6 @@ import be.ucll.java.gip5.dao.PersoonRepository;
 import be.ucll.java.gip5.dao.PloegRepository;
 import be.ucll.java.gip5.dao.ToewijzingRepository;
 import be.ucll.java.gip5.dao.WedstrijdRepository;
-import be.ucll.java.gip5.dto.PersoonDTO;
 import be.ucll.java.gip5.dto.PloegDTO;
 import be.ucll.java.gip5.exceptions.InvalidCredentialsException;
 import be.ucll.java.gip5.exceptions.NotFoundException;
@@ -13,6 +12,8 @@ import be.ucll.java.gip5.model.Persoon;
 import be.ucll.java.gip5.model.Ploeg;
 import be.ucll.java.gip5.model.Toewijzing;
 import be.ucll.java.gip5.model.Wedstrijd;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,6 +79,7 @@ public class PloegResource {
         }
         Optional<List<Toewijzing>> toewijzingList = toewijzingRepository.findAllByPloegId(id);
         if(!toewijzingList.isPresent()){
+            Notification.show("Deze ploeg bevat geen spelers", 3000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
             throw new NotFoundException("Er zijn geen toewijzingen gevonden voor de meegegeven ploeg id");
         }
         List<Persoon> persoonList = new ArrayList<>();

@@ -251,21 +251,34 @@ public class PloegenView extends VerticalLayout {
     }
     private void handleClickShowPLayers() throws InvalidCredentialsException, NotFoundException {
         List<Persoon> playersInPloeg = (List<Persoon>) ploegResource.getAllSpelersInPloeg(Long.parseLong(frm.lblID.getText()) ,"").getBody();
-        if(gridp != null)
-        lpvLayout.remove(gridp);
-        gridp = new Grid<>();
+        try
+        {
+            if(playersInPloeg == null || playersInPloeg.size() < 1)
+                throw new NotFoundException("Players");
+            
+            if(gridp != null)
+                lpvLayout.remove(gridp);
 
-        gridp.setItems(playersInPloeg);
-        gridp.addColumn(Persoon::getVoornaam).setHeader("Voornaam").setSortable(true);
-        gridp.addColumn(Persoon::getNaam).setHeader("Naam").setSortable(true);
-        gridp.addColumn(Persoon::getGeslacht).setHeader("Geslacht").setSortable(true);
-        gridp.addColumn(Persoon::getAdres).setHeader("Adres").setSortable(true);
-        gridp.addColumn(Persoon::getTelefoon).setHeader("Telefoon").setSortable(true);
-        gridp.addColumn(Persoon::getGsm).setHeader("Gsm").setSortable(true);
-        gridp.addColumn(Persoon::getEmail).setHeader("E-mail").setSortable(true);
-        gridp.addColumn(Persoon::getGeboortedatum).setHeader("Geboortedatum").setSortable(true);
+            gridp = new Grid<>();
 
-        lpvLayout.add(gridp);
+            gridp.setItems(playersInPloeg);
+            gridp.addColumn(Persoon::getVoornaam).setHeader("Voornaam").setSortable(true);
+            gridp.addColumn(Persoon::getNaam).setHeader("Naam").setSortable(true);
+            gridp.addColumn(Persoon::getGeslacht).setHeader("Geslacht").setSortable(true);
+            gridp.addColumn(Persoon::getAdres).setHeader("Adres").setSortable(true);
+            gridp.addColumn(Persoon::getTelefoon).setHeader("Telefoon").setSortable(true);
+            gridp.addColumn(Persoon::getGsm).setHeader("Gsm").setSortable(true);
+            gridp.addColumn(Persoon::getEmail).setHeader("E-mail").setSortable(true);
+            gridp.addColumn(Persoon::getGeboortedatum).setHeader("Geboortedatum").setSortable(true);
+
+            lpvLayout.add(gridp);
+        }
+        catch (NotFoundException e)
+        {
+            Notification.show("Deze ploeg bevat geen spelers", 3000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
+            e.printStackTrace();
+        }
+
     }
     private void populateForm(PloegDTO p) {
         btnCreate.setVisible(false);
