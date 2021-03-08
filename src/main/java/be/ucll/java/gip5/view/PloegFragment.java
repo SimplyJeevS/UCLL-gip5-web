@@ -35,6 +35,7 @@ public class PloegFragment extends FormLayout {
 
 
         addFormItem(txtNaam, "Naam");
+        addFormItem(txtOmschrijving, "Omschrijving");
     }
 
     public void resetForm() {

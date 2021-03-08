@@ -93,6 +93,7 @@ public class PloegenView extends VerticalLayout {
         grid = new Grid<>();
         grid.setItems(new ArrayList<PloegDTO>(0));
         grid.addColumn(PloegDTO::getNaam).setHeader("Naam").setSortable(true);
+        grid.addColumn(PloegDTO::getOmschrijving).setHeader("Omschrijving").setSortable(true);
         //when a row is selected or deselected, populate form
         grid.asSingleSelect().addValueChangeListener(event -> populateForm(event.getValue()));
 
@@ -144,7 +145,7 @@ public class PloegenView extends VerticalLayout {
 
         rpvLayout.add(frm);
         rpvLayout.add(rphLayout);
-        rpvLayout.setWidth("30%");
+        rpvLayout.setWidth("35%");
 
         return rpvLayout;
     }
@@ -201,7 +202,7 @@ public class PloegenView extends VerticalLayout {
         }
 
         try {
-            PloegDTO pdto = new PloegDTO(frm.txtOmschrijving.getValue(), frm.txtNaam.getValue());
+            PloegDTO pdto = new PloegDTO(frm.txtNaam.getValue(), frm.txtOmschrijving.getValue());
             ploegResource.putPloeg(Long.parseLong(frm.lblID.getText()), pdto, "");
 
             Notification.show("Ploeg aangepast", 3000, Notification.Position.TOP_CENTER);
