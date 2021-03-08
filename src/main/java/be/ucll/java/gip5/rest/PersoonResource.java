@@ -62,6 +62,11 @@ public class PersoonResource {
         }
     }
 
+    @GetMapping(value="/getLoginInfo")
+    public ResponseEntity getLoginInfo(@RequestParam(name = "api", required = false, defaultValue = "") String api) throws InvalidCredentialsException {
+        return ResponseEntity.status(HttpStatus.OK).body(checkApiKey(api,persoonRepository));
+    }
+
     @GetMapping(value = "/persoon")
     public ResponseEntity getPersonen(@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, InvalidCredentialsException {
         checkApiKey(api,persoonRepository);
