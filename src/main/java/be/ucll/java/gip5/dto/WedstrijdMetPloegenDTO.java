@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 public class WedstrijdMetPloegenDTO {
 
+    private Long id;
     private LocalDateTime tijdstip;
     private String locatie;
     private Long thuisploegId;
@@ -19,6 +20,23 @@ public class WedstrijdMetPloegenDTO {
         this.tegenstanderId = tegenstanderId;
         this.tegenstander = tegenstander;
         this.thuisploeg = thuisploeg;
+    }
+    public WedstrijdMetPloegenDTO(Long id, LocalDateTime tijdstip, String locatie, Long thuisploegId, Long tegenstanderId, String tegenstander, String thuisploeg) {
+        this.id = id;
+        this.tijdstip = tijdstip;
+        this.locatie = locatie;
+        this.thuisploegId = thuisploegId;
+        this.tegenstanderId = tegenstanderId;
+        this.tegenstander = tegenstander;
+        this.thuisploeg = thuisploeg;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public LocalDateTime getTijdstip() {

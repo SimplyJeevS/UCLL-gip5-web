@@ -5,23 +5,45 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 public class WedstrijdDTO {
-    private String tijdstip;
+    private Long id;
+    private LocalDateTime tijdstip;
     private String locatie;
     private Long thuisPloeg;
     private Long tegenstander;
 
     public WedstrijdDTO(){}
-    public WedstrijdDTO(String tijdstip, String locatie, Long thuisPloeg){
+    public WedstrijdDTO(LocalDateTime tijdstip, String locatie, Long thuisPloeg){
         this.tijdstip = tijdstip;
         this.locatie = locatie;
         this.thuisPloeg = thuisPloeg;
     }
+    public WedstrijdDTO(Long id, LocalDateTime tijdstip, String locatie, Long thuisPloeg, Long tegenstander){
+        this.id = id;
+        this.tijdstip = tijdstip;
+        this.locatie = locatie;
+        this.thuisPloeg = thuisPloeg;
+        this.tegenstander = tegenstander;
+    }
+    public WedstrijdDTO(LocalDateTime tijdstip, String locatie, Long thuisPloeg, Long tegenstander){
+        this.tijdstip = tijdstip;
+        this.locatie = locatie;
+        this.thuisPloeg = thuisPloeg;
+        this.tegenstander = tegenstander;
+    }
 
-    public String tijdstip() {
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public LocalDateTime tijdstip() {
         return tijdstip;
     }
 
-    public void setDatum(String tijdstip) {
+    public void setDatum(LocalDateTime tijdstip) {
         this.tijdstip = tijdstip;
     }
 
@@ -50,11 +72,11 @@ public class WedstrijdDTO {
         this.tegenstander = tegenstander;
     }
 
-    public String getTijdstip() {
+    public LocalDateTime getTijdstip() {
         return tijdstip;
     }
 
-    public void setTijdstip(String tijdstip) {
+    public void setTijdstip(LocalDateTime tijdstip) {
         this.tijdstip = tijdstip;
     }
 }

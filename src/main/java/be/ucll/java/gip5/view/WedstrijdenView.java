@@ -37,6 +37,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
@@ -103,8 +104,8 @@ public class WedstrijdenView extends VerticalLayout {
         grid = new Grid<>();
         grid.setItems(new ArrayList<WedstrijdMetPloegenDTO>(0));
         grid.addColumn(WedstrijdMetPloegenDTO::getLocatie).setHeader("Locatie").setSortable(true);
-        grid.addColumn(WedstrijdMetPloegenDTO::getThuisploegId).setHeader("Thuisploeg").setSortable(true);
-        grid.addColumn(WedstrijdMetPloegenDTO::getTegenstanderId).setHeader("Tegenstander").setSortable(true);
+        grid.addColumn(WedstrijdMetPloegenDTO::getThuisploeg).setHeader("Thuisploeg").setSortable(true);
+        grid.addColumn(WedstrijdMetPloegenDTO::getTegenstander).setHeader("Tegenstander").setSortable(true);
         grid.addColumn(WedstrijdMetPloegenDTO::getTijdstip).setHeader("Tijdstip").setSortable(true);
 
         grid.setHeightFull();
@@ -174,15 +175,80 @@ public class WedstrijdenView extends VerticalLayout {
             grid.setItems(wedstrijdResource.getSearchWedstrijden(searchterm));
         }
     }
-    private void handleClickCancel(ClickEvent<Button> e) {
+    private void handleClickCancel(ClickEvent e) {
+        grid.asSingleSelect().clear();
+        frm.resetForm();
+        btnCreate.setVisible(true);
+        btnUpdate.setVisible(false);
+        btnDelete.setVisible(false);
     }
-    private void handleClickCreate(ClickEvent<Button> e) {
+    private void handleClickCreate(ClickEvent event) {
+        if (!frm.isformValid()) {
+            Notification.show("Er zijn validatiefouten", 3000, Notification.Position.MIDDLE);
+            return;
+        }
+
+        try {
+            LocalDateTime d = frm.datTijdstip.getValue();
+
+            WedstrijdDTO w = new WedstrijdDTO(d, frm.txtLocatie.getValue(), frm.selectedTegenstander.getId(), frm.selectedThuis.getId());
+            ResponseEntity i = wedstrijdResource.postWedstrijd(w, "");
+
+            Notification.show("Persoon created (id: " + i + ")", 3000, Notification.Position.TOP_CENTER);
+            frm.resetForm();
+            handleClickSearch(null);
+        } catch (IllegalArgumentException e) {
+            Notification.show(e.getMessage(), 5000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
+        } catch (ParameterInvalidException e) {
+            e.printStackTrace();
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+        } catch (InvalidCredentialsException e) {
+            e.printStackTrace();
+        }
     }
-    private void handleClickUpdate(ClickEvent<Button> e) {
+    private void handleClickUpdate(ClickEvent e) {
     }
-    private void handleClickDelete(ClickEvent<Button> e) {
+    private void handleClickDelete(ClickEvent e) {
     }
-    private void populateForm(WedstrijdMetPloegenDTO value) {
+    private void populateForm(WedstrijdMetPloegenDTO w) {
+        btnCreate.setVisible(false);
+        btnUpdate.setVisible(true);
+        btnDelete.setVisible(true);
+
+        if (w != null) {
+            // Copy the ID in a hidden field
+            if (w.getId() != null) {
+                frm.lblID.setText(w.getId().toString());
+            } else {
+                frm.lblID.setText("");
+            }
+
+            if (w.getLocatie() != null) {
+                frm.txtLocatie.setValue(w.getLocatie());
+            } else {
+                frm.txtLocatie.setValue("");
+            }
+            if (w.getThuisploeg() != null) {
+                frm.cmbThuisPloegen.setPlaceholder(w.getThuisploeg());
+            } else {
+                frm.cmbThuisPloegen.setPlaceholder("Kies een thuisploeg");
+            }
+            if (w.getTegenstander() != null) {
+                frm.cmbTegenstanders.setPlaceholder(w.getTegenstander());
+            } else {
+                frm.cmbTegenstanders.setPlaceholder("Kies een thuisploeg");
+            }
+            if (w.getTijdstip() != null) {
+                try {
+                    frm.datTijdstip.setValue(w.getTijdstip());
+                } catch (NullPointerException e) {
+                    frm.datTijdstip.setValue(null);
+                }
+            } else {
+                frm.datTijdstip.setValue(null);
+            }
+        }
     }
 
 }

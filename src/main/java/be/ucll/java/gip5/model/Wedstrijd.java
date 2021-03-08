@@ -21,7 +21,13 @@ public class Wedstrijd {
     @Column(name="tegenstander")
     private Long tegenstander;
 
-    private Wedstrijd(WedstrijdBuilder builder){}
+    private Wedstrijd(WedstrijdBuilder builder){
+        setId(builder.id);
+        setLocatie(builder.locatie);
+        setTegenstander(builder.tegenstander);
+        setThuisPloeg(builder.thuisPloeg);
+        setTijdstip(builder.tijdstip);
+    }
     public Wedstrijd(){}
 
     public static final class WedstrijdBuilder {

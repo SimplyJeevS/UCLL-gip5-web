@@ -172,12 +172,12 @@ public class WedstrijdResource {
     @PostMapping( value = "/wedstrijd")
     public ResponseEntity postWedstrijd(@RequestBody WedstrijdDTO wedstrijd,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
         checkApiKey(api,persoonRepository);
-        LocalDateTime tijdstip = checkWedstrijdDTOAndFindTijdstip(wedstrijd);
+        checkWedstrijdDTOAndFindTijdstip(wedstrijd);
         Wedstrijd newWedstrijd = new Wedstrijd.WedstrijdBuilder()
                 .tegenstander(wedstrijd.getTegenstander())
                 .thuisPloeg(wedstrijd.getThuisPloeg())
                 .locatie(wedstrijd.getLocatie())
-                .tijdstip(tijdstip)
+                .tijdstip(wedstrijd.getTijdstip())
                 .build();
         wedstrijdRepository.save(newWedstrijd);
         return ResponseEntity.status(HttpStatus.CREATED).body(newWedstrijd);
@@ -187,9 +187,9 @@ public class WedstrijdResource {
     public ResponseEntity putWedstrijd(@PathVariable("id") Long id, @RequestBody WedstrijdDTO wedstrijd,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, ParameterInvalidException, InvalidCredentialsException {
         checkApiKey(api,persoonRepository);
         Wedstrijd foundWedstrijd = findWedstrijdFromId(id);
-        LocalDateTime tijdstip = checkWedstrijdDTOAndFindTijdstip(wedstrijd);
+        checkWedstrijdDTOAndFindTijdstip(wedstrijd);
         foundWedstrijd.setLocatie(wedstrijd.getLocatie());
-        foundWedstrijd.setTijdstip(tijdstip);
+        foundWedstrijd.setTijdstip(wedstrijd.getTijdstip());
         foundWedstrijd.setTegenstander(wedstrijd.getTegenstander());
         foundWedstrijd.setThuisPloeg(wedstrijd.getThuisPloeg());
         wedstrijdRepository.save(foundWedstrijd);
@@ -204,22 +204,22 @@ public class WedstrijdResource {
         return ResponseEntity.status(HttpStatus.OK).body(wedstrijd);
     }
 
-    private LocalDateTime checkWedstrijdDTOAndFindTijdstip(WedstrijdDTO wedstrijd) throws ParameterInvalidException, NotFoundException {
+    private void checkWedstrijdDTOAndFindTijdstip(WedstrijdDTO wedstrijd) throws ParameterInvalidException, NotFoundException {
         if(wedstrijd.getLocatie().isEmpty() || wedstrijd.getLocatie().trim().length() <= 0 ){
             throw new ParameterInvalidException("Locatie met waarde "+wedstrijd.getLocatie());
         }
         LocalDateTime tijdstip;
-        try {
-            try {
-                tijdstip = LocalDateTime.parse(wedstrijd.getTijdstip(),
-                        DateTimeFormatter.ISO_INSTANT);
-            } catch (Exception err) {
-                tijdstip = LocalDateTime.parse(wedstrijd.getTijdstip(),
-                        DateTimeFormatter.RFC_1123_DATE_TIME);
-            }
-        }catch(Exception err){
-            throw new ParameterInvalidException("Tijdstip formaat invalid, gebruik ISO 8601 of RFC 1123/ RFC 822 formaat. tijdstip met waarde "+wedstrijd.getTijdstip());
-        }
+//        try {
+//            try {
+//                tijdstip = LocalDateTime.parse(wedstrijd.getTijdstip(),
+//                        DateTimeFormatter.ISO_INSTANT);
+//            } catch (Exception err) {
+//                tijdstip = LocalDateTime.parse(wedstrijd.getTijdstip(),
+//                        DateTimeFormatter.RFC_1123_DATE_TIME);
+//            }
+//        }catch(Exception err){
+//            throw new ParameterInvalidException("Tijdstip formaat invalid, gebruik ISO 8601 of RFC 1123/ RFC 822 formaat. tijdstip met waarde "+wedstrijd.getTijdstip());
+//        }
         if(!(wedstrijd.getTegenstander() instanceof Long) || wedstrijd.getTegenstander() <=0){
             throw new ParameterInvalidException("Tegenstander moet een postitief nummer zijn");
         }
@@ -234,7 +234,6 @@ public class WedstrijdResource {
         if(!tegenstander.isPresent()){
             throw new NotFoundException("Tegenstander met id "+wedstrijd.getThuisPloeg());
         }
-        return tijdstip;
     }
     private Wedstrijd findWedstrijdFromId(Long id) throws ParameterInvalidException, NotFoundException {
         if(id == null && !(id instanceof Long) && id <=0 ){
