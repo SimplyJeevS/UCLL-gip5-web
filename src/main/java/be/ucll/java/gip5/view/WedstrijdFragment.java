@@ -60,12 +60,8 @@ public class WedstrijdFragment extends FormLayout {
             e.printStackTrace();
         }
         cmbThuisPloegen.setWidth("500px");
-        Div Value = new Div();
-        Value.setText("kies een ploeg");
         cmbThuisPloegen.addValueChangeListener(event -> {
-            Value.setText("geselecteerde ploeg: " + event.getValue().getId());
             selectedThuis = event.getValue();
-            selectedThuis.setId(event.getValue().getId());
         });
         cmbTegenstanders = new ComboBox<>();
         cmbTegenstanders.setItemLabelGenerator(PloegDTO::getNaam);
@@ -83,7 +79,6 @@ public class WedstrijdFragment extends FormLayout {
         cmbTegenstanders.setWidth("500px");
         cmbTegenstanders.addValueChangeListener(event -> {
             selectedTegenstander = event.getValue();
-            selectedTegenstander.setId(event.getValue().getId());
         });
 
 

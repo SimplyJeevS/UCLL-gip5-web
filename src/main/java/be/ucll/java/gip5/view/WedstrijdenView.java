@@ -167,7 +167,7 @@ public class WedstrijdenView extends VerticalLayout {
         }
     }
 
-    private void handleClickSearch(ClickEvent event) {
+    private void handleClickSearch(Object o) {
         if (txtLocatie.getValue().trim().length() == 0) {
             grid.setItems(wedstrijdResource.getAllWedstrijden());
         } else {
@@ -175,7 +175,7 @@ public class WedstrijdenView extends VerticalLayout {
             grid.setItems(wedstrijdResource.getSearchWedstrijden(searchterm));
         }
     }
-    private void handleClickCancel(ClickEvent e) {
+    private void handleClickCancel(ClickEvent event) {
         grid.asSingleSelect().clear();
         frm.resetForm();
         btnCreate.setVisible(true);
@@ -194,7 +194,7 @@ public class WedstrijdenView extends VerticalLayout {
             WedstrijdDTO w = new WedstrijdDTO(d, frm.txtLocatie.getValue(), frm.selectedTegenstander.getId(), frm.selectedThuis.getId());
             ResponseEntity i = wedstrijdResource.postWedstrijd(w, "");
 
-            Notification.show("Persoon created (id: " + i + ")", 3000, Notification.Position.TOP_CENTER);
+            Notification.show("Wedstrijd created (id: " + i + ")", 3000, Notification.Position.TOP_CENTER);
             frm.resetForm();
             handleClickSearch(null);
         } catch (IllegalArgumentException e) {
@@ -207,9 +207,67 @@ public class WedstrijdenView extends VerticalLayout {
             e.printStackTrace();
         }
     }
-    private void handleClickUpdate(ClickEvent e) {
+    private void handleClickUpdate(ClickEvent event) {
+        if (!frm.isformValid()) {
+            Notification.show("Er zijn validatiefouten", 3000, Notification.Position.MIDDLE);
+            return;
+        }
+
+        try {
+            LocalDateTime d = frm.datTijdstip.getValue();
+
+            WedstrijdDTO w = new WedstrijdDTO(d, frm.txtLocatie.getValue(), frm.selectedTegenstander.getId(), frm.selectedThuis.getId());
+            wedstrijdResource.putWedstrijd(Long.parseLong(frm.lblID.getText()), w, "");
+            Notification.show("Wedstrijd aangepast", 3000, Notification.Position.TOP_CENTER);
+            frm.resetForm();
+            handleClickSearch(null);
+        } catch (IllegalArgumentException e) {
+            Notification.show(e.getMessage(), 5000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
+        } catch (ParameterInvalidException e) {
+            e.printStackTrace();
+        } catch (InvalidCredentialsException e) {
+            Notification.show("Je bent niet ingelogd", 3000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
+            UI.getCurrent().navigate("login");
+            e.printStackTrace();
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+        }
     }
-    private void handleClickDelete(ClickEvent e) {
+    private void handleClickDelete(ClickEvent event) {
+        Dialog dialog = new Dialog();
+        dialog.setCloseOnEsc(false);
+        dialog.setCloseOnOutsideClick(false);
+
+        Button confirmButton = new Button("Bevestig Wedstrijd verwijderen", event2 -> {
+            try {
+                wedstrijdResource.deleteWedstrijd(Long.parseLong(frm.lblID.getText()), "");
+                Notification.show("Wedstrijd verwijderd", 3000, Notification.Position.TOP_CENTER);
+            } catch (IllegalArgumentException e) {
+                Notification.show("Het is NIET mogelijk de wedstrijd te verwijderen wegens geregistreerde toewijzigingen.", 5000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
+            } catch (ParameterInvalidException e) {
+                e.printStackTrace();
+            } catch (NotFoundException e) {
+                e.printStackTrace();
+            } catch (InvalidCredentialsException e) {
+                Notification.show("Je bent niet ingelogd", 3000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
+                UI.getCurrent().navigate("login");
+                e.printStackTrace();
+            }
+            frm.resetForm();
+            handleClickSearch(null);
+            btnCreate.setVisible(true);
+            btnUpdate.setVisible(false);
+            btnDelete.setVisible(false);
+
+            dialog.close();
+        });
+        Button cancelButton = new Button("Cancel", event2 -> {
+            dialog.close();
+        });
+
+        dialog.add(confirmButton, new Html("<span>&nbsp;</span>"), cancelButton);
+
+        dialog.open();
     }
     private void populateForm(WedstrijdMetPloegenDTO w) {
         btnCreate.setVisible(false);

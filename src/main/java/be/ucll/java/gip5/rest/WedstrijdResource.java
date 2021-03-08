@@ -205,21 +205,21 @@ public class WedstrijdResource {
     @PutMapping( value = "/wedstrijd/{id}")
     public ResponseEntity putWedstrijd(@PathVariable("id") Long id, @RequestBody WedstrijdDTO wedstrijd,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, ParameterInvalidException, InvalidCredentialsException {
         checkApiKey(api,persoonRepository);
-        Wedstrijd foundWedstrijd = findWedstrijdFromId(id);
+        Optional<Wedstrijd> foundWedstrijd = wedstrijdRepository.findWedstrijdById(id);
         checkWedstrijdDTOAndFindTijdstip(wedstrijd);
-        foundWedstrijd.setLocatie(wedstrijd.getLocatie());
-        foundWedstrijd.setTijdstip(wedstrijd.getTijdstip());
-        foundWedstrijd.setTegenstander(wedstrijd.getTegenstander());
-        foundWedstrijd.setThuisPloeg(wedstrijd.getThuisPloeg());
-        wedstrijdRepository.save(foundWedstrijd);
+        foundWedstrijd.get().setLocatie(wedstrijd.getLocatie());
+        foundWedstrijd.get().setTijdstip(wedstrijd.getTijdstip());
+        foundWedstrijd.get().setTegenstander(wedstrijd.getTegenstander());
+        foundWedstrijd.get().setThuisPloeg(wedstrijd.getThuisPloeg());
+        wedstrijdRepository.save(foundWedstrijd.get());
         return ResponseEntity.status(HttpStatus.OK).body(foundWedstrijd);
     }
 
     @DeleteMapping( value = "/wedstrijd/{id}")
     public ResponseEntity deleteWedstrijd(@PathVariable("id") Long id,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, ParameterInvalidException, InvalidCredentialsException {
         checkApiKey(api,persoonRepository);
-        Wedstrijd wedstrijd = findWedstrijdFromId(id);
-        wedstrijdRepository.delete(wedstrijd);
+        Optional<Wedstrijd> wedstrijd = wedstrijdRepository.findWedstrijdById(id);
+        wedstrijdRepository.delete(wedstrijd.get());
         return ResponseEntity.status(HttpStatus.OK).body(wedstrijd);
     }
 
@@ -283,6 +283,7 @@ public class WedstrijdResource {
         Stream< WedstrijdMetPloegenDTO> stream = lst.stream()
                 .map(rec -> {
                      WedstrijdMetPloegenDTO dto = new  WedstrijdMetPloegenDTO();
+                    dto.setId(rec.getId());
                     dto.setLocatie(rec.getLocatie());
                     dto.setTegenstanderId(rec.getTegenstander());
                     dto.setThuisploegId(rec.getThuisPloeg());

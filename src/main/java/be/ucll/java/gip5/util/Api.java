@@ -6,6 +6,7 @@ import be.ucll.java.gip5.exceptions.InvalidCredentialsException;
 import be.ucll.java.gip5.model.Persoon;
 import be.ucll.java.gip5.model.Rol;
 import be.ucll.java.gip5.model.Toewijzing;
+import com.vaadin.flow.component.UI;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -27,6 +28,7 @@ public class Api {
         }
         Optional<Persoon> persoon = persoonRepository.findPersoonByApi(api);
         if(!persoon.isPresent()){
+            UI.getCurrent().navigate("");
             throw new InvalidCredentialsException();
         }
         return persoon.get();
