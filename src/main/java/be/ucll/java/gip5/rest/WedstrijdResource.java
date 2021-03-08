@@ -268,8 +268,10 @@ public class WedstrijdResource {
                     dto.setLocatie(rec.getLocatie());
                     dto.setTegenstanderId(rec.getTegenstander());
                     dto.setThuisploegId(rec.getThuisPloeg());
-                    dto.setThuisploeg(ploegRepository.findPloegById(rec.getThuisPloeg()).get().getNaam());
-                    dto.setTegenstander(ploegRepository.findPloegById(rec.getTegenstander()).get().getNaam());
+                    Optional<Ploeg> thuisploeg = ploegRepository.findPloegById(rec.getThuisPloeg());
+                    Optional<Ploeg> tegenstander = ploegRepository.findPloegById(rec.getTegenstander());
+                    dto.setThuisploeg((thuisploeg.isPresent())?thuisploeg.get().getNaam():"Geen thuisploeg gevonden");
+                    dto.setTegenstander((tegenstander.isPresent())?tegenstander.get().getNaam():"Geen tegenstander gevonden");
                     dto.setTijdstip((rec.getTijdstip()));
                     return dto;
                 });
