@@ -10,6 +10,7 @@ import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
 import be.ucll.java.gip5.model.Persoon;
 import be.ucll.java.gip5.model.Ploeg;
+import be.ucll.java.gip5.model.Rol;
 import be.ucll.java.gip5.model.Toewijzing;
 import be.ucll.java.gip5.rest.PloegResource;
 import be.ucll.java.gip5.rest.ToewijzingResource;
@@ -25,6 +26,8 @@ import com.vaadin.flow.component.listbox.ListBox;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
+import com.vaadin.flow.component.radiobutton.RadioGroupVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,10 +70,10 @@ public class ToewijzingDialog extends Dialog {
 
         lstToewijzing = new ListBox<>();
         Optional<Persoon> p = persoonRepository.findPersoonByEmailIgnoreCase(persoonDTO.getEmail());
-        List<Toewijzing> inschrijvingen = (List<Toewijzing>) toewijzingMngr.getToewijzingListVanPersoon(p.get().getId(), "").getBody();
+        List<Toewijzing> toewijzingen = (List<Toewijzing>) toewijzingMngr.getToewijzingListVanPersoon(p.get().getId(), "").getBody();
 
-        if (inschrijvingen != null && inschrijvingen.size() > 0) {
-            inschrijvingen.forEach(i -> {
+        if (toewijzingen != null && toewijzingen.size() > 0) {
+            toewijzingen.forEach(i -> {
                 lstToewijzing.setItems(new ToewijzingDTO(i.getPersoonId(), i.getRol(), i.getPloegId()));
             });
         }
@@ -118,27 +121,43 @@ public class ToewijzingDialog extends Dialog {
                 PloegDTO ploeg = new PloegDTO(ploegen.get(i).getId(), ploegen.get(i).getNaam());
                 ploegDTOList.add(ploeg);
             }
+            cmbPloegen.setLabel("Ploeg");
             cmbPloegen.setItems(ploegDTOList);
         } catch (NotFoundException | InvalidCredentialsException e) {
             e.printStackTrace();
         }
-        Div value = new Div();
-        cmbPloegen.setWidth("500px");
-        value.setText("Kies een ploeg");
+
+        cmbPloegen.setWidth("400px");
         cmbPloegen.addValueChangeListener(event -> {
-            if (event.getValue() == null) {
-                value.setText("Geen ploeg geselecteerd");
-            } else {
-                value.setText("Geselecteerde ploeg: " + event.getValue().getId());
-                Optional<Persoon> selectedPersoon = persoonRepository.findPersoonByEmailIgnoreCase(persoonDTO.getEmail());
-                selectedToewijzing.setPloegId(event.getValue().getId());
-                selectedToewijzing.setPersoonId(selectedPersoon.get().getId());
-                selectedToewijzing.setRol(selectedPersoon.get().getDefault_rol());
+            Optional<Persoon> selectedPersoon = persoonRepository.findPersoonByEmailIgnoreCase(persoonDTO.getEmail());
+            selectedToewijzing.setPloegId(event.getValue().getId());
+            selectedToewijzing.setPersoonId(selectedPersoon.get().getId());
+        });
+        add(cmbPloegen);
+
+        RadioButtonGroup<String> radioGroup = new RadioButtonGroup<>();
+        radioGroup.setLabel("Rol");
+        radioGroup.setItems("Coach", "Speler", "Journalist", "Supporter");
+        radioGroup.addThemeVariants(RadioGroupVariant.LUMO_HELPER_ABOVE_FIELD);
+
+        Div value = new Div();
+        radioGroup.addValueChangeListener(event -> {
+            switch (event.getValue())
+            {
+                case "Coach":  selectedToewijzing.setRol(Rol.COACH);
+                break;
+                case "Speler": selectedToewijzing.setRol(Rol.SPELER);
+                break;
+                case "Journalist": selectedToewijzing.setRol(Rol.JOURNALIST);
+                break;
+                case "Supporter": selectedToewijzing.setRol(Rol.SUPPORTER);
+                break;
             }
         });
-        add(cmbPloegen, value);
 
-        hl1.add(new Label("Ploeg: "), cmbPloegen);
+
+        hl1.add(cmbPloegen);
+        hl1.add(radioGroup, value);
         add(hl1);
 
         btnInschrijven = new Button("Toewijzen");

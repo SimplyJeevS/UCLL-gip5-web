@@ -25,7 +25,6 @@ import org.springframework.context.MessageSource;
 import javax.annotation.PostConstruct;
 import java.util.Locale;
 
-
 @Route("Home")
 @Theme(value = Lumo.class)
 @PageTitle("Home UCLL")
