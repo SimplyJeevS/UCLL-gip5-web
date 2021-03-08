@@ -100,8 +100,13 @@ public class WedstrijdResource {
                 }
             }
         }
-
-        return ResponseEntity.status(HttpStatus.OK).body(wedstrijdMetPloegenDTOList);
+        List<WedstrijdMetPloegenDTO> finalWedstrijdMetPloegenDTOList = new ArrayList<>();
+        for (WedstrijdMetPloegenDTO w : wedstrijdMetPloegenDTOList) {
+            if(w.getTijdstip().isAfter(LocalDateTime.now().minusDays(1))){
+                finalWedstrijdMetPloegenDTOList.add(w);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(finalWedstrijdMetPloegenDTOList);
     }
 
     @GetMapping("/wedstrijd")
@@ -135,7 +140,13 @@ public class WedstrijdResource {
         if(wedstrijdList.isEmpty()){
             throw new NotFoundException("Geen wedstrijden gevonden");
         }
-        return ResponseEntity.status(HttpStatus.OK).body(wedstrijdList);
+        List<Wedstrijd> finalWedstrijdList = new ArrayList<>();
+        for (Wedstrijd w : wedstrijdList) {
+            if(w.getTijdstip().isAfter(LocalDateTime.now().minusDays(1))){
+                finalWedstrijdList.add(w);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(finalWedstrijdList);
     }
 
     //tijdstip
@@ -196,7 +207,13 @@ public class WedstrijdResource {
         if(!wedstrijdList.isPresent() || wedstrijdList.get().isEmpty()){
             throw new NotFoundException("Geen wedstrijden gevonden met tegenstander id "+ploegId);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(wedstrijdList);
+        List<Wedstrijd> finalWedstrijdList = new ArrayList<>();
+        for (Wedstrijd w : wedstrijdList.get()) {
+            if(w.getTijdstip().isAfter(LocalDateTime.now().minusDays(1))){
+                finalWedstrijdList.add(w);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(finalWedstrijdList);
     }
 
     @PutMapping( value = "/wedstrijd/{id}/uitnodig")

@@ -22,12 +22,13 @@ import static be.ucll.java.gip5.util.Api.checkApiKey;
 @RequestMapping("/rest/v1")
 public class DeelnameResource {
     private Logger logger = LoggerFactory.getLogger(BerichtResource.class);
+    @Autowired
     private DeelnameRepository deelnameRepository;
     private PersoonRepository persoonRepository;
     private WedstrijdRepository wedstrijdRepository;
 
     @Autowired
-    public DeelnameResource(DeelnameRepository deelnameRepository, PersoonRepository persoonRepository, WedstrijdRepository wedstrijdRepository){
+    public DeelnameResource(PersoonRepository persoonRepository, WedstrijdRepository wedstrijdRepository, DeelnameRepository deelnameRepository){
         this.deelnameRepository = deelnameRepository;
         this.persoonRepository = persoonRepository;
         this.wedstrijdRepository = wedstrijdRepository;
@@ -106,12 +107,17 @@ public class DeelnameResource {
         }
         checkandFindWedstrijdId(deelname.getPersoonId());
         checkandFindWedstrijdId(deelname.getWedstrijdId());
-        Deelname newDeelname = deelnameRepository.save(new Deelname.DeelnameBuilder()
-                .persoonId(deelname.getPersoonId())
-                .wedstrijdId(deelname.getWedstrijdId())
-                .status(deelname.getStatus())
-        .build());
-        return ResponseEntity.status(HttpStatus.CREATED).body(newDeelname);
+        Optional<Deelname> d = deelnameRepository.findByPersoonIdAndWedstrijdId(deelname.getPersoonId(),deelname.getWedstrijdId());
+        if(d.isPresent()){
+            return ResponseEntity.status(HttpStatus.OK).body(d.get());
+        }else{
+            Deelname newDeelname = deelnameRepository.save(new Deelname.DeelnameBuilder()
+                    .persoonId(deelname.getPersoonId())
+                    .wedstrijdId(deelname.getWedstrijdId())
+                    .status(deelname.getStatus())
+                    .build());
+            return ResponseEntity.status(HttpStatus.CREATED).body(newDeelname);
+        }
     }
 
     @PutMapping( value = "/deelname/{id}")
