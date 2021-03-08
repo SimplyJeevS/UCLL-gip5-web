@@ -41,7 +41,7 @@ public class HomeView extends AppLayout {
     // Content views
     private PersoonView pView;
     private PloegenView plView;
-
+    private WedstrijdenView wView;
     // Left navigation tabs
     private Tab tab1;
     private static final String TABNAME1 = "Personen";
@@ -106,6 +106,8 @@ public class HomeView extends AppLayout {
         plView = new PloegenView();
         plView.loadData();
 
+        wView = new WedstrijdenView();
+        wView.loadData();
         // As default load the persoonView
         setContent(pView);
     }
@@ -118,6 +120,8 @@ public class HomeView extends AppLayout {
                 setContent(pView);
             } else if (selTab.getLabel().equals(TABNAME2)) {
                 setContent(plView);
+            } else if (selTab.getLabel().equals(TABNAME5)) {
+                setContent(wView);
             } else {
                 setContent(new Label("Te implementeren scherm voor Admins only"));
             }

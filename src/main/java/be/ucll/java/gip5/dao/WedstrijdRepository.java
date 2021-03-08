@@ -14,4 +14,5 @@ public interface WedstrijdRepository extends JpaRepository<Wedstrijd, Long> {
     Optional<List<Wedstrijd>> findWedstrijdByLocatieContaining(String locatie);
     Optional<List<Wedstrijd>> findWedstrijdByThuisPloeg(Long id);
     Optional<List<Wedstrijd>> findWedstrijdByTegenstander(Long id);
+    List<Wedstrijd> findAllByLocatieContainingIgnoreCase(String locatie);
 }

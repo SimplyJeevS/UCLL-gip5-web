@@ -11,6 +11,7 @@ public class WedstrijdMetPloegenDTO {
     private String tegenstander;
     private String thuisploeg;
 
+    public WedstrijdMetPloegenDTO(){}
     public WedstrijdMetPloegenDTO(LocalDateTime tijdstip, String locatie, Long thuisploegId, Long tegenstanderId, String tegenstander, String thuisploeg) {
         this.tijdstip = tijdstip;
         this.locatie = locatie;

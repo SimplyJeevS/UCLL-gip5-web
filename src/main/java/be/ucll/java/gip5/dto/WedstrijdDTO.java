@@ -1,6 +1,5 @@
 package be.ucll.java.gip5.dto;
 
-import liquibase.pro.packaged.S;
 
 import java.time.LocalDateTime;
 import java.util.Date;

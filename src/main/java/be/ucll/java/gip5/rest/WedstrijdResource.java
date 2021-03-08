@@ -1,6 +1,7 @@
 package be.ucll.java.gip5.rest;
 
 import be.ucll.java.gip5.dao.*;
+import be.ucll.java.gip5.dto.PersoonDTO;
 import be.ucll.java.gip5.dto.WedstrijdDTO;
 import be.ucll.java.gip5.dto.WedstrijdMetPloegenDTO;
 import be.ucll.java.gip5.exceptions.InvalidCredentialsException;
@@ -16,11 +17,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static be.ucll.java.gip5.util.Api.checkApiKey;
 
@@ -33,6 +32,8 @@ public class WedstrijdResource {
     private ToewijzingRepository toewijzingRepository;
     private DeelnameRepository deelnameRepository;
     private PersoonRepository persoonRepository;
+    private Locale loc = new Locale("en");
+
     @Autowired
     public WedstrijdResource(WedstrijdRepository wedstrijdRepository, PloegRepository ploegRepository, ToewijzingRepository toewijzingRepository, DeelnameRepository deelnameRepository, PersoonRepository persoonRepository){
         this.wedstrijdRepository = wedstrijdRepository;
@@ -257,5 +258,28 @@ public class WedstrijdResource {
         }else{
             throw new NotFoundException(id.toString());
         }
+    }
+    public void setLocale(Locale loc) {this.loc = loc;
+    }
+    private List<WedstrijdMetPloegenDTO> queryListToWedstrijdMetPloegenDTOList(List<Wedstrijd> lst){
+        Stream< WedstrijdMetPloegenDTO> stream = lst.stream()
+                .map(rec -> {
+                     WedstrijdMetPloegenDTO dto = new  WedstrijdMetPloegenDTO();
+                    dto.setLocatie(rec.getLocatie());
+                    dto.setTegenstanderId(rec.getTegenstander());
+                    dto.setThuisploegId(rec.getThuisPloeg());
+                    dto.setThuisploeg(rec.getThuisPloeg());
+                    dto.setTijdstip((rec.getTijdstip()));
+                    return dto;
+                });
+        return stream.collect(Collectors.toList());
+    }
+    public List< WedstrijdMetPloegenDTO> getAllWedstrijden() {return queryListToWedstrijdMetPloegenDTOList(wedstrijdRepository.findAll());}
+    public List< WedstrijdMetPloegenDTO> getSearchWedstrijden(String locatie) throws IllegalArgumentException {
+        if (locatie == null || locatie.trim().length() == 0)
+            throw new IllegalArgumentException("Wedstrijden ophalen met de locatie gefaald. locatie leeg");
+
+        List<Wedstrijd> lst = wedstrijdRepository.findAllByLocatieContainingIgnoreCase(locatie);
+        return queryListToWedstrijdMetPloegenDTOList(lst);
     }
 }
