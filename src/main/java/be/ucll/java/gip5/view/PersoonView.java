@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
 @UIScope
 public class PersoonView extends VerticalLayout {
 
@@ -83,6 +82,7 @@ public class PersoonView extends VerticalLayout {
         splitLayout.addToSecondary(createEditorLayout());
         add(splitLayout);
     }
+
 
     private Component createGridLayout() {
         lpvLayout = new VerticalLayout();

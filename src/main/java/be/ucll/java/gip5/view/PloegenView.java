@@ -5,6 +5,7 @@ import be.ucll.java.gip5.dto.PloegDTO;
 import be.ucll.java.gip5.exceptions.InvalidCredentialsException;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
+import be.ucll.java.gip5.model.Persoon;
 import be.ucll.java.gip5.rest.PloegResource;
 import be.ucll.java.gip5.util.BeanUtil;
 import com.vaadin.flow.component.ClickEvent;
@@ -49,11 +50,13 @@ public class PloegenView extends VerticalLayout {
     private TextField txtNaam;
 
     private Grid<PloegDTO> grid;
+    private Grid<Persoon>  gridp;
 
     private Button btnCancel;
     private Button btnCreate;
     private Button btnUpdate;
     private Button btnDelete;
+    private Button btnShowPlayers;
     public PloegenView() {
         super();
 
@@ -126,7 +129,18 @@ public class PloegenView extends VerticalLayout {
         btnDelete.addClickListener(e -> handleClickDelete(e));
         btnDelete.setVisible(false);
 
-        rphLayout.add(btnCancel, btnCreate, btnUpdate, btnDelete);
+        btnShowPlayers = new Button("Toon spelers");
+        btnShowPlayers.addClickListener(e -> {
+            try {
+                handleClickShowPLayers();
+            } catch (InvalidCredentialsException ex) {
+                ex.printStackTrace();
+            } catch (NotFoundException ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        rphLayout.add(btnCancel, btnCreate, btnUpdate, btnDelete, btnShowPlayers);
 
         rpvLayout.add(frm);
         rpvLayout.add(rphLayout);
@@ -203,7 +217,6 @@ public class PloegenView extends VerticalLayout {
             e.printStackTrace();
         }
     }
-
     private void handleClickDelete(ClickEvent event) {
         Dialog dialog = new Dialog();
         dialog.setCloseOnEsc(false);
@@ -240,6 +253,24 @@ public class PloegenView extends VerticalLayout {
         dialog.add(confirmButton, new Html("<span>&nbsp;</span>"), cancelButton);
 
         dialog.open();
+    }
+    private void handleClickShowPLayers() throws InvalidCredentialsException, NotFoundException {
+        List<Persoon> playersInPloeg = (List<Persoon>) ploegResource.getAllSpelersInPloeg(Long.parseLong(frm.lblID.getText()) ,"").getBody();
+        if(gridp != null)
+        lpvLayout.remove(gridp);
+        gridp = new Grid<>();
+
+        gridp.setItems(playersInPloeg);
+        gridp.addColumn(Persoon::getVoornaam).setHeader("Voornaam").setSortable(true);
+        gridp.addColumn(Persoon::getNaam).setHeader("Naam").setSortable(true);
+        gridp.addColumn(Persoon::getGeslacht).setHeader("Geslacht").setSortable(true);
+        gridp.addColumn(Persoon::getAdres).setHeader("Adres").setSortable(true);
+        gridp.addColumn(Persoon::getTelefoon).setHeader("Telefoon").setSortable(true);
+        gridp.addColumn(Persoon::getGsm).setHeader("Gsm").setSortable(true);
+        gridp.addColumn(Persoon::getEmail).setHeader("E-mail").setSortable(true);
+        gridp.addColumn(Persoon::getGeboortedatum).setHeader("Geboortedatum").setSortable(true);
+
+        lpvLayout.add(gridp);
     }
     private void populateForm(PloegDTO p) {
         btnCreate.setVisible(false);
