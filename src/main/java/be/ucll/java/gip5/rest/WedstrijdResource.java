@@ -3,6 +3,7 @@ package be.ucll.java.gip5.rest;
 import be.ucll.java.gip5.dao.*;
 import be.ucll.java.gip5.dto.PersoonDTO;
 import be.ucll.java.gip5.dto.WedstrijdDTO;
+import be.ucll.java.gip5.dto.WedstrijdListDTO;
 import be.ucll.java.gip5.dto.WedstrijdMetPloegenDTO;
 import be.ucll.java.gip5.exceptions.InvalidCredentialsException;
 import be.ucll.java.gip5.exceptions.NotFoundException;
@@ -50,6 +51,21 @@ public class WedstrijdResource {
         return ResponseEntity.status(HttpStatus.OK).body(findWedstrijdFromId(id));
     }
 
+    @GetMapping(value = "/wedstrijdMetPloegen/{id}")
+    public ResponseEntity getWedstrijdMetPLoegen(@PathVariable("id") Long id,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
+        checkApiKey(api,persoonRepository);
+        logger.debug("GET request voor wedstrijd gekregen");
+        Optional<Wedstrijd> wedstrijd = wedstrijdRepository.findWedstrijdById(id);
+        if(!wedstrijd.isPresent()){
+            throw new NotFoundException("Geen wedstrijden gevonden met de meegegeven id");
+        }
+        WedstrijdMetPloegenDTO wedstrijdMetPloegenDTO = new WedstrijdMetPloegenDTO(id,wedstrijd.get().getTijdstip(),wedstrijd.get().getLocatie(),wedstrijd.get().getThuisPloeg(),wedstrijd.get().getTegenstander(),null,null);
+        Optional<Ploeg> thuisploeg = ploegRepository.findPloegById(wedstrijd.get().getThuisPloeg());
+        Optional<Ploeg> tegenstander = ploegRepository.findPloegById(wedstrijd.get().getTegenstander());
+        wedstrijdMetPloegenDTO.setThuisploeg((thuisploeg.isPresent())?thuisploeg.get().getNaam():"Geen thuisploeg gevonden");
+        wedstrijdMetPloegenDTO.setTegenstander((tegenstander.isPresent())?tegenstander.get().getNaam():"Geen tegenstander gevonden");
+        return ResponseEntity.status(HttpStatus.OK).body(wedstrijdMetPloegenDTO);
+    }
     @GetMapping("/wedstrijdMetPloegen")
     public ResponseEntity getNaamPloegen(@RequestParam(name = "api", required = false, defaultValue = "") String api) throws InvalidCredentialsException, NotFoundException {
         Persoon persoon = checkApiKey(api,persoonRepository);
@@ -58,21 +74,24 @@ public class WedstrijdResource {
         if(!toewijzingList.isPresent()){
             throw new NotFoundException("Deze persoon heeft geen toewijzing(en)");
         }
-        List<WedstrijdMetPloegenDTO> wedstrijdMetPloegenDTOList = Collections.emptyList();
-        List<Ploeg> ploegList = Collections.emptyList();
+        List<WedstrijdMetPloegenDTO> wedstrijdMetPloegenDTOList = new ArrayList<>();
+        List<Ploeg> ploegList = new ArrayList<>();
         toewijzingList.get().forEach(t->{
             Optional<Ploeg> ploeg = ploegRepository.findPloegById(t.getPloegId());
-            ploegList.add(ploeg.get());
+            if(ploeg.isPresent()) {
+                ploegList.add(ploeg.get());
+            }
         });
         ploegList.forEach(p->{
             Optional<List<Wedstrijd>> wedstrijd = wedstrijdRepository.findWedstrijdByThuisPloeg(p.getId());
             if(wedstrijd.isPresent()){
                 wedstrijd.get().forEach(w->{
                     Optional<Ploeg> tegenstander = ploegRepository.findPloegById(w.getTegenstander());
-                    new WedstrijdMetPloegenDTO(w.getTijdstip(),w.getLocatie(),p.getId(),w.getTegenstander(),p.getNaam(),tegenstander.get().getNaam());
+                    wedstrijdMetPloegenDTOList.add(new WedstrijdMetPloegenDTO(w.getId(),w.getTijdstip(),w.getLocatie(),p.getId(),w.getTegenstander(),p.getNaam(),tegenstander.get().getNaam()));
                 });
             }
         });
+        WedstrijdListDTO wedstrijden = new WedstrijdListDTO(wedstrijdMetPloegenDTOList);
         return ResponseEntity.status(HttpStatus.OK).body(wedstrijdMetPloegenDTOList);
     }
 
