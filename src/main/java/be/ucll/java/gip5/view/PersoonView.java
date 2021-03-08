@@ -118,6 +118,8 @@ public class PersoonView extends VerticalLayout {
                 } catch (NotFoundException ex) {
                     ex.printStackTrace();
                 } catch (InvalidCredentialsException ex) {
+                    Notification.show("Je bent niet ingelogd", 3000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
+                    UI.getCurrent().navigate("login");
                     ex.printStackTrace();
                 } catch (ParameterInvalidException ex) {
                     ex.printStackTrace();
@@ -127,6 +129,8 @@ public class PersoonView extends VerticalLayout {
                 } catch (NotFoundException ex) {
                     ex.printStackTrace();
                 } catch (InvalidCredentialsException ex) {
+                    Notification.show("Je bent niet ingelogd", 3000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
+                    UI.getCurrent().navigate("login");
                     ex.printStackTrace();
                 } catch (ParameterInvalidException ex) {
                     ex.printStackTrace();
@@ -236,6 +240,8 @@ public class PersoonView extends VerticalLayout {
         } catch (NotFoundException e) {
             e.printStackTrace();
         } catch (InvalidCredentialsException e) {
+            Notification.show("Je bent niet ingelogd", 3000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
+            UI.getCurrent().navigate("login");
             e.printStackTrace();
         }
     }
@@ -260,6 +266,8 @@ public class PersoonView extends VerticalLayout {
         } catch (ParameterInvalidException e) {
             e.printStackTrace();
         } catch (InvalidCredentialsException e) {
+            Notification.show("Je bent niet ingelogd", 3000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
+            UI.getCurrent().navigate("login");
             e.printStackTrace();
         } catch (NotFoundException e) {
             e.printStackTrace();
@@ -283,6 +291,8 @@ public class PersoonView extends VerticalLayout {
             } catch (NotFoundException e) {
                 e.printStackTrace();
             } catch (InvalidCredentialsException e) {
+                Notification.show("Je bent niet ingelogd", 3000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
+                UI.getCurrent().navigate("login");
                 e.printStackTrace();
             }
             frm.resetForm();

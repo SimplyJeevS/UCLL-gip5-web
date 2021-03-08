@@ -4,7 +4,10 @@ import be.ucll.java.gip5.controller.PersoonController;
 import be.ucll.java.gip5.exceptions.InvalidCredentialsException;
 import be.ucll.java.gip5.rest.LoginResource;
 import be.ucll.java.gip5.util.BeanUtil;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.login.LoginForm;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -49,6 +52,8 @@ public class LoginView extends VerticalLayout {
                 getUI().ifPresent(ui -> ui.navigate("Home"));
             } catch (InvalidCredentialsException ex) {
                 frmLogin.setError(true);
+                Notification.show("Je bent niet ingelogd", 3000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
+                UI.getCurrent().navigate("login");
                 ex.printStackTrace();
             }
         });

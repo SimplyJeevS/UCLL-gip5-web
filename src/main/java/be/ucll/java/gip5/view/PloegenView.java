@@ -1,13 +1,10 @@
 package be.ucll.java.gip5.view;
 
 import be.ucll.java.gip5.dao.PloegRepository;
-import be.ucll.java.gip5.dto.PersoonDTO;
 import be.ucll.java.gip5.dto.PloegDTO;
 import be.ucll.java.gip5.exceptions.InvalidCredentialsException;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
-import be.ucll.java.gip5.model.Persoon;
-import be.ucll.java.gip5.model.Ploeg;
 import be.ucll.java.gip5.rest.PloegResource;
 import be.ucll.java.gip5.util.BeanUtil;
 import com.vaadin.flow.component.ClickEvent;
@@ -19,28 +16,20 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 @UIScope
 public class PloegenView extends VerticalLayout {
@@ -186,6 +175,8 @@ public class PloegenView extends VerticalLayout {
         } catch (ParameterInvalidException e) {
             e.printStackTrace();
         } catch (InvalidCredentialsException e) {
+            Notification.show("Je bent niet ingelogd", 3000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
+            UI.getCurrent().navigate("login");
             e.printStackTrace();
         }
     }
@@ -229,6 +220,8 @@ public class PloegenView extends VerticalLayout {
             } catch (NotFoundException e) {
                 e.printStackTrace();
             } catch (InvalidCredentialsException e) {
+                Notification.show("Je bent niet ingelogd", 3000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
+                UI.getCurrent().navigate("login");
                 e.printStackTrace();
             }
             frm.resetForm();

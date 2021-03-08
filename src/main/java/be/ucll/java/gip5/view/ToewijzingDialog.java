@@ -15,6 +15,7 @@ import be.ucll.java.gip5.rest.PloegResource;
 import be.ucll.java.gip5.rest.ToewijzingResource;
 import be.ucll.java.gip5.util.BeanUtil;
 import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -94,6 +95,8 @@ public class ToewijzingDialog extends Dialog {
             } catch (ParameterInvalidException ex) {
                 ex.printStackTrace();
             } catch (InvalidCredentialsException ex) {
+                Notification.show("Je bent niet ingelogd", 3000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
+                UI.getCurrent().navigate("login");
                 ex.printStackTrace();
             } catch (NotFoundException ex) {
                 ex.printStackTrace();
