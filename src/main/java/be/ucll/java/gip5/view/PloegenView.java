@@ -190,7 +190,7 @@ public class PloegenView extends VerticalLayout {
             PloegDTO pdto = new PloegDTO(frm.txtNaam.getValue());
             ploegResource.putPloeg(Long.parseLong(frm.lblID.getText()), pdto, "");
 
-            Notification.show("Persoon aangepast", 3000, Notification.Position.TOP_CENTER);
+            Notification.show("Ploeg aangepast", 3000, Notification.Position.TOP_CENTER);
             frm.resetForm();
             handleClickSearch(null);
         } catch (IllegalArgumentException e) {
@@ -209,12 +209,12 @@ public class PloegenView extends VerticalLayout {
         dialog.setCloseOnEsc(false);
         dialog.setCloseOnOutsideClick(false);
 
-        Button confirmButton = new Button("Bevestig Persoon verwijderen", event2 -> {
+        Button confirmButton = new Button("Bevestig Ploeg verwijderen", event2 -> {
             try {
                 ploegResource.deletePloeg(Long.parseLong(frm.lblID.getText()), "");
-                Notification.show("Persoon verwijderd", 3000, Notification.Position.TOP_CENTER);
+                Notification.show("Ploeg verwijderd", 3000, Notification.Position.TOP_CENTER);
             } catch (IllegalArgumentException e) {
-                Notification.show("Het is NIET mogelijk de persoon te verwijderen wegens geregistreerde toewijzigingen.", 5000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
+                Notification.show("Het is NIET mogelijk de ploeg te verwijderen wegens geregistreerde toewijzigingen.", 5000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
             } catch (ParameterInvalidException e) {
                 e.printStackTrace();
             } catch (NotFoundException e) {
