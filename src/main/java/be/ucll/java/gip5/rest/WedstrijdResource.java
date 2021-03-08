@@ -70,7 +70,7 @@ public class WedstrijdResource {
     public ResponseEntity getNaamPloegen(@RequestParam(name = "api", required = false, defaultValue = "") String api) throws InvalidCredentialsException, NotFoundException {
         Persoon persoon = checkApiKey(api,persoonRepository);
         Long id = persoon.getId();
-        Optional<List<Toewijzing>> toewijzingList = toewijzingRepository.findAllByPloegId(id);
+        Optional<List<Toewijzing>> toewijzingList = toewijzingRepository.findAllByPersoonId(id);
         if(!toewijzingList.isPresent()){
             throw new NotFoundException("Deze persoon heeft geen toewijzing(en)");
         }
@@ -91,7 +91,6 @@ public class WedstrijdResource {
                 });
             }
         });
-        WedstrijdListDTO wedstrijden = new WedstrijdListDTO(wedstrijdMetPloegenDTOList);
         return ResponseEntity.status(HttpStatus.OK).body(wedstrijdMetPloegenDTOList);
     }
 

@@ -104,7 +104,6 @@ public class PloegResource {
     @PutMapping( value = "/ploeg/{id}")
     public ResponseEntity putPloeg(@PathVariable("id") Long id,@RequestBody PloegDTO ploeg,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
         checkApiKey(api,persoonRepository);
-        checkIfPloegExists(ploeg.getNaam());
         if(id == null || !(id instanceof Long) || id <=0 ){
             throw new ParameterInvalidException(id.toString());
         }
