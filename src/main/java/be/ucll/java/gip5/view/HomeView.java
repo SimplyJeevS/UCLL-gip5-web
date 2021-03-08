@@ -26,7 +26,7 @@ import javax.annotation.PostConstruct;
 import java.util.Locale;
 
 @Route("Home")
-@Theme(value = Lumo.class)
+@Theme(value = Lumo.class, variant = Lumo.DARK)
 @PageTitle("Home UCLL")
 public class HomeView extends AppLayout {
 
@@ -46,12 +46,8 @@ public class HomeView extends AppLayout {
     private static final String TABNAME1 = "Personen";
     private Tab tab2;
     private static final String TABNAME2 = "Ploegen";
-    private Tab tab3;
-    private Tab tab4;
     private Tab tab5;
     private static final String TABNAME5 = "Wedstrijden";
-    private Tab tab6;
-    private static final String TABNAME6 = "Wedstrijdberichten";
     private Tabs tabs;
 
     private Button btnLogout;
@@ -82,13 +78,8 @@ public class HomeView extends AppLayout {
         // Tabs on the left side drawer
         tab1 = new Tab(TABNAME1);
         tab2 = new Tab(TABNAME2);
-        tab3 = new Tab("Help");
-        tab3.setEnabled(false);
-        tab4 = new Tab(new Icon(VaadinIcon.COG));
         tab5 = new Tab(TABNAME5);
-        tab6 = new Tab(TABNAME6);
-
-        tabs = new Tabs(tab1, tab2, tab3, tab4, tab5, tab6);
+        tabs = new Tabs(tab1, tab2, tab5);
         tabs.setOrientation(Tabs.Orientation.VERTICAL);
         tabs.addSelectedChangeListener(event -> {
             handleTabClicked(event);
