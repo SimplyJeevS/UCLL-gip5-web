@@ -69,35 +69,69 @@ public class WedstrijdResource {
     @GetMapping("/wedstrijdMetPloegen")
     public ResponseEntity getNaamPloegen(@RequestParam(name = "api", required = false, defaultValue = "") String api) throws InvalidCredentialsException, NotFoundException {
         Persoon persoon = checkApiKey(api,persoonRepository);
-        Long id = persoon.getId();
-        Optional<List<Toewijzing>> toewijzingList = toewijzingRepository.findAllByPersoonId(id);
-        if(!toewijzingList.isPresent()){
-            throw new NotFoundException("Deze persoon heeft geen toewijzing(en)");
-        }
         List<WedstrijdMetPloegenDTO> wedstrijdMetPloegenDTOList = new ArrayList<>();
-        List<Ploeg> ploegList = new ArrayList<>();
-        toewijzingList.get().forEach(t->{
-            Optional<Ploeg> ploeg = ploegRepository.findPloegById(t.getPloegId());
-            if(ploeg.isPresent()) {
-                ploegList.add(ploeg.get());
+        if(persoon.getDefault_rol().equals(Rol.SECRETARIS)){
+            List<Wedstrijd> wedstrijdList = wedstrijdRepository.findAll();
+            for (Wedstrijd w : wedstrijdList) {
+                Optional<Ploeg> tegenstander = ploegRepository.findPloegById(w.getTegenstander());
+                Optional<Ploeg> thuisploeg = ploegRepository.findPloegById(w.getThuisPloeg());
+                wedstrijdMetPloegenDTOList.add(new WedstrijdMetPloegenDTO(w.getId(), w.getTijdstip(), w.getLocatie(),w.getThuisPloeg(), w.getTegenstander(),( (tegenstander.isPresent())?tegenstander.get().getNaam():"Geen thuisploeg gevonden"), (thuisploeg.isPresent())?thuisploeg.get().getNaam():"Geen thuisploeg gevonden"));
             }
-        });
-        ploegList.forEach(p->{
-            Optional<List<Wedstrijd>> wedstrijd = wedstrijdRepository.findWedstrijdByThuisPloeg(p.getId());
-            if(wedstrijd.isPresent()){
-                wedstrijd.get().forEach(w->{
-                    Optional<Ploeg> tegenstander = ploegRepository.findPloegById(w.getTegenstander());
-                    wedstrijdMetPloegenDTOList.add(new WedstrijdMetPloegenDTO(w.getId(),w.getTijdstip(),w.getLocatie(),p.getId(),w.getTegenstander(),p.getNaam(),tegenstander.get().getNaam()));
-                });
+        }else {
+            Long id = persoon.getId();
+            Optional<List<Toewijzing>> toewijzingList = toewijzingRepository.findAllByPersoonId(id);
+            if (!toewijzingList.isPresent()) {
+                throw new NotFoundException("Deze persoon heeft geen toewijzing(en)");
             }
-        });
+            List<Ploeg> ploegList = new ArrayList<>();
+            for (Toewijzing t : toewijzingList.get()) {
+                Optional<Ploeg> ploeg = ploegRepository.findPloegById(t.getPloegId());
+                if (ploeg.isPresent()) {
+                    ploegList.add(ploeg.get());
+                }
+            }
+            for (Ploeg p : ploegList) {
+                Optional<List<Wedstrijd>> wedstrijd = wedstrijdRepository.findWedstrijdByThuisPloeg(p.getId());
+                if (wedstrijd.isPresent()) {
+                    for (Wedstrijd w : wedstrijd.get()) {
+                        Optional<Ploeg> tegenstander = ploegRepository.findPloegById(w.getTegenstander());
+                        wedstrijdMetPloegenDTOList.add(new WedstrijdMetPloegenDTO(w.getId(), w.getTijdstip(), w.getLocatie(), p.getId(), w.getTegenstander(), p.getNaam(), tegenstander.get().getNaam()));
+                    }
+                }
+            }
+        }
+
         return ResponseEntity.status(HttpStatus.OK).body(wedstrijdMetPloegenDTOList);
     }
 
     @GetMapping("/wedstrijd")
     public ResponseEntity getWedstrijdList(@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, InvalidCredentialsException {
-        checkApiKey(api,persoonRepository);
-        List<Wedstrijd> wedstrijdList = wedstrijdRepository.findAll();
+        Persoon persoon = checkApiKey(api,persoonRepository);
+        List<Wedstrijd> wedstrijdList = new ArrayList<>();
+        if(persoon.getDefault_rol().equals(Rol.SECRETARIS)){
+            wedstrijdList = wedstrijdRepository.findAll();
+        }else {
+            Optional<List<Toewijzing>> toewijzingList = toewijzingRepository.findAllByPersoonId(persoon.getId());
+            if (!toewijzingList.isPresent()) {
+                throw new NotFoundException("Deze persoon heeft geen toewijzing(en)");
+            }
+            List<Ploeg> ploegList = new ArrayList<>();
+            for (Toewijzing t : toewijzingList.get()) {
+                Optional<Ploeg> ploeg = ploegRepository.findPloegById(t.getPloegId());
+                if (ploeg.isPresent()) {
+                    ploegList.add(ploeg.get());
+                }
+            }
+            for (Ploeg p : ploegList) {
+                Optional<List<Wedstrijd>> wedstrijd = wedstrijdRepository.findWedstrijdByThuisPloeg(p.getId());
+                if (wedstrijd.isPresent()) {
+                    for (Wedstrijd w : wedstrijd.get()) {
+                        Optional<Ploeg> tegenstander = ploegRepository.findPloegById(w.getTegenstander());
+                        wedstrijdList.add(w);
+                    }
+                }
+            }
+        }
         if(wedstrijdList.isEmpty()){
             throw new NotFoundException("Geen wedstrijden gevonden");
         }
