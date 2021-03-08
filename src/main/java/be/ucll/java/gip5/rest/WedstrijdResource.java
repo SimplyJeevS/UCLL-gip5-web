@@ -268,7 +268,8 @@ public class WedstrijdResource {
                     dto.setLocatie(rec.getLocatie());
                     dto.setTegenstanderId(rec.getTegenstander());
                     dto.setThuisploegId(rec.getThuisPloeg());
-                    dto.setThuisploeg(rec.getThuisPloeg());
+                    dto.setThuisploeg(ploegRepository.findPloegById(rec.getThuisPloeg()).get().getNaam());
+                    dto.setTegenstander(ploegRepository.findPloegById(rec.getTegenstander()).get().getNaam());
                     dto.setTijdstip((rec.getTijdstip()));
                     return dto;
                 });
