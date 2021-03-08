@@ -2,6 +2,7 @@ package be.ucll.java.gip5.rest;
 
 import be.ucll.java.gip5.dao.PersoonRepository;
 import be.ucll.java.gip5.dao.PloegRepository;
+import be.ucll.java.gip5.dao.ToewijzingRepository;
 import be.ucll.java.gip5.dao.WedstrijdRepository;
 import be.ucll.java.gip5.dto.PersoonDTO;
 import be.ucll.java.gip5.dto.PloegDTO;
@@ -10,6 +11,7 @@ import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
 import be.ucll.java.gip5.model.Persoon;
 import be.ucll.java.gip5.model.Ploeg;
+import be.ucll.java.gip5.model.Toewijzing;
 import be.ucll.java.gip5.model.Wedstrijd;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,10 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -34,13 +33,15 @@ public class PloegResource {
     private PloegRepository ploegRepository;
     private WedstrijdRepository wedstrijdRepository;
     private PersoonRepository persoonRepository;
+    private ToewijzingRepository toewijzingRepository;
     private Locale loc = new Locale("en");
 
     @Autowired
-    public PloegResource(PloegRepository ploegRepository, WedstrijdRepository wedstrijdRepository, PersoonRepository persoonRepository){
+    public PloegResource(PloegRepository ploegRepository, WedstrijdRepository wedstrijdRepository, PersoonRepository persoonRepository, ToewijzingRepository toewijzingRepository){
         this.ploegRepository = ploegRepository;
         this.wedstrijdRepository = wedstrijdRepository;
         this.persoonRepository = persoonRepository;
+        this.toewijzingRepository = toewijzingRepository;
     }
 
     @GetMapping(value = "/ploeg/{id}")
@@ -66,6 +67,24 @@ public class PloegResource {
             throw new NotFoundException("Geen ploegen gevonden");
         }
         return ResponseEntity.status(HttpStatus.OK).body(ploegen);
+    }
+
+    @GetMapping(value="/ploeg/{id}/spelers")
+    public ResponseEntity getAllSpelersInPloeg(@PathVariable("id") Long id, @RequestParam(name = "api", required = false, defaultValue = "") String api) throws InvalidCredentialsException, NotFoundException {
+        checkApiKey(api,persoonRepository);
+        Optional<Ploeg> ploeg = ploegRepository.findPloegById(id);
+        if(!ploeg.isPresent()){
+            throw new NotFoundException("Ploeg met de meegegeven id bestaat niet");
+        }
+        Optional<List<Toewijzing>> toewijzingList = toewijzingRepository.findAllByPloegId(id);
+        if(!toewijzingList.isPresent()){
+            throw new NotFoundException("Er zijn geen toewijzingen gevonden voor de meegegeven ploeg id");
+        }
+        List<Persoon> persoonList = new ArrayList<>();
+        for (Toewijzing t : toewijzingList.get()) {
+            persoonList.add(persoonRepository.findPersoonById(t.getPersoonId()).get());
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(persoonList);
     }
 
     @PostMapping(value="/ploeg")
