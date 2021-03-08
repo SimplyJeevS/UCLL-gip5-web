@@ -28,9 +28,9 @@ VALUES (1300, 'Luchthavenlaan 26 Moerzeke', 2, 'xandelde@gmail.com', '1999-11-23
 
 -- INSERT INTO gip5.persoon(id, adres, default_rol, email, geboortedatum, geslacht, naam, gsm, telefoon, voornaam,wachtwoord, api)
 -- VALUES (4, 'straat', 1, 'email', 'datum', 'geslacht', 'achternaam', 'gsm', 'telefoon', 'voornaam', 'ww', 'api');
-INSERT INTO gip5.ploeg(id, naam) VALUES (100, 'RFC Sérésien');
-INSERT INTO gip5.ploeg(id, naam) VALUES (200, 'FC Hemiksem');
-INSERT INTO gip5.ploeg(id, naam) VALUES (300, 'RCS Brainois');
+INSERT INTO gip5.ploeg(id, naam, omschrijving) VALUES (100, 'RFC Sérésien','Waalse ploeg');
+INSERT INTO gip5.ploeg(id, naam, omschrijving) VALUES (200, 'FC Hemiksem', 'West vlaamse regionale ploeg');
+INSERT INTO gip5.ploeg(id, naam, omschrijving) VALUES (300, 'RCS Brainois', 'Waalse Vrouwenploeg');
 INSERT INTO gip5.wedstrijd(id, locatie, tegenstander,thuis_ploeg, tijdstip) VALUES (100,'Leuven',100,200,'2021-01-21');
 INSERT INTO gip5.wedstrijd(id, locatie, tegenstander,thuis_ploeg, tijdstip) VALUES (200,'Oud-Heverlee',100,200,'2021-02-02');
 INSERT INTO gip5.wedstrijd(id, locatie, tegenstander,thuis_ploeg, tijdstip) VALUES (300,'Brussel',300,400,'2021-02-14');

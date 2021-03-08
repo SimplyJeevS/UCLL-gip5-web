@@ -67,6 +67,8 @@
             <column name="naam" type="CHARACTER VARYING(50)">
                 <constraints nullable="false"/>
             </column>
+            <column name="omschrijving" type="CHARACTER VARYING">
+            </column>
         </createTable>
         <createTable tableName="wedstrijd" schemaName="gip5">
             <column name="id" type="SERIAL" autoIncrement="true">
