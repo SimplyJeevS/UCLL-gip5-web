@@ -38,7 +38,6 @@ public class PloegenView extends VerticalLayout {
     private final PloegResource ploegResource;
     private final PloegRepository ploegRepository;
     private final MessageSource msgSource;
-
     private SplitLayout splitLayout;
     private VerticalLayout lpvLayout; // Left Panel Vertical Layout
     private HorizontalLayout lphLayout;
@@ -57,6 +56,8 @@ public class PloegenView extends VerticalLayout {
     private Button btnUpdate;
     private Button btnDelete;
     private Button btnShowPlayers;
+
+
     public PloegenView() {
         super();
 
@@ -74,9 +75,6 @@ public class PloegenView extends VerticalLayout {
         splitLayout.addToSecondary(createEditorLayout());
         add(splitLayout);
     }
-
-
-
     private Component createGridLayout() {
         lpvLayout = new VerticalLayout();
         lpvLayout.setWidthFull();
@@ -102,9 +100,6 @@ public class PloegenView extends VerticalLayout {
         lpvLayout.setWidth("70%");
         return lpvLayout;
     }
-
-
-
     private Component createEditorLayout() {
         rpvLayout = new VerticalLayout();
 
@@ -142,7 +137,6 @@ public class PloegenView extends VerticalLayout {
         });
 
         rphLayout.add(btnCancel, btnCreate, btnUpdate, btnDelete, btnShowPlayers);
-
         rpvLayout.add(frm);
         rpvLayout.add(rphLayout);
         rpvLayout.setWidth("35%");

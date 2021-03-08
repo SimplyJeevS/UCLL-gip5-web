@@ -3,18 +3,32 @@ package be.ucll.java.gip5.dto;
 import be.ucll.java.gip5.model.Status;
 
 public class DeelnameDTO {
+    private Long id;
     private Long persoonId;
     private Long wedstrijdId;
     private String commentaar;
     private Status status;
 
     public DeelnameDTO(){}
-    public DeelnameDTO(Long persoonId, Long wedstrijdId, String commentaar, Status status){
+    public DeelnameDTO(Long persoonId, Long wedstrijdId, Status status){
         setPersoonId(persoonId);
         setWedstrijdId(wedstrijdId);
-        setPersoonId(persoonId);
-        setCommentaar(commentaar);
         setStatus(status);
+    }
+
+    public DeelnameDTO(Long id, Long persoonId, Long wedstrijdId, Status status){
+        setPersoonId(persoonId);
+        setWedstrijdId(wedstrijdId);
+        setStatus(status);
+        setId(id);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getPersoonId() {

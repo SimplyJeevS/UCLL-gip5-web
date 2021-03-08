@@ -1,14 +1,17 @@
 package be.ucll.java.gip5.view;
 
-import be.ucll.java.gip5.dao.PersoonRepository;
+import be.ucll.java.gip5.dao.DeelnameRepository;
 import be.ucll.java.gip5.dao.WedstrijdRepository;
-import be.ucll.java.gip5.dto.PersoonDTO;
+import be.ucll.java.gip5.dto.DeelnameDTO;
 import be.ucll.java.gip5.dto.WedstrijdDTO;
 import be.ucll.java.gip5.dto.WedstrijdMetPloegenDTO;
 import be.ucll.java.gip5.exceptions.InvalidCredentialsException;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
+import be.ucll.java.gip5.model.Deelname;
 import be.ucll.java.gip5.model.Persoon;
+import be.ucll.java.gip5.model.Status;
+import be.ucll.java.gip5.rest.DeelnameResource;
 import be.ucll.java.gip5.rest.PersoonResource;
 import be.ucll.java.gip5.rest.WedstrijdResource;
 import be.ucll.java.gip5.util.BeanUtil;
@@ -20,16 +23,16 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
+import com.vaadin.flow.component.radiobutton.RadioGroupVariant;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.spring.annotation.UIScope;
@@ -38,9 +41,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,6 +51,10 @@ public class WedstrijdenView extends VerticalLayout {
     private final WedstrijdResource wedstrijdResource;
     private WedstrijdRepository wedstrijdRepository;
     private final MessageSource msgSource;
+    private PersoonResource persoonResource;
+    private DeelnameResource deelnameResource;
+    private DeelnameRepository deelnameRepository;
+    private DeelnameDTO selectedDeelname = new DeelnameDTO();
 
     private SplitLayout splitLayout;
     private VerticalLayout lpvLayout; // Left Panel Vertical Layout
@@ -67,6 +72,7 @@ public class WedstrijdenView extends VerticalLayout {
     private Button btnCreate;
     private Button btnUpdate;
     private Button btnDelete;
+    private Button btnStatus;
 
     private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -75,8 +81,11 @@ public class WedstrijdenView extends VerticalLayout {
 
         wedstrijdRepository = BeanUtil.getBean(WedstrijdRepository.class);
         wedstrijdResource = BeanUtil.getBean(WedstrijdResource.class);
-        wedstrijdResource.setLocale(VaadinSession.getCurrent().getLocale());
+        persoonResource = BeanUtil.getBean(PersoonResource.class);
+        deelnameResource = BeanUtil.getBean(DeelnameResource.class);
+        deelnameRepository = BeanUtil.getBean(DeelnameRepository.class);
         msgSource = BeanUtil.getBean(MessageSource.class);
+        wedstrijdResource.setLocale(VaadinSession.getCurrent().getLocale());
 
         this.setSizeFull();
         this.setPadding(false);
@@ -146,9 +155,49 @@ public class WedstrijdenView extends VerticalLayout {
         btnDelete.addClickListener(e -> handleClickDelete(e));
         btnDelete.setVisible(false);
 
-        rphLayout.add(btnCancel, btnCreate, btnUpdate, btnDelete);
+        btnStatus = new Button("Status");
+        btnStatus.addClickListener(e -> {
+            try {
+                handleClickStatus(e);
+            } catch (ParameterInvalidException ex) {
+                ex.printStackTrace();
+            } catch (NotFoundException ex) {
+                ex.printStackTrace();
+            } catch (InvalidCredentialsException ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        rphLayout.add(btnCancel, btnCreate, btnUpdate, btnDelete, btnStatus);
+
+        RadioButtonGroup<String> radioGroup = new RadioButtonGroup<>();
+        radioGroup.setLabel("Status");
+        radioGroup.setItems("Beschikbaar", "Onbeschikbaar", "Reserve");
+        radioGroup.addThemeVariants(RadioGroupVariant.LUMO_HELPER_ABOVE_FIELD);
+
+        Div value = new Div();
+        radioGroup.addValueChangeListener(event -> {
+            Persoon currentPersoon = new Persoon();
+            try {
+                currentPersoon = (Persoon) persoonResource.getLoginInfo("").getBody();
+            } catch (InvalidCredentialsException e) {
+                e.printStackTrace();
+            }
+            selectedDeelname.setPersoonId(currentPersoon.getId());
+            selectedDeelname.setWedstrijdId(Long.parseLong(frm.lblID.getText()));
+            switch (event.getValue())
+            {
+                case "Beschikbaar":  selectedDeelname.setStatus(Status.AVAILABLE);
+                    break;
+                case "Onbeschikbaar": selectedDeelname.setStatus(Status.UNAVAILABLE);
+                    break;
+                case "Reserve": selectedDeelname.setStatus(Status.RESERVE);
+                    break;
+            }
+        });
 
         rpvLayout.add(frm);
+        rpvLayout.add(radioGroup);
         rpvLayout.add(rphLayout);
         rpvLayout.setWidth("30%");
 
@@ -268,6 +317,25 @@ public class WedstrijdenView extends VerticalLayout {
         dialog.add(confirmButton, new Html("<span>&nbsp;</span>"), cancelButton);
 
         dialog.open();
+    }
+    private void handleClickStatus(ClickEvent event) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
+        DeelnameDTO deelnameDTO = new DeelnameDTO(selectedDeelname.getPersoonId(), selectedDeelname.getWedstrijdId(), selectedDeelname.getStatus());
+        if(deelnameRepository.findByPersoonIdAndWedstrijdId(selectedDeelname.getPersoonId(), selectedDeelname.getWedstrijdId()).isPresent())
+        {
+            Optional<Deelname> foundDeelname = deelnameRepository.findByPersoonIdAndWedstrijdId(selectedDeelname.getPersoonId(), selectedDeelname.getWedstrijdId());
+            ResponseEntity i = deelnameResource.putDeelname(foundDeelname.get().getId(), deelnameDTO, "");
+            Notification.show("Deelname updated met (id: " + i + ")", 3000, Notification.Position.TOP_CENTER);
+        }
+
+        else
+        {
+            ResponseEntity i = deelnameResource.postDeelname(deelnameDTO, "");
+            Notification.show("Deelname created (id: " + i + ")", 3000, Notification.Position.TOP_CENTER);
+        }
+
+        frm.resetForm();
+        handleClickSearch(null);
+
     }
     private void populateForm(WedstrijdMetPloegenDTO w) {
         btnCreate.setVisible(false);

@@ -101,18 +101,15 @@ public class DeelnameResource {
     public ResponseEntity postDeelname(@RequestBody DeelnameDTO deelname,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
         checkApiKey(api,persoonRepository);
         logger.debug("POST request voor deelname gekregen");
-        if(deelname.getPersoonId().equals(null) || deelname.getWedstrijdId().equals(null) || deelname.getCommentaar().equals(null)){
+        if(deelname.getPersoonId().equals(null) || deelname.getWedstrijdId().equals(null)){
             throw new ParameterInvalidException("Geef een compleet object mee van deelname");
-        }
-        if(deelname.getCommentaar().trim().length() <= 0){
-            throw new ParameterInvalidException("Commentaar mag niet leeg zijn");
         }
         checkandFindWedstrijdId(deelname.getPersoonId());
         checkandFindWedstrijdId(deelname.getWedstrijdId());
         Deelname newDeelname = deelnameRepository.save(new Deelname.DeelnameBuilder()
-        .persoonId(deelname.getPersoonId())
-        .wedstrijdId(deelname.getWedstrijdId())
-        .commentaar(deelname.getCommentaar())
+                .persoonId(deelname.getPersoonId())
+                .wedstrijdId(deelname.getWedstrijdId())
+                .status(deelname.getStatus())
         .build());
         return ResponseEntity.status(HttpStatus.CREATED).body(newDeelname);
     }
@@ -120,15 +117,12 @@ public class DeelnameResource {
     @PutMapping( value = "/deelname/{id}")
     public ResponseEntity putDeelname(@PathVariable("id") Long id,@RequestBody DeelnameDTO deelname,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
         checkApiKey(api,persoonRepository);
-        if(deelname.getCommentaar().trim().length() <= 0){
-            throw new ParameterInvalidException("Deelname is niet ingvuld");
-        }
         Deelname foundDeelname = checkandFindDeelnameId(id);
         checkandFindPersoonId(deelname.getPersoonId());
         checkandFindWedstrijdId(deelname.getWedstrijdId());
         foundDeelname.setPersoonId(deelname.getPersoonId());
         foundDeelname.setPersoonId(deelname.getWedstrijdId());
-        foundDeelname.setCommentaar(deelname.getCommentaar());
+        foundDeelname.setStatus(deelname.getStatus());
         deelnameRepository.save(foundDeelname);
         return ResponseEntity.status(HttpStatus.OK).body(deelname);
     }
