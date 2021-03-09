@@ -56,7 +56,7 @@ public class PersoonView extends VerticalLayout {
     private Label lblNaam;
     private TextField txtNaam;
 
-    private Grid<PersoonDTO> grid;
+    private Grid<Persoon> grid;
 
     private Button btnCancel;
     private Button btnCreate;
@@ -92,21 +92,29 @@ public class PersoonView extends VerticalLayout {
         lblNaam = new Label("search"); //new Label(msgSource.getMessage("persoonresource.lblNaam", null, getLocale()));
         txtNaam = new TextField();
         txtNaam.setValueChangeMode(ValueChangeMode.EAGER);
-        txtNaam.addValueChangeListener(e -> handleClickSearch(null));
+        txtNaam.addValueChangeListener(e -> {
+            try {
+                handleClickSearch(null);
+            } catch (NotFoundException notFoundException) {
+                notFoundException.printStackTrace();
+            } catch (InvalidCredentialsException invalidCredentialsException) {
+                invalidCredentialsException.printStackTrace();
+            }
+        });
         txtNaam.setClearButtonVisible(true);
         lphLayout.add(lblNaam);
         lphLayout.add(txtNaam);
 
         grid = new Grid<>();
-        grid.setItems(new ArrayList<PersoonDTO>(0));
-        grid.addColumn(PersoonDTO::getVoornaam).setHeader("Voornaam").setSortable(true);
-        grid.addColumn(PersoonDTO::getNaam).setHeader("Naam").setSortable(true);
-        grid.addColumn(PersoonDTO::getGeslacht).setHeader("Geslacht").setSortable(true);
-        grid.addColumn(PersoonDTO::getAdres).setHeader("Adres").setSortable(true);
-        grid.addColumn(PersoonDTO::getTelefoon).setHeader("Telefoon").setSortable(true);
-        grid.addColumn(PersoonDTO::getGsm).setHeader("Gsm").setSortable(true);
-        grid.addColumn(PersoonDTO::getEmail).setHeader("E-mail").setSortable(true);
-        grid.addColumn(PersoonDTO::getGeboortedatum).setHeader("Geboortedatum").setSortable(true);
+        grid.setItems(new ArrayList<Persoon>(0));
+        grid.addColumn(Persoon::getVoornaam).setHeader("Voornaam").setSortable(true);
+        grid.addColumn(Persoon::getNaam).setHeader("Naam").setSortable(true);
+        grid.addColumn(Persoon::getGeslacht).setHeader("Geslacht").setSortable(true);
+        grid.addColumn(Persoon::getAdres).setHeader("Adres").setSortable(true);
+        grid.addColumn(Persoon::getTelefoon).setHeader("Telefoon").setSortable(true);
+        grid.addColumn(Persoon::getGsm).setHeader("Gsm").setSortable(true);
+        grid.addColumn(Persoon::getEmail).setHeader("E-mail").setSortable(true);
+        grid.addColumn(Persoon::getGeboortedatum).setHeader("Geboortedatum").setSortable(true);
         grid.addColumn(new ComponentRenderer<>(pers -> {
             Button b = new Button(new Icon(VaadinIcon.BULLETS));
             b.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
@@ -192,21 +200,21 @@ public class PersoonView extends VerticalLayout {
         return rpvLayout;
     }
 
-    public void loadData() {
+    public void loadData() throws NotFoundException, InvalidCredentialsException {
         if (persoonResource != null) {
-            List<PersoonDTO> lst = persoonResource.getAllPersonen();
+            List<Persoon> lst = (List<Persoon>) persoonResource.getPersonen("").getBody();
             grid.setItems(lst);
         } else {
             System.err.println("Autowiring failed");
         }
     }
 
-    private void handleClickSearch(ClickEvent event) {
+    private void handleClickSearch(ClickEvent event) throws NotFoundException, InvalidCredentialsException {
         if (txtNaam.getValue().trim().length() == 0) {
-            grid.setItems(persoonResource.getAllPersonen());
+            grid.setItems((List<Persoon>) persoonResource.getPersonen("").getBody());
         } else {
             String searchterm = txtNaam.getValue().trim();
-            grid.setItems(persoonResource.getSearchPersonen(searchterm));
+            grid.setItems(persoonResource.getPersonenSearch(searchterm, ""));
         }
     }
 
@@ -296,7 +304,13 @@ public class PersoonView extends VerticalLayout {
                 e.printStackTrace();
             }
             frm.resetForm();
-            handleClickSearch(null);
+            try {
+                handleClickSearch(null);
+            } catch (NotFoundException e) {
+                e.printStackTrace();
+            } catch (InvalidCredentialsException e) {
+                e.printStackTrace();
+            }
             btnCreate.setVisible(true);
             btnUpdate.setVisible(false);
             btnDelete.setVisible(false);
@@ -313,7 +327,7 @@ public class PersoonView extends VerticalLayout {
         dialog.open();
     }
 
-    private void populateForm(PersoonDTO p) {
+    private void populateForm(Persoon p) {
         btnCreate.setVisible(false);
         btnUpdate.setVisible(true);
         btnDelete.setVisible(true);

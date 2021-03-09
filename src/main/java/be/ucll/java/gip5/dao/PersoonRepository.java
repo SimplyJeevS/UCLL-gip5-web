@@ -16,6 +16,7 @@ public interface PersoonRepository extends JpaRepository<Persoon, Long> {
     List<Persoon> findAllByVoornaamContainingIgnoreCase(String voornaam);
     Optional<List<Persoon>> findAllByNaamContaining(String voornaam);
     Optional<List<Persoon>> findAllByNaamContainingIgnoreCase(String voornaam);
+    Optional<List<Persoon>> findAllByNaamContainingIgnoreCaseOrVoornaamContainingIgnoreCase(String searchterm, String searchterm2);
     Optional<List<Persoon>> findAllByGeslacht(String geslacht);
     Optional<List<Persoon>> findAllByAdresContaining(String adres);
     Optional<Persoon> findPersoonByEmailAndWachtwoord(String email, String wachtwoord);

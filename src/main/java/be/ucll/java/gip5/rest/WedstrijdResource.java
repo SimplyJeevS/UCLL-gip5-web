@@ -66,8 +66,10 @@ public class WedstrijdResource {
         wedstrijdMetPloegenDTO.setTegenstander((tegenstander.isPresent())?tegenstander.get().getNaam():"Geen tegenstander gevonden");
         return ResponseEntity.status(HttpStatus.OK).body(wedstrijdMetPloegenDTO);
     }
+
+
     @GetMapping("/wedstrijdMetPloegen")
-    public ResponseEntity getNaamPloegen(@RequestParam(name = "api", required = false, defaultValue = "") String api) throws InvalidCredentialsException, NotFoundException {
+    public List<WedstrijdMetPloegenDTO> getWedstrijdMetPLoegenVaadin(@RequestParam(name = "api", required = false, defaultValue = "") String api) throws InvalidCredentialsException, NotFoundException {
         Persoon persoon = checkApiKey(api,persoonRepository);
         List<WedstrijdMetPloegenDTO> wedstrijdMetPloegenDTOList = new ArrayList<>();
         if(persoon.getDefault_rol().equals(Rol.SECRETARIS)){
@@ -106,7 +108,49 @@ public class WedstrijdResource {
                 finalWedstrijdMetPloegenDTOList.add(w);
             }
         }
-        return ResponseEntity.status(HttpStatus.OK).body(finalWedstrijdMetPloegenDTOList);
+        return finalWedstrijdMetPloegenDTOList;
+    }
+
+    public List<WedstrijdMetPloegenDTO> GetWedstrijdSearchVaadin(String searchTerm, @RequestParam(name = "api", required = false, defaultValue = "") String api) throws InvalidCredentialsException, NotFoundException {
+        Persoon persoon = checkApiKey(api,persoonRepository);
+        List<WedstrijdMetPloegenDTO> wedstrijdMetPloegenDTOList = new ArrayList<>();
+        if(persoon.getDefault_rol().equals(Rol.SECRETARIS)){
+            List<Wedstrijd> wedstrijdList = wedstrijdRepository.findAllByLocatieContainingIgnoreCase(searchTerm);
+            for (Wedstrijd w : wedstrijdList) {
+                Optional<Ploeg> tegenstander = ploegRepository.findPloegById(w.getTegenstander());
+                Optional<Ploeg> thuisploeg = ploegRepository.findPloegById(w.getThuisPloeg());
+                wedstrijdMetPloegenDTOList.add(new WedstrijdMetPloegenDTO(w.getId(), w.getTijdstip(), w.getLocatie(),w.getThuisPloeg(), w.getTegenstander(),( (tegenstander.isPresent())?tegenstander.get().getNaam():"Geen thuisploeg gevonden"), (thuisploeg.isPresent())?thuisploeg.get().getNaam():"Geen thuisploeg gevonden"));
+            }
+        }else {
+            Long id = persoon.getId();
+            Optional<List<Toewijzing>> toewijzingList = toewijzingRepository.findAllByPersoonId(id);
+            if (!toewijzingList.isPresent()) {
+                throw new NotFoundException("Deze persoon heeft geen toewijzing(en)");
+            }
+            List<Ploeg> ploegList = new ArrayList<>();
+            for (Toewijzing t : toewijzingList.get()) {
+                Optional<Ploeg> ploeg = ploegRepository.findPloegById(t.getPloegId());
+                if (ploeg.isPresent()) {
+                    ploegList.add(ploeg.get());
+                }
+            }
+            for (Ploeg p : ploegList) {
+                Optional<List<Wedstrijd>> wedstrijd = wedstrijdRepository.findWedstrijdByThuisPloegAndLocatieContainingIgnoreCase(p.getId(), searchTerm);
+                if (wedstrijd.isPresent()) {
+                    for (Wedstrijd w : wedstrijd.get()) {
+                        Optional<Ploeg> tegenstander = ploegRepository.findPloegById(w.getTegenstander());
+                        wedstrijdMetPloegenDTOList.add(new WedstrijdMetPloegenDTO(w.getId(), w.getTijdstip(), w.getLocatie(), p.getId(), w.getTegenstander(), p.getNaam(), tegenstander.get().getNaam()));
+                    }
+                }
+            }
+        }
+        List<WedstrijdMetPloegenDTO> finalWedstrijdMetPloegenDTOList = new ArrayList<>();
+        for (WedstrijdMetPloegenDTO w : wedstrijdMetPloegenDTOList) {
+            if(w.getTijdstip().isAfter(LocalDateTime.now().minusDays(1))){
+                finalWedstrijdMetPloegenDTOList.add(w);
+            }
+        }
+        return finalWedstrijdMetPloegenDTOList;
     }
 
     @GetMapping("/wedstrijd")
@@ -332,7 +376,7 @@ public class WedstrijdResource {
     private List<WedstrijdMetPloegenDTO> queryListToWedstrijdMetPloegenDTOList(List<Wedstrijd> lst){
         Stream< WedstrijdMetPloegenDTO> stream = lst.stream()
                 .map(rec -> {
-                     WedstrijdMetPloegenDTO dto = new  WedstrijdMetPloegenDTO();
+                    WedstrijdMetPloegenDTO dto = new  WedstrijdMetPloegenDTO();
                     dto.setId(rec.getId());
                     dto.setLocatie(rec.getLocatie());
                     dto.setTegenstanderId(rec.getTegenstander());
@@ -346,7 +390,9 @@ public class WedstrijdResource {
                 });
         return stream.collect(Collectors.toList());
     }
-    public List< WedstrijdMetPloegenDTO> getAllWedstrijden() {return queryListToWedstrijdMetPloegenDTOList(wedstrijdRepository.findAll());}
+    public List< WedstrijdMetPloegenDTO> getAllWedstrijden() {
+        return queryListToWedstrijdMetPloegenDTOList(wedstrijdRepository.findAll());
+    }
     public List< WedstrijdMetPloegenDTO> getSearchWedstrijden(String locatie) throws IllegalArgumentException {
         if (locatie == null || locatie.trim().length() == 0)
             throw new IllegalArgumentException("Wedstrijden ophalen met de locatie gefaald. locatie leeg");

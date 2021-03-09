@@ -22,6 +22,12 @@ public class DeelnameDTO {
         setStatus(status);
         setId(id);
     }
+    public DeelnameDTO(Long persoonId, Long wedstrijdId,String commentaar, Status status){
+        setWedstrijdId(wedstrijdId);
+        setStatus(status);
+        setId(id);
+        setCommentaar(commentaar);
+    }
 
     public Long getId() {
         return id;

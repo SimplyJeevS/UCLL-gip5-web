@@ -6,6 +6,7 @@ import be.ucll.java.gip5.exceptions.InvalidCredentialsException;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
 import be.ucll.java.gip5.model.Persoon;
+import be.ucll.java.gip5.model.Ploeg;
 import be.ucll.java.gip5.rest.PloegResource;
 import be.ucll.java.gip5.util.BeanUtil;
 import com.vaadin.flow.component.ClickEvent;
@@ -48,7 +49,7 @@ public class PloegenView extends VerticalLayout {
     private Label lblNaam;
     private TextField txtNaam;
 
-    private Grid<PloegDTO> grid;
+    private Grid<Ploeg> grid;
     private Grid<Persoon>  gridp;
 
     private Button btnCancel;
@@ -83,15 +84,23 @@ public class PloegenView extends VerticalLayout {
         lblNaam = new Label("search");
         txtNaam = new TextField();
         txtNaam.setValueChangeMode(ValueChangeMode.EAGER);
-        txtNaam.addValueChangeListener(e -> handleClickSearch(null));
+        txtNaam.addValueChangeListener(e -> {
+            try {
+                handleClickSearch(null);
+            } catch (NotFoundException notFoundException) {
+                notFoundException.printStackTrace();
+            } catch (InvalidCredentialsException invalidCredentialsException) {
+                invalidCredentialsException.printStackTrace();
+            }
+        });
         txtNaam.setClearButtonVisible(true);
         lphLayout.add(lblNaam);
         lphLayout.add(txtNaam);
 
         grid = new Grid<>();
-        grid.setItems(new ArrayList<PloegDTO>(0));
-        grid.addColumn(PloegDTO::getNaam).setHeader("Naam").setSortable(true);
-        grid.addColumn(PloegDTO::getOmschrijving).setHeader("Omschrijving").setSortable(true);
+        grid.setItems(new ArrayList<Ploeg>(0));
+        grid.addColumn(Ploeg::getNaam).setHeader("Naam").setSortable(true);
+        grid.addColumn(Ploeg::getOmschrijving).setHeader("Omschrijving").setSortable(true);
         //when a row is selected or deselected, populate form
         grid.asSingleSelect().addValueChangeListener(event -> populateForm(event.getValue()));
 
@@ -143,20 +152,20 @@ public class PloegenView extends VerticalLayout {
 
         return rpvLayout;
     }
-    public void loadData() {
+    public void loadData() throws NotFoundException, InvalidCredentialsException {
         if (ploegResource != null) {
-            List<PloegDTO> lst = ploegResource.getAllPloegen();
+            List<Ploeg> lst = (List<Ploeg>) ploegResource.getPloegen("").getBody();
             grid.setItems(lst);
         } else {
             System.err.println("Autowiring failed");
         }
     }
-    private void handleClickSearch(Object o) {
+    private void handleClickSearch(Object o) throws NotFoundException, InvalidCredentialsException {
         if (txtNaam.getValue().trim().length() == 0) {
-            grid.setItems(ploegResource.getAllPloegen());
+            grid.setItems( (List<Ploeg>) ploegResource.getPloegen("").getBody());
         } else {
             String searchterm = txtNaam.getValue().trim();
-            grid.setItems(ploegResource.getSearchPloegen(searchterm));
+            grid.setItems(ploegResource.getPloegenSearchVaadin(searchterm, ""));
         }
     }
     private void handleClickCancel(ClickEvent event) {
@@ -186,6 +195,8 @@ public class PloegenView extends VerticalLayout {
         } catch (InvalidCredentialsException e) {
             Notification.show("Je bent niet ingelogd", 3000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
             UI.getCurrent().navigate("login");
+            e.printStackTrace();
+        } catch (NotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -233,7 +244,13 @@ public class PloegenView extends VerticalLayout {
                 e.printStackTrace();
             }
             frm.resetForm();
-            handleClickSearch(null);
+            try {
+                handleClickSearch(null);
+            } catch (NotFoundException e) {
+                e.printStackTrace();
+            } catch (InvalidCredentialsException e) {
+                e.printStackTrace();
+            }
             btnCreate.setVisible(true);
             btnUpdate.setVisible(false);
             btnDelete.setVisible(false);
@@ -280,7 +297,7 @@ public class PloegenView extends VerticalLayout {
         }
 
     }
-    private void populateForm(PloegDTO p) {
+    private void populateForm(Ploeg p) {
         btnCreate.setVisible(false);
         btnUpdate.setVisible(true);
         btnDelete.setVisible(true);

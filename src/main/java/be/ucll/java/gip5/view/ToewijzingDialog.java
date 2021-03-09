@@ -56,7 +56,7 @@ public class ToewijzingDialog extends Dialog {
     private Button btnInschrijven;
 
 
-    public ToewijzingDialog(PersoonDTO persoonDTO) throws NotFoundException, InvalidCredentialsException, ParameterInvalidException {
+    public ToewijzingDialog(Persoon persoonDTO) throws NotFoundException, InvalidCredentialsException, ParameterInvalidException {
         super();
 
         // Load Spring beans

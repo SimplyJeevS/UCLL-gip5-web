@@ -8,12 +8,10 @@ import be.ucll.java.gip5.dto.PloegDTO;
 import be.ucll.java.gip5.exceptions.InvalidCredentialsException;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
-import be.ucll.java.gip5.model.Persoon;
-import be.ucll.java.gip5.model.Ploeg;
-import be.ucll.java.gip5.model.Toewijzing;
 import be.ucll.java.gip5.model.Wedstrijd;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
+import be.ucll.java.gip5.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,13 +60,53 @@ public class PloegResource {
 
     @GetMapping( value = "/ploeg")
     public ResponseEntity getPloegen(@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, InvalidCredentialsException {
-        checkApiKey(api,persoonRepository);
-        List<Ploeg> ploegen = ploegRepository.findAll();
-        if(ploegen.isEmpty()){
+        Persoon persoon = checkApiKey(api,persoonRepository);
+        List<Ploeg> ploegList = new ArrayList<>();
+        if(persoon.getDefault_rol().equals(Rol.SECRETARIS)){
+            ploegList = ploegRepository.findAll();
+        }else{
+            Long id = persoon.getId();
+            Optional<List<Toewijzing>> toewijzingList = toewijzingRepository.findAllByPersoonId(id);
+            if (!toewijzingList.isPresent()) {
+                throw new NotFoundException("Deze persoon heeft geen toewijzing(en)");
+            }
+            for (Toewijzing t : toewijzingList.get()) {
+                Optional<Ploeg> ploeg = ploegRepository.findPloegById(t.getPloegId());
+                if (ploeg.isPresent()) {
+                    ploegList.add(ploeg.get());
+                }
+            }
+        }
+        if(ploegList.isEmpty()){
             throw new NotFoundException("Geen ploegen gevonden");
         }
-        return ResponseEntity.status(HttpStatus.OK).body(ploegen);
+        return ResponseEntity.status(HttpStatus.OK).body(ploegList);
     }
+
+    public List<Ploeg> getPloegenSearchVaadin(String searchTerm, @RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, InvalidCredentialsException {
+        Persoon persoon = checkApiKey(api,persoonRepository);
+        List<Ploeg> ploegList = new ArrayList<>();
+        if(persoon.getDefault_rol().equals(Rol.SECRETARIS)){
+            ploegList = ploegRepository.findAllByNaamContainingIgnoreCase(searchTerm).get();
+        }else{
+            Long id = persoon.getId();
+            Optional<List<Toewijzing>> toewijzingList = toewijzingRepository.findAllByPersoonId(id);
+            if (!toewijzingList.isPresent()) {
+                throw new NotFoundException("Deze persoon heeft geen toewijzing(en)");
+            }
+            for (Toewijzing t : toewijzingList.get()) {
+                Optional<List<Ploeg>> foundPloegList = ploegRepository.findPloegByIdAndNaamContainingIgnoreCase(t.getPloegId(), searchTerm);
+                if (foundPloegList.isPresent()) {
+                    ploegList.addAll(foundPloegList.get());
+                }
+            }
+        }
+        if(ploegList.isEmpty()){
+            throw new NotFoundException("Geen ploegen gevonden");
+        }
+        return ploegList;
+    }
+
 
     @GetMapping(value="/ploeg/{id}/spelers")
     public ResponseEntity getAllSpelersInPloeg(@PathVariable("id") Long id, @RequestParam(name = "api", required = false, defaultValue = "") String api) throws InvalidCredentialsException, NotFoundException {

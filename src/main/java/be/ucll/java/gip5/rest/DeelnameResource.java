@@ -129,6 +129,9 @@ public class DeelnameResource {
         foundDeelname.setPersoonId(deelname.getPersoonId());
         foundDeelname.setPersoonId(deelname.getWedstrijdId());
         foundDeelname.setStatus(deelname.getStatus());
+        if(!(deelname.getCommentaar()==null)){
+            foundDeelname.setCommentaar(deelname.getCommentaar());
+        }
         deelnameRepository.save(foundDeelname);
         return ResponseEntity.status(HttpStatus.OK).body(deelname);
     }

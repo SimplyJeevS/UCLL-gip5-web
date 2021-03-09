@@ -8,6 +8,7 @@ import be.ucll.java.gip5.exceptions.InvalidCredentialsException;
 import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.exceptions.ParameterInvalidException;
 import be.ucll.java.gip5.model.Persoon;
+import be.ucll.java.gip5.model.Ploeg;
 import be.ucll.java.gip5.model.Rol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,12 +70,36 @@ public class PersoonResource {
 
     @GetMapping(value = "/persoon")
     public ResponseEntity getPersonen(@RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, InvalidCredentialsException {
-        checkApiKey(api,persoonRepository);
-        List<Persoon> personen = persoonRepository.findAll();
-        if(personen.isEmpty()){
+        Persoon persoon = checkApiKey(api,persoonRepository);
+        List<Persoon> persoonList = new ArrayList<>();
+        if(persoon.getDefault_rol().equals(Rol.SECRETARIS)){
+           persoonList = persoonRepository.findAll();
+        }else {
+            persoonList.add(persoon);
+        }
+
+        if(persoonList.isEmpty()){
             throw new NotFoundException("geen personen gevonden");
         }
-        return ResponseEntity.status(HttpStatus.OK).body(personen);
+        return ResponseEntity.status(HttpStatus.OK).body(persoonList);
+    }
+
+    public List<Persoon> getPersonenSearch(String searchTerm, @RequestParam(name = "api", required = false, defaultValue = "") String api) throws NotFoundException, InvalidCredentialsException {
+        Persoon persoon = checkApiKey(api,persoonRepository);
+        List<Persoon> persoonList = new ArrayList<>();
+        if(persoon.getDefault_rol().equals(Rol.SECRETARIS)){
+            Optional<List<Persoon>> p = persoonRepository.findAllByNaamContainingIgnoreCaseOrVoornaamContainingIgnoreCase(searchTerm, searchTerm);
+            if(p.isPresent()){
+                persoonList.addAll(p.get());
+            }
+        }else {
+            persoonList.add(persoon);
+        }
+
+        if(persoonList.isEmpty()){
+            throw new NotFoundException("geen personen gevonden");
+        }
+        return persoonList;
     }
 
     /**

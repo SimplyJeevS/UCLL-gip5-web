@@ -1,6 +1,8 @@
 package be.ucll.java.gip5.view;
 
 
+import be.ucll.java.gip5.exceptions.InvalidCredentialsException;
+import be.ucll.java.gip5.exceptions.NotFoundException;
 import be.ucll.java.gip5.rest.PersoonResource;
 import be.ucll.java.gip5.util.BeanUtil;
 import com.vaadin.flow.component.ClickEvent;
@@ -89,7 +91,7 @@ public class HomeView extends AppLayout {
     }
 
     @PostConstruct
-    public void init() {
+    public void init() throws InvalidCredentialsException, NotFoundException {
         pView = new PersoonView();
         pView.loadData();
 

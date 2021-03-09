@@ -105,7 +105,15 @@ public class WedstrijdenView extends VerticalLayout {
         lblLocatie = new Label("search"); //new Label(msgSource.getMessage("persoonresource.lblNaam", null, getLocale()));
         txtLocatie = new TextField();
         txtLocatie.setValueChangeMode(ValueChangeMode.EAGER);
-        txtLocatie.addValueChangeListener(e -> handleClickSearch(null));
+        txtLocatie.addValueChangeListener(e -> {
+            try {
+                handleClickSearch(null);
+            } catch (InvalidCredentialsException invalidCredentialsException) {
+                invalidCredentialsException.printStackTrace();
+            } catch (NotFoundException notFoundException) {
+                notFoundException.printStackTrace();
+            }
+        });
         txtLocatie.setClearButtonVisible(true);
         lphLayout.add(lblLocatie);
         lphLayout.add(txtLocatie);
@@ -207,21 +215,21 @@ public class WedstrijdenView extends VerticalLayout {
 
 
 
-    public void loadData() {
+    public void loadData() throws InvalidCredentialsException, NotFoundException {
         if (wedstrijdResource != null) {
-            List<WedstrijdMetPloegenDTO> lst = wedstrijdResource.getAllWedstrijden();
+            List<WedstrijdMetPloegenDTO> lst = wedstrijdResource.getWedstrijdMetPLoegenVaadin("");
             grid.setItems(lst);
         } else {
             System.err.println("Autowiring failed");
         }
     }
 
-    private void handleClickSearch(Object o) {
+    private void handleClickSearch(Object o) throws InvalidCredentialsException, NotFoundException {
         if (txtLocatie.getValue().trim().length() == 0) {
-            grid.setItems(wedstrijdResource.getAllWedstrijden());
+            grid.setItems(wedstrijdResource.getWedstrijdMetPLoegenVaadin(""));
         } else {
             String searchterm = txtLocatie.getValue().trim();
-            grid.setItems(wedstrijdResource.getSearchWedstrijden(searchterm));
+            grid.setItems(wedstrijdResource.GetWedstrijdSearchVaadin(searchterm,""));
         }
     }
     private void handleClickCancel(ClickEvent event) {
@@ -303,7 +311,13 @@ public class WedstrijdenView extends VerticalLayout {
                 e.printStackTrace();
             }
             frm.resetForm();
-            handleClickSearch(null);
+            try {
+                handleClickSearch(null);
+            } catch (InvalidCredentialsException e) {
+                e.printStackTrace();
+            } catch (NotFoundException e) {
+                e.printStackTrace();
+            }
             btnCreate.setVisible(true);
             btnUpdate.setVisible(false);
             btnDelete.setVisible(false);
