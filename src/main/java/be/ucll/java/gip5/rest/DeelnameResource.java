@@ -139,9 +139,6 @@ public class DeelnameResource {
     public ResponseEntity deleteDeelname(@PathVariable("id") Long id,@RequestParam(name = "api", required = false, defaultValue = "") String api) throws ParameterInvalidException, NotFoundException, InvalidCredentialsException {
         checkApiKey(api,persoonRepository);
         logger.debug("DELETE request voor deelname gekregen");
-        if(id == null || !(id instanceof Long) ||    id <=0 ){
-            throw new ParameterInvalidException(id.toString());
-        }
         Optional<Deelname> deelname = deelnameRepository.findDeelnameById(id);
         if(!deelname.isPresent()){
             throw new NotFoundException(id.toString());
@@ -151,9 +148,6 @@ public class DeelnameResource {
     }
 
     private Wedstrijd checkandFindWedstrijdId(Long id) throws NotFoundException, ParameterInvalidException {
-        if(id == null || !(id instanceof Long) || id <=0 ){
-            throw new ParameterInvalidException(id.toString());
-        }
         Optional<Wedstrijd> wedstrijd = wedstrijdRepository.findWedstrijdById(id);
         if(!wedstrijd.isPresent()){
             throw new NotFoundException("Wedstrijd niet gevonden met id "+id);
@@ -162,9 +156,6 @@ public class DeelnameResource {
     }
 
     private Persoon checkandFindPersoonId(Long id) throws NotFoundException, ParameterInvalidException {
-        if(id == null || !(id instanceof Long) || id <=0 ){
-            throw new ParameterInvalidException(id.toString());
-        }
         Optional<Persoon> persoon = persoonRepository.findPersoonById(id);
         if(!persoon.isPresent()){
             throw new NotFoundException("Persoon niet gevonden met id "+id);
